@@ -9,21 +9,21 @@
   "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
  ],
  "by_instrument": {
-  "bsn_sus@plain": 79,
-  "cb_sus@plain": 116,
+  "bsn_sus@plain": 84,
+  "cb_sus@plain": 127,
   "fl_sus@plain": 15,
-  "hpsd@sso": 257,
-  "ob_sus@plain": 116,
+  "hpsd@sso": 294,
+  "ob_sus@plain": 127,
   "org_loud@plain": 36,
-  "org_quiet@plain": 133,
-  "vc_sus@plain": 128,
-  "vla_sus@plain": 135,
-  "vln_sus@plain": 376
+  "org_quiet@plain": 207,
+  "vc_sus@plain": 146,
+  "vla_sus@plain": 185,
+  "vln_sus@plain": 472
  },
  "substitutions": {},
  "missing": {},
  "out_of_range_rescued": {},
- "sfizz_notes": 215,
+ "sfizz_notes": 248,
  "lengthened": 0,
  "window": [
   0.0,
@@ -49,29 +49,29 @@
    4.8,
    9.2,
    11.0,
-   19.8,
+   20.8,
    29.5,
-   44.0,
-   46.2,
    53.5,
    54.5,
-   93.8,
-   136.2,
-   150.2
+   56.5,
+   57.5,
+   101.0,
+   123.8,
+   150.5
   ],
   "png": "/home/claude/immollimma/requests/fugue-grenzen/out/report.png"
  },
  "parts_lufs": {
-  "Bass": -23.3,
-  "Alto": -23.7,
-  "Bassoon": -24.2,
-  "Tenor": -25.3,
+  "Bass": -23.0,
+  "Alto": -24.1,
+  "Bassoon": -24.1,
+  "Oboe": -25.3,
   "Flute": -25.6,
-  "Oboe": -25.8,
-  "Soprano": -26.0,
-  "Organ": -28.9,
-  "Harpsichord": -30.6,
+  "Tenor": -25.8,
+  "Soprano": -25.9,
+  "Organ": -28.7,
+  "Harpsichord": -30.3,
   "Basses": -30.9
  },
- "seconds_taken": 47.9
+ "seconds_taken": 53.4
 }

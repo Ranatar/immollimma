@@ -170,14 +170,16 @@ def generate(slots, harm, fixed, lo, hi, *, role="upper", above=(), below=(), st
                         c += 12
         return c
 
-    def local(i, m):
+    def local(i, m, susp=False):
         t, d = slots[i]
         h = harm.at(t)
         chord, key = h[1], h[2]
         s = strength(t)
         c = 0.05 * abs(m - center)
         nct = m % 12 not in chord.pcs
-        if nct and s >= 1.5:
+        if susp:
+            pass
+        elif nct and s >= 1.5:
             c += 60
         elif nct and s >= 1:
             c += 25
@@ -193,7 +195,7 @@ def generate(slots, harm, fixed, lo, hi, *, role="upper", above=(), below=(), st
             if f < m:
                 lowest = False
             iv = abs(m - f) % 12
-            if iv in DISS:
+            if iv in DISS and not susp:
                 f_nct = f % 12 not in chord.pcs
                 if s >= 1 and not f_nct:
                     c += 50 if not nct else 30
@@ -252,6 +254,10 @@ def generate(slots, harm, fixed, lo, hi, *, role="upper", above=(), below=(), st
             c += 40
         if a_nct and a == b:
             c += 20
+        if b_nct and 1 <= abs(b - a) <= 2:
+            c -= 0.8  # проходящий/вспомогательный — живая линия
+        if not b_nct and not a_nct and abs(b - a) >= 3 and slots[i][1] <= 0.5:
+            c += 0.8  # беготня по звукам аккорда
         k = h0[2]
         if k.mode == "minor" and a % 12 == (k.tonic + 11) % 12 and b % 12 != k.tonic and h0[1].root == (k.tonic + 7) % 12:
             c += 8
@@ -269,6 +275,12 @@ def generate(slots, harm, fixed, lo, hi, *, role="upper", above=(), below=(), st
 
     def trans3(i, p, a, b):
         c = 0.0
+        j = i - 1
+        if (a == p and strength(slots[j][0]) >= 1 and (j, a) in relax and 1 <= a - b <= 2
+                and b % 12 in harm.at(slots[i][0])[1].pcs):
+            c -= relax[(j, a)] + 3  # задержание: приготовлено, на доле, разрешено вниз на секунду
+        if abs(a - p) >= 3 and abs(b - a) >= 3 and (b - a) * (a - p) > 0:
+            c += 1.5
         if b == p and slots[i][1] < 1:
             c += 1.5  # возврат к тому же звуку через один (трель-топтание)
         if abs(a - p) >= 5 and (abs(b - a) > 2 or (b - a) * (a - p) > 0):
@@ -280,6 +292,21 @@ def generate(slots, harm, fixed, lo, hi, *, role="upper", above=(), below=(), st
     n = len(slots)
     if n == 0:
         return []
+    relax = {}
+    for j, (t, d) in enumerate(slots):
+        if strength(t) < 1:
+            continue
+        h = harm.at(t)
+        for m in cands[j]:
+            if m % 12 in h[1].pcs:
+                continue
+            ok = True
+            for v in fixed:  # задержание не должно бить по звуку, взятому тут же на доле в том же тоне
+                f = sounding(v, t)
+                if f is not None and f % 12 == (m - 1) % 12 or (f is not None and f % 12 == (m - 2) % 12 and False):
+                    ok = False
+            if ok:
+                relax[(j, m)] = local(j, m) - local(j, m, susp=True)
     # состояние: (пред, тек)
     best = {}
     for m in cands[0]:
@@ -335,18 +362,39 @@ def merge_repeats(line):
     return out
 
 
-def slots_between(t0, t1, voices, busy_div=0.5, calm_div=1.0):
-    """ритм свободного голоса: восьмые там, где остальные стоят, четверти — где движутся"""
+def slots_between(t0, t1, voices, seed=0, cadence=True):
+    """ритм свободного голоса — дополняющий: где другие голоса бегут шестнадцатыми, этот держит четверть или
+    идёт восьмыми; где стоят — движется (восьмые, пунктир темы ♪. ♬, шестнадцатые противосложения).
+    Последняя доля перед паузой — опорная нота (окончание фразы)"""
+    import random
+    rng = random.Random(int(t0 * 8) * 131 + seed)
     out, t = [], t0
     while t < t1 - 1e-9:
-        moving = sum(1 for v in voices for n in v if t + 1e-9 < n[0] < t + 1 - 1e-9)
-        step = busy_div if moving == 0 else calm_div
-        step = min(step, t1 - t)
-        k = int(round(1 / step)) if step < 1 else 1
-        for j in range(k):
-            if t + j * step < t1 - 1e-9:
-                out.append((t + j * step, min(step, t1 - t - j * step)))
-        t += step * k
+        if t1 - t < 1 - 1e-9 or abs(t - round(t)) > 1e-9:
+            step = min(0.5 if abs(t * 2 - round(t * 2)) < 1e-9 else 0.25, t1 - t)
+            out.append((t, step))
+            t += step
+            continue
+        ons = [n[0] for v in voices for n in v if t + 1e-9 < n[0] < t + 1 - 1e-9]
+        fast = any(abs((x - t) * 4 - round((x - t) * 4)) < 1e-9 and abs((x - t) * 2 - round((x - t) * 2)) > 1e-9
+                   for x in ons)
+        moving = bool(ons)
+        last = t1 - t <= 2 + 1e-9 and cadence
+        if last:
+            pats = [[1.0], [0.5, 0.5]] if t1 - t > 1 + 1e-9 else [[1.0]]
+            w = [0.6, 0.4] if len(pats) == 2 else [1]
+        elif fast:
+            pats, w = [[1.0], [0.5, 0.5]], [0.55, 0.45]
+        elif moving:
+            pats = [[0.5, 0.5], [0.75, 0.25], [0.25, 0.25, 0.5], [0.25, 0.25, 0.25, 0.25], [1.0]]
+            w = [0.3, 0.25, 0.15, 0.15, 0.15]
+        else:
+            pats = [[0.25, 0.25, 0.25, 0.25], [0.5, 0.5], [0.75, 0.25], [0.5, 0.25, 0.25]]
+            w = [0.3, 0.3, 0.25, 0.15]
+        pat = rng.choices(pats, weights=w)[0]
+        for d in pat:
+            out.append((t, d))
+            t += d
     return out
 
 
@@ -356,6 +404,16 @@ NAMES = "C C# D Eb E F F# G Ab A Bb B".split()
 
 def nm(m):
     return f"{NAMES[m % 12]}{m // 12 - 1}"
+
+
+def is_suspension(voice, t):
+    """звук приготовлен раньше (тянется через долю t) и разрешается вниз на секунду"""
+    for i, n in enumerate(voice):
+        if n[0] < t - 1e-9 < n[0] + n[1] - 1e-9 + 0 and n[0] + n[1] > t + 1e-9:
+            if i + 1 < len(voice):
+                nx = voice[i + 1]
+                return 1 <= n[2] - nx[2] <= 2 and nx[0] - (n[0] + n[1]) < 1e-6
+    return False
 
 
 def check(voices, harm, t0=None, t1=None, verbose=True):
@@ -387,6 +445,8 @@ def check(voices, harm, t0=None, t1=None, verbose=True):
                 if s >= 1 and iv in DISS and h is not None and (onset_at(va, t) or onset_at(vb, t)):
                     if ma % 12 in h[1].pcs and mb % 12 in h[1].pcs:
                         continue  # септаккорд
+                    if is_suspension(va, t) or is_suspension(vb, t):
+                        continue
                     problems.append((t, f"диссонанс на доле {names[a]}-{names[b]} {nm(ma)}/{nm(mb)} ({h[1]})"))
     if verbose:
         for t, p in problems:
