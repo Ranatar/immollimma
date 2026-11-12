@@ -18,6 +18,7 @@
  },
  "substitutions": {},
  "missing": {},
+ "out_of_range_rescued": {},
  "sfizz_notes": 20,
  "lengthened": 0,
  "window": [
@@ -56,5 +57,5 @@
   "Violas": -35.8,
   "Cellos": -42.9
  },
- "seconds_taken": 15.7
+ "seconds_taken": 16.7
 }

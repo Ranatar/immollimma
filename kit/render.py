@@ -29,6 +29,9 @@ class Renderer:
                      "sso": st["Sonatina (SSO)"] and st["libsfizz"]}
         self.used = collections.Counter()  # (inst, lib)
         self.missing = collections.Counter()
+        self.rescued = collections.Counter()  # notes moved to a library that has the pitch recorded
+        from .sfz_engine import load_calib
+        self.calib = load_calib()
 
     def engine(self, lib):
         if lib == "plain":
@@ -41,8 +44,29 @@ class Renderer:
             self.sfz[lib] = e
         return self.sfz[lib]
 
+    def recorded(self, inst, lib):
+        """(lo, hi) of the pitches a library has recorded for an instrument"""
+        if lib == "plain":
+            rows = self.plain.idx.get(INSTR[inst]["plain"], [])
+            return (min(r["note"] for r in rows), max(r["note"] for r in rows)) if rows else None
+        c = self.calib.get(lib, {}).get(inst)
+        return (c["lo"], c["hi"]) if c else None
+
     def note(self, e, t):
-        for lib in sources(e["inst"], self.backend):
+        libs = [lib for lib in sources(e["inst"], self.backend) if self.have[lib]]
+        # a note far outside what the first library recorded (resampled > 4 semitones, sounds artificial):
+        # take it from the next library that has it recorded, if any
+        if len(libs) > 1:
+            r0 = self.recorded(e["inst"], libs[0])
+            if r0 and not r0[0] - 4 <= e["midi"] <= r0[1] + 4:
+                for lib in libs[1:]:
+                    r = self.recorded(e["inst"], lib)
+                    if r and r[0] - 1 <= e["midi"] <= r[1] + 1:
+                        libs.remove(lib)
+                        libs.insert(0, lib)
+                        self.rescued[e["inst"]] += 1
+                        break
+        for lib in libs:
             if self.have[lib]:
                 self.used[(e["inst"], lib)] += 1
                 self.engine(lib).note(e["inst"], e["midi"], t, e["dur"], vel=e["vel"], gain=e["gain"], pan=e["pan"],
@@ -87,7 +111,7 @@ class Renderer:
                     subst[inst] = f"{first[0]} unavailable → {lib}"
         return dict(backend=self.backend, libraries=libs, licenses=sorted({LICENSES[x] for x in libs if x in LICENSES}),
                     by_instrument={f"{i}@{lib}": n for (i, lib), n in sorted(self.used.items())},
-                    substitutions=subst, missing=dict(self.missing),
+                    substitutions=subst, missing=dict(self.missing), out_of_range_rescued=dict(self.rescued),
                     sfizz_notes=sum(e.notes_rendered for e in self.sfz.values()),
                     lengthened=sum(e.extended for e in self.sfz.values()))
 

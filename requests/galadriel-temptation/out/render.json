@@ -1,0 +1,120 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso",
+  "vsco"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "afl_sus@sso": 36,
+  "bcl_sus@sso": 4,
+  "cb_sus@plain": 61,
+  "cb_trem@plain": 2,
+  "cbsn_sus@sso": 36,
+  "celesta@sso": 18,
+  "choir@sso": 141,
+  "cl_sus@plain": 9,
+  "crotales@sso": 5,
+  "eh_sus@sso": 8,
+  "fl_sus@plain": 53,
+  "glock@plain": 4,
+  "grains@plain": 1,
+  "harp@plain": 197,
+  "hns_sus@sso": 77,
+  "org_loud@plain": 107,
+  "org_quiet@plain": 8,
+  "org_reed@sso": 42,
+  "picc_sus@vsco": 1,
+  "sample@plain": 37,
+  "sample@sso": 2,
+  "tba_sus@plain": 42,
+  "tbn_sus@plain": 50,
+  "timp@plain": 29,
+  "timp_roll@plain": 2,
+  "vc_spic@vsco": 302,
+  "vc_sus@plain": 44,
+  "vc_trem@plain": 2,
+  "vla_spic@vsco": 112,
+  "vla_sus@plain": 43,
+  "vla_trem@plain": 2,
+  "vln_harm@sso": 8,
+  "vln_leg@sso": 18,
+  "vln_sus@plain": 77,
+  "vln_trem@plain": 1
+ },
+ "substitutions": {},
+ "missing": {},
+ "out_of_range_rescued": {},
+ "sfizz_notes": 232,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  222.1
+ ],
+ "seconds": 222.1,
+ "mp3": "/home/claude/immollimma/requests/galadriel-temptation/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/galadriel-temptation/out/score.mid",
+  "lost": {
+   "notes with a glissando inside": 170,
+   "raw samples (noises, unpitched percussion)": 39,
+   "grain clouds": 1,
+   "notes with detune (out-of-tune doubles)": 144,
+   "ring-modulated notes": 2
+  },
+  "musicxml": "/home/claude/immollimma/requests/galadriel-temptation/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/galadriel-temptation/out/score.pdf",
+  "grid": [
+   4
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   4.0,
+   50.8,
+   58.8,
+   62.5,
+   70.2,
+   162.2,
+   164.5,
+   172.2,
+   176.0,
+   179.8,
+   207.8,
+   216.2
+  ],
+  "png": "/home/claude/immollimma/requests/galadriel-temptation/out/report.png"
+ },
+ "parts_lufs": {
+  "Choir": -14.0,
+  "Contrabassoon": -15.7,
+  "Piccolo": -17.1,
+  "Cellos": -21.1,
+  "Flute": -23.0,
+  "Organ": -25.2,
+  "Tuba": -25.7,
+  "Violas": -26.0,
+  "Alto flute": -26.2,
+  "Horns": -26.4,
+  "Clarinet": -27.7,
+  "Bass clarinet": -30.4,
+  "Harp": -30.6,
+  "English horn": -31.0,
+  "Basses": -31.3,
+  "Violins": -31.4,
+  "Timpani": -31.7,
+  "Celesta": -35.0,
+  "Trombone": -36.1,
+  "Glockenspiel": -38.9,
+  "Crotales": -39.9
+ },
+ "seconds_taken": 139.0
+}

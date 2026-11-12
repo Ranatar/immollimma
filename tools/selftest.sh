@@ -6,7 +6,7 @@ python3 tools/export_registry.py > /dev/null
 git diff --quiet -- kit/data/instruments.json 2>/dev/null || echo "note: kit/data/instruments.json changed — commit it (the forms read it)"
 python3 -m kit check
 for ex in chorale_prelude nocturne phase; do
-  python3 -m kit run examples/$ex/piece.py > /tmp/selftest_$ex.log 2>&1 || { echo "FAIL $ex"; tail -20 /tmp/selftest_$ex.log; exit 1; }
+  python3 -m kit run examples/$ex/piece.py --parts > /tmp/selftest_$ex.log 2>&1 || { echo "FAIL $ex"; tail -20 /tmp/selftest_$ex.log; exit 1; }
   python3 - "$ex" <<'PY'
 import json, sys
 ex = sys.argv[1]

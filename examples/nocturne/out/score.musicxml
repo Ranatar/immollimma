@@ -8,7 +8,7 @@
   <identification>
     <creator type="composer"> </creator>
     <encoding>
-      <encoding-date>2026-11-12</encoding-date>
+      <encoding-date>2026-11-13</encoding-date>
       <software>music21 v.10.5.2</software>
       <supports element="beam" type="yes" />
       <supports element="stem" type="yes" />
@@ -22,81 +22,81 @@
     </scaling>
   </defaults>
   <part-list>
-    <score-part id="Pd95149453b0e069703276386e7fc941a">
+    <score-part id="P2cfd2d3b9ad6f8e53706dadea184f148">
       <part-name>Alto flute</part-name>
       <part-abbreviation>Alto </part-abbreviation>
     </score-part>
-    <score-part id="Pea4f39eef8b43a59c70e1c851aeef74f">
+    <score-part id="P1f6caaa925e37ca01d977aa1908b3cd4">
       <part-name>Vibraphone</part-name>
       <part-abbreviation>Vibra</part-abbreviation>
     </score-part>
-    <score-part id="P2a148bb30b21d1d05c3181fc1bb24c5a">
+    <score-part id="Pae6e4931c865ac90e8151b9074657a28">
       <part-name>Celesta 1</part-name>
       <part-abbreviation>Celes</part-abbreviation>
     </score-part>
-    <score-part id="P1e9a790acd3742a47da6f09f493e93db">
+    <score-part id="Pa12009e54cd38046d6831ac098426587">
       <part-name>Celesta 2</part-name>
       <part-abbreviation>Celes</part-abbreviation>
     </score-part>
-    <score-part id="P13fd7a9b12384f27581d49518b75ac7f">
+    <score-part id="P3b185df762a8364569a174ca3ff60a45">
       <part-name>Celesta 3</part-name>
       <part-abbreviation>Celes</part-abbreviation>
     </score-part>
-    <score-part id="Pa6c25038e649a0772f5aa9ae35ba9b79">
+    <score-part id="P818d9c59b26e8d1913cb985db5e23cb3">
       <part-name>Celesta 4</part-name>
       <part-abbreviation>Celes</part-abbreviation>
     </score-part>
-    <score-part id="Pa0d9021422f07fef50d2223e1ff6c07a">
+    <score-part id="Pc03c465b299d1d5da399ca1f75be1d7c">
       <part-name>Harp 1</part-name>
       <part-abbreviation>Harp </part-abbreviation>
     </score-part>
-    <score-part id="Pe474391d97d4ac75c396ac9e69ab92ca">
+    <score-part id="Paa30d8182d7523d6c30ef2696939a548">
       <part-name>Harp 2</part-name>
       <part-abbreviation>Harp </part-abbreviation>
     </score-part>
-    <score-part id="P7b806c2f94adee3139bae80e71141d88">
+    <score-part id="Pee4a793bed676864d80ab7e481760eb7">
       <part-name>Harp 3</part-name>
       <part-abbreviation>Harp </part-abbreviation>
     </score-part>
-    <score-part id="P6652417a099e7ec65784a28929979f04">
+    <score-part id="Pf57c922c7a7e7a66d31182e01b79a828">
       <part-name>Violins 1</part-name>
       <part-abbreviation>Violi</part-abbreviation>
     </score-part>
-    <score-part id="P8f6c3e66bd7637fd69aa15b8ed8c4e1d">
+    <score-part id="Pbd9203e642d043a444e4fc0c2b21af23">
       <part-name>Violins 2</part-name>
       <part-abbreviation>Violi</part-abbreviation>
     </score-part>
-    <score-part id="Pc43b85294a487222a9dfe0daa0c872c4">
+    <score-part id="P60bf83c0c7de3297c061fd8d2d9365d1">
       <part-name>Violins 3</part-name>
       <part-abbreviation>Violi</part-abbreviation>
     </score-part>
-    <score-part id="Pf866dc575cab9f79b8fc3894ad5c06a9">
+    <score-part id="P00011a57802e5e6dfcde396fc5af5960">
       <part-name>Violins 4</part-name>
       <part-abbreviation>Violi</part-abbreviation>
     </score-part>
-    <score-part id="P5b4af75316d2f7960ace7f40c7ff66ca">
+    <score-part id="P7d765e0dc325a5a22a97fe0fbc207a4a">
       <part-name>Violas 1</part-name>
       <part-abbreviation>Viola</part-abbreviation>
     </score-part>
-    <score-part id="P8884c5f5085a54f1817045e10e4710a0">
+    <score-part id="P6431894ba5e9fcf6badc03081124acfa">
       <part-name>Violas 2</part-name>
       <part-abbreviation>Viola</part-abbreviation>
     </score-part>
-    <score-part id="Pf07c32d9c9b2fbdd1d0a7b426f969e72">
+    <score-part id="Pca3d696e8b59da5185baaaea90f29d32">
       <part-name>Cellos 1</part-name>
       <part-abbreviation>Cello</part-abbreviation>
     </score-part>
-    <score-part id="Pbecffa1faa21bc5f8e7823ef1e70fe2e">
+    <score-part id="P4657f4ac8626f55d0d415bc7a3267b7c">
       <part-name>Cellos 2</part-name>
       <part-abbreviation>Cello</part-abbreviation>
     </score-part>
-    <score-part id="P9cbec1eab7b52905cdfa933a2d3ae007">
+    <score-part id="P865a712568072ce4141d619ca3f5ad2a">
       <part-name>Basses</part-name>
       <part-abbreviation>Basse</part-abbreviation>
     </score-part>
   </part-list>
   <!--=========================== Part 1 ===========================-->
-  <part id="Pd95149453b0e069703276386e7fc941a">
+  <part id="P2cfd2d3b9ad6f8e53706dadea184f148">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -455,7 +455,7 @@
     </measure>
   </part>
   <!--=========================== Part 2 ===========================-->
-  <part id="Pea4f39eef8b43a59c70e1c851aeef74f">
+  <part id="P1f6caaa925e37ca01d977aa1908b3cd4">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -658,7 +658,7 @@
     </measure>
   </part>
   <!--=========================== Part 3 ===========================-->
-  <part id="P2a148bb30b21d1d05c3181fc1bb24c5a">
+  <part id="Pae6e4931c865ac90e8151b9074657a28">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -861,7 +861,7 @@
     </measure>
   </part>
   <!--=========================== Part 4 ===========================-->
-  <part id="P1e9a790acd3742a47da6f09f493e93db">
+  <part id="Pa12009e54cd38046d6831ac098426587">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -1057,7 +1057,7 @@
     </measure>
   </part>
   <!--=========================== Part 5 ===========================-->
-  <part id="P13fd7a9b12384f27581d49518b75ac7f">
+  <part id="P3b185df762a8364569a174ca3ff60a45">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -1265,7 +1265,7 @@
     </measure>
   </part>
   <!--=========================== Part 6 ===========================-->
-  <part id="Pa6c25038e649a0772f5aa9ae35ba9b79">
+  <part id="P818d9c59b26e8d1913cb985db5e23cb3">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -1466,7 +1466,7 @@
     </measure>
   </part>
   <!--=========================== Part 7 ===========================-->
-  <part id="Pa0d9021422f07fef50d2223e1ff6c07a">
+  <part id="Pc03c465b299d1d5da399ca1f75be1d7c">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -1746,7 +1746,7 @@
     </measure>
   </part>
   <!--=========================== Part 8 ===========================-->
-  <part id="Pe474391d97d4ac75c396ac9e69ab92ca">
+  <part id="Paa30d8182d7523d6c30ef2696939a548">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -2212,7 +2212,7 @@
     </measure>
   </part>
   <!--=========================== Part 9 ===========================-->
-  <part id="P7b806c2f94adee3139bae80e71141d88">
+  <part id="Pee4a793bed676864d80ab7e481760eb7">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -2678,7 +2678,7 @@
     </measure>
   </part>
   <!--========================== Part 10 ===========================-->
-  <part id="P6652417a099e7ec65784a28929979f04">
+  <part id="Pf57c922c7a7e7a66d31182e01b79a828">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -3049,7 +3049,7 @@
     </measure>
   </part>
   <!--========================== Part 11 ===========================-->
-  <part id="P8f6c3e66bd7637fd69aa15b8ed8c4e1d">
+  <part id="Pbd9203e642d043a444e4fc0c2b21af23">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -3413,7 +3413,7 @@
     </measure>
   </part>
   <!--========================== Part 12 ===========================-->
-  <part id="Pc43b85294a487222a9dfe0daa0c872c4">
+  <part id="P60bf83c0c7de3297c061fd8d2d9365d1">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -3785,7 +3785,7 @@
     </measure>
   </part>
   <!--========================== Part 13 ===========================-->
-  <part id="Pf866dc575cab9f79b8fc3894ad5c06a9">
+  <part id="P00011a57802e5e6dfcde396fc5af5960">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -3907,7 +3907,7 @@
     </measure>
   </part>
   <!--========================== Part 14 ===========================-->
-  <part id="P5b4af75316d2f7960ace7f40c7ff66ca">
+  <part id="P7d765e0dc325a5a22a97fe0fbc207a4a">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -4275,7 +4275,7 @@
     </measure>
   </part>
   <!--========================== Part 15 ===========================-->
-  <part id="P8884c5f5085a54f1817045e10e4710a0">
+  <part id="P6431894ba5e9fcf6badc03081124acfa">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -4646,7 +4646,7 @@
     </measure>
   </part>
   <!--========================== Part 16 ===========================-->
-  <part id="Pf07c32d9c9b2fbdd1d0a7b426f969e72">
+  <part id="Pca3d696e8b59da5185baaaea90f29d32">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -4871,7 +4871,7 @@
     </measure>
   </part>
   <!--========================== Part 17 ===========================-->
-  <part id="Pbecffa1faa21bc5f8e7823ef1e70fe2e">
+  <part id="P4657f4ac8626f55d0d415bc7a3267b7c">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -5097,7 +5097,7 @@
     </measure>
   </part>
   <!--========================== Part 18 ===========================-->
-  <part id="P9cbec1eab7b52905cdfa933a2d3ae007">
+  <part id="P865a712568072ce4141d619ca3f5ad2a">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>

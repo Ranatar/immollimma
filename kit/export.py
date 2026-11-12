@@ -150,7 +150,8 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
             art = e.get("art") or ("staccato" if e["inst"].endswith(("_stac", "_spic")) else None)
             groups[(on, ln, _tech(e["inst"]), art)].append(m)
         staves = []  # [(end, [items])]
-        for key in sorted(groups):
+        order = lambda k: (k[0], k[1], k[2] or "", k[3] or "")  # noqa: E731  None and text marks side by side
+        for key in sorted(groups, key=order):
             on, ln = key[0], key[1]
             for st in staves:
                 if st[0] <= on + 1e-6:
@@ -217,6 +218,9 @@ def to_pdf(musicxml, pdf):
     # a readable score on A4 portrait, small staves
     src = open(ly, encoding="utf-8").read()
     src = src.replace('\\version', '#(set-global-staff-size 14)\n\\version', 1)
+    # a "French" score: staves without notes in a system are not printed (big scores stay readable)
+    # (a top-level \layout only counts when it stands before \score)
+    src = src.replace("\\score {", "\\layout { \\context { \\Staff \\RemoveAllEmptyStaves } }\n\\score {", 1)
     open(ly, "w", encoding="utf-8").write(src)
     r = subprocess.run(["lilypond", "-dno-point-and-click", "-o", base, ly], capture_output=True, text=True)
     return pdf if os.path.exists(pdf) else (r.stderr[-800:] and None)

@@ -8,7 +8,7 @@
   <identification>
     <creator type="composer"> </creator>
     <encoding>
-      <encoding-date>2026-11-12</encoding-date>
+      <encoding-date>2026-11-13</encoding-date>
       <software>music21 v.10.5.2</software>
       <supports element="beam" type="yes" />
       <supports element="stem" type="yes" />
@@ -22,41 +22,41 @@
     </scaling>
   </defaults>
   <part-list>
-    <score-part id="Pf6d1c8a2e4b4a0fcb57a723eb80b0cb4">
+    <score-part id="Pc46c6cd42138578515251ddc6ae5502d">
       <part-name>Clarinet</part-name>
       <part-abbreviation>Clari</part-abbreviation>
     </score-part>
-    <score-part id="P3a2cd050f993c0aa2a7d12684ec96314">
+    <score-part id="P02d02b277220274651e1361a74c3031a">
       <part-name>Glockenspiel 1</part-name>
       <part-abbreviation>Glock</part-abbreviation>
     </score-part>
-    <score-part id="P7bde2ed3b06aa7b399f5a501566b4e4f">
+    <score-part id="P634451428e880461168fee2879b4cf66">
       <part-name>Glockenspiel 2</part-name>
       <part-abbreviation>Glock</part-abbreviation>
     </score-part>
-    <score-part id="Pdb3ed43ec2a9a435f8f839b2061d5ceb">
+    <score-part id="Pa7deadf6181a6d2ed368d36e65eefdf2">
       <part-name>Marimba 1</part-name>
       <part-abbreviation>Marim</part-abbreviation>
     </score-part>
-    <score-part id="Pfed6e1b2479b47bea5c49cc51958b993">
+    <score-part id="Pdadedd3d11284dfcd95ca0589034c1ab">
       <part-name>Marimba 2</part-name>
       <part-abbreviation>Marim</part-abbreviation>
     </score-part>
-    <score-part id="P1a9997b48f9493547afc836b2f2de3ca">
+    <score-part id="Pe73d7a5d251feec86a5afd4106f074d1">
       <part-name>Violas</part-name>
       <part-abbreviation>Viola</part-abbreviation>
     </score-part>
-    <score-part id="Pd6821c39e2620b4e32e4c49c25984e5b">
+    <score-part id="P791e47c002fdc72d5753985badc72e1c">
       <part-name>Cellos</part-name>
       <part-abbreviation>Cello</part-abbreviation>
     </score-part>
-    <score-part id="Pd3a972fc895ee7ded53da3db6b76fa87">
+    <score-part id="P11e38e7af8a6f1ddf474101ac5a572a9">
       <part-name>Basses</part-name>
       <part-abbreviation>Basse</part-abbreviation>
     </score-part>
   </part-list>
   <!--=========================== Part 1 ===========================-->
-  <part id="Pf6d1c8a2e4b4a0fcb57a723eb80b0cb4">
+  <part id="Pc46c6cd42138578515251ddc6ae5502d">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -1034,7 +1034,7 @@
     </measure>
   </part>
   <!--=========================== Part 2 ===========================-->
-  <part id="P3a2cd050f993c0aa2a7d12684ec96314">
+  <part id="P02d02b277220274651e1361a74c3031a">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -1453,7 +1453,7 @@
     </measure>
   </part>
   <!--=========================== Part 3 ===========================-->
-  <part id="P7bde2ed3b06aa7b399f5a501566b4e4f">
+  <part id="P634451428e880461168fee2879b4cf66">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -1808,7 +1808,7 @@
     </measure>
   </part>
   <!--=========================== Part 4 ===========================-->
-  <part id="Pdb3ed43ec2a9a435f8f839b2061d5ceb">
+  <part id="Pa7deadf6181a6d2ed368d36e65eefdf2">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -4890,7 +4890,7 @@
     </measure>
   </part>
   <!--=========================== Part 5 ===========================-->
-  <part id="Pfed6e1b2479b47bea5c49cc51958b993">
+  <part id="Pdadedd3d11284dfcd95ca0589034c1ab">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -8784,7 +8784,7 @@
     </measure>
   </part>
   <!--=========================== Part 6 ===========================-->
-  <part id="P1a9997b48f9493547afc836b2f2de3ca">
+  <part id="Pe73d7a5d251feec86a5afd4106f074d1">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -10016,7 +10016,7 @@
     </measure>
   </part>
   <!--=========================== Part 7 ===========================-->
-  <part id="Pd6821c39e2620b4e32e4c49c25984e5b">
+  <part id="P791e47c002fdc72d5753985badc72e1c">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -10249,7 +10249,7 @@
     </measure>
   </part>
   <!--=========================== Part 8 ===========================-->
-  <part id="Pd3a972fc895ee7ded53da3db6b76fa87">
+  <part id="P11e38e7af8a6f1ddf474101ac5a572a9">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>

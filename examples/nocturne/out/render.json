@@ -21,6 +21,7 @@
  },
  "substitutions": {},
  "missing": {},
+ "out_of_range_rescued": {},
  "sfizz_notes": 42,
  "lengthened": 0,
  "window": [
@@ -67,5 +68,5 @@
   "Violas": -40.3,
   "Vibraphone": -41.9
  },
- "seconds_taken": 19.2
+ "seconds_taken": 21.4
 }
