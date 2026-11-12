@@ -48,14 +48,24 @@
    11.0,
    13.0,
    14.0,
-   14.8,
+   14.5,
    16.5,
-   23.8,
    24.8,
+   27.5,
    29.2,
    40.2
   ],
   "png": "/home/claude/immollimma/examples/chorale_prelude/out/report.png"
  },
- "seconds_taken": 13.3
+ "parts_lufs": {
+  "Cellos": -22.6,
+  "Oboe": -22.6,
+  "Bassoon": -26.1,
+  "Violas": -29.5,
+  "Basses": -31.5,
+  "Horn": -32.8,
+  "Harpsichord": -37.4,
+  "Organ": -41.6
+ },
+ "seconds_taken": 19.9
 }

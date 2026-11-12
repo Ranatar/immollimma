@@ -62,4 +62,6 @@ def build(ctx):
     end = p.bar(total_bars)
     for m, inst in ((40, "cb_sus"), (52, "vc_sus"), (64, "cl_sus"), (76, "marimba")):
         p.note(inst, m, end, p.bar(2), vel=0.45, gain=0.4, attack=0.05, release=2.0)
+    # balance by part (dB); measured 2026-11-12: the additive glockenspiel line 18 dB and the pulse 27 dB under the marimbas, the clarinet above them
+    p.balance({"Clarinet": -6, "Glockenspiel": 14, "Violas": 16, "Basses": 14})
     return p

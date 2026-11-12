@@ -3,7 +3,7 @@
   check                              what is installed (libraries, sfizz, LilyPond)
   plan REQUEST_DIR                   brief.json (+ cues.json) → REQUEST_DIR/plan.md, plan.json
   run PIECE.py [--out DIR]           build → events.json → WAV/MP3 → MIDI/MusicXML/PDF → report → credits
-        [--backend plain|vsco|sso] [--from S --to S] [--sketch] [--stems] [--no-pdf] [--ref-buses F]
+        [--backend plain|vsco|sso] [--from S --to S] [--sketch] [--stems] [--no-pdf] [--ref-buses F] [--parts]
   qa WAV [--events F] [--out DIR]    instrument report of any rendering
   scenes VIDEO [--out cues.json]     cue sheet from the scene changes of a video
   mux AUDIO VIDEO OUT                put the music under the video
@@ -115,7 +115,11 @@ def cmd_run(a):
             if "t1" in e:
                 e["t1"] -= t0
             view.events.append(e)
-    rep["qa"] = qa.report(wav, out, piece=view, silences=[(a_ - t0, b_ - t0) for a_, b_ in silences], title=piece.title)
+    parts = qa.parts_loudness(view, backend) if a.parts else None
+    rep["qa"] = qa.report(wav, out, piece=view, silences=[(a_ - t0, b_ - t0) for a_, b_ in silences], title=piece.title,
+                          balance=parts)
+    if parts:
+        rep["parts_lufs"] = parts
     open(os.path.join(out, "credits.txt"), "w").write(credits(rep, piece))
     rep["seconds_taken"] = round(time.time() - t, 1)
     json.dump(rep, open(os.path.join(out, "render.json"), "w"), ensure_ascii=False, indent=1, default=str)
@@ -153,6 +157,7 @@ def main():
     p.add_argument("--no-pdf", action="store_true")
     p.add_argument("--no-notation", action="store_true")
     p.add_argument("--ref-buses")
+    p.add_argument("--parts", action="store_true", help="balance: loudness of every part alone (one render per part)")
     p = sub.add_parser("qa")
     p.add_argument("wav")
     p.add_argument("--events")

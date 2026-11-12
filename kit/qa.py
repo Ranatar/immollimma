@@ -91,7 +91,30 @@ def score_checks(piece):
     return out_real, stretched
 
 
-def report(wav, out_dir, piece=None, silences=(), title=None):
+def parts_loudness(piece, backend="plain", sends=None, gains=None):
+    """perceived loudness (LUFS, K-weighted, while the part plays) of every notation part rendered alone,
+    in the mix's own buses and hall — the balance check the ear does first. Costs one render per part."""
+    import pyloudnorm as pyln
+
+    from . import mix as M
+    from .render import Renderer
+    from .sampler import SR
+    sends = {**M.SENDS, **piece.meta.get("sends", {}), **(sends or {})}
+    gains = {**M.GAINS, **piece.meta.get("gains", {}), **(gains or {})}
+    ir = M.make_ir()
+    total = piece.end() + 2
+    meter = pyln.Meter(SR)
+    out = {}
+    for part in sorted({e["part"] for e in piece.notes()}):
+        r = Renderer(total + 4, backend)
+        r.play([e for e in piece.notes() if e["part"] == part])
+        y = sum(M._stem(b, int(total * SR), sends.get(k, 0.3), 10 ** (gains.get(k, 0.0) / 20), ir) for k, b in r.buses.items())
+        act = np.abs(y).max(1) > 1e-4
+        out[part] = round(float(meter.integrated_loudness(y[act])), 1) if act.sum() > SR * 0.5 else None
+    return dict(sorted(out.items(), key=lambda kv: -(kv[1] if kv[1] is not None else -99)))
+
+
+def report(wav, out_dir, piece=None, silences=(), title=None, balance=None):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -160,6 +183,9 @@ def report(wav, out_dir, piece=None, silences=(), title=None):
                   f"- outside the real range of the instrument (matters for live players): {dict(out_real) or 'none'}",
                   f"- more than 5 semitones beyond the recorded range (resampled, may sound artificial): "
                   f"{dict(stretched) or 'none'}"]
+    if balance:
+        lines += ["", "## Balance (each part alone, LUFS while it plays; the tune and the bass usually within ±3 dB)", "",
+                  "| part | LUFS |", "|---|---|"] + [f"| {k} | {v} |" for k, v in balance.items()]
     ax[-1].set_xlim(0, dur)
     ax[-1].set_xticks(np.arange(0, dur, 10 if dur < 400 else 20))
     for a_ in ax:

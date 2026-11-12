@@ -22,6 +22,17 @@ PROG = ["i", "V", "i", "iv", "VII", "III", "iv", "V",
         "i", "VI", "ii°", "V", "i", "iv", "V", "i",
         "III", "VII", "III", "VI", "iv", "V", "i", "i"]
 # the tune's contour: where the soprano wants to be (it takes the nearest chord tone, avoiding repeats)
+# balance (dB): the outer voices carry a chorale prelude — the bass line (cellos, basses, bassoon) is set level
+# with the tune (the whole group ≈ the oboe, +2 dB with the bassoon); the violas' quavers stay an inner voice.
+# Measured per part in LUFS (2026-11-12): before this the basses sat 19 dB under the oboe — no floor under the
+# bass line — while the bassoon was the loudest part of all.
+BAL = {"ob": 0.0, "vc": 0.0, "cb": 10.0, "bsn": -5.0, "vla": 0.0}
+
+
+def g(part, x):
+    return x * 10 ** (BAL[part] / 20)
+
+
 CONTOUR = [74, 73, 74, 74, 76, 77, 79, 76, 74, 77, 79, 76, 77, 74, 73, 74, 77, 79, 81, 79, 77, 76, 74, 74]
 
 
@@ -59,7 +70,7 @@ def build(ctx):
         dur = half * (3 if last else 1)
         vel = [0.4, 0.55, 0.72][ph]
         # the tune
-        p.note("ob_sus", s, t, dur * 0.97, vel=vel, gain=0.55, pan=0.1, attack=0.04, release=0.5)
+        p.note("ob_sus", s, t, dur * 0.97, vel=vel, gain=g("ob", 0.55), pan=0.1, attack=0.04, release=0.5)
         if ph == 2:
             p.note("hn_sus", s - 12, t, dur * 0.97, vel=vel * 0.8, gain=0.3, pan=-0.3, attack=0.05)
         # inner voices: alto and tenor as viola quavers from chord tones and passing notes
@@ -82,11 +93,11 @@ def build(ctx):
         walk = [root, root if nroot == root else scale_step(root, nroot > root)]
         for j, m in enumerate(walk if not last else [root]):
             d = half / 2 * 0.92 if not last else dur
-            p.note("vc_sus", m, t + j * half / 2, d, vel=vel, gain=0.45, pan=-0.25, attack=0.02, release=0.3)
-            p.note("cb_pizz" if ph == 0 else "cb_sus", m - 12, t + j * half / 2, d, vel=vel * 0.8, gain=0.35, pan=-0.35,
+            p.note("vc_sus", m, t + j * half / 2, d, vel=vel, gain=g("vc", 0.45), pan=-0.25, attack=0.02, release=0.3)
+            p.note("cb_pizz" if ph == 0 else "cb_sus", m - 12, t + j * half / 2, d, vel=vel * 0.8, gain=g("cb", 0.35), pan=-0.35,
                    release=0.3)
             if ph >= 1:
-                p.note("bsn_sus", m, t + j * half / 2, d, vel=vel * 0.8, gain=0.3, pan=-0.1, release=0.3)
+                p.note("bsn_sus", m, t + j * half / 2, d, vel=vel * 0.8, gain=g("bsn", 0.3), pan=-0.1, release=0.3)
         if ph == 2:
             p.note("org_quiet", root - 12, t, dur, vel=0.5, gain=0.35, attack=0.05, release=1.0)
         # continuo: harpsichord chord on each beat of the half note (only the downbeat at the end)

@@ -42,7 +42,7 @@
 sh tools/setup.sh                                  # библиотеки (≈ 4,4 ГБ) в libs/, пакеты, проверка
 python3 -m kit plan requests/_example              # план
 python3 -m kit run examples/nocturne/piece.py      # звук, ноты, отчёт → examples/nocturne/out/
-python3 -m kit run piece.py --sketch               # эскиз (первые sketch_seconds)
+python3 -m kit run piece.py --sketch --parts       # эскиз (первые sketch_seconds) + баланс партий
 python3 -m kit run piece.py --from 120 --to 180    # кусок длинной пьесы
 python3 -m kit run piece.py --backend sso          # всё через Sonatina
 python3 -m kit scenes clip.mp4 --out cues.json     # метки по сменам сцен

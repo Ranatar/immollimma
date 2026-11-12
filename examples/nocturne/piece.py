@@ -70,4 +70,6 @@ def build(ctx):
     for j, m in enumerate([92, 90, 88, 86, 84, 82, 80]):
         p.note("celesta", m, end + p.b(1) + j * p.b(0.5), p.b(1), vel=0.3, gain=0.3, pan=0.3 - 0.1 * j)
     p.note("vln_harm", 88, end, bar * 1.5, vel=0.25, gain=0.25, pan=-0.3, attack=1.0, release=3.0)
+    # balance by part (dB); measured 2026-11-12: celesta 15, vibraphone 28, the pedal 26 dB under the alto flute — the colours were lost
+    p.balance({"Celesta": 11, "Vibraphone": 16, "Basses": 15, "Cellos": 7, "Violas": 7, "Violins": 4})
     return p

@@ -19,8 +19,8 @@ done
 mkdir -p "$LIBS"
 
 echo "== Python packages"
-python3 -c "import numpy, scipy, soundfile, librosa, mido, music21, matplotlib" 2>/dev/null || \
-  pip install -q --break-system-packages numpy scipy soundfile librosa mido music21 matplotlib 2>&1 | tail -1
+python3 -c "import numpy, scipy, soundfile, librosa, mido, music21, matplotlib, pyloudnorm" 2>/dev/null || \
+  pip install -q --break-system-packages numpy scipy soundfile librosa mido music21 matplotlib pyloudnorm 2>&1 | tail -1
 
 echo "== system tools (ffmpeg required; LilyPond for PDF scores)"
 command -v ffmpeg >/dev/null || (apt-get install -y -qq ffmpeg >/dev/null 2>&1 || echo "  ffmpeg missing — install it")

@@ -87,6 +87,15 @@ class Piece:
         self.events.append(e)
         return e
 
+    def balance(self, db_by_part):
+        """after composing: raise or lower whole parts (dB), e.g. {"Celesta": +10, "Clarinet": -6}; measure first
+        with `python3 -m kit run piece.py --parts` (perceived loudness of each part alone)"""
+        for e in self.events:
+            if e["kind"] == "note" and e["part"] in db_by_part:
+                e["gain"] *= 10 ** (db_by_part[e["part"]] / 20)
+        self.meta.setdefault("balance", {}).update(db_by_part)
+        return self
+
     # -- views ---------------------------------------------------------------------------------------------
     def end(self):
         out = 0.0

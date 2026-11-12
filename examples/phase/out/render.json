@@ -41,7 +41,6 @@
   "clicks": [],
   "flat": [],
   "bounds": [
-   6.0,
    12.0,
    17.8,
    23.0,
@@ -49,5 +48,13 @@
   ],
   "png": "/home/claude/immollimma/examples/phase/out/report.png"
  },
- "seconds_taken": 11.9
+ "parts_lufs": {
+  "Marimba": -26.2,
+  "Clarinet": -30.4,
+  "Glockenspiel": -30.7,
+  "Basses": -33.9,
+  "Violas": -35.8,
+  "Cellos": -42.9
+ },
+ "seconds_taken": 15.7
 }
