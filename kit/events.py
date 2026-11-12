@@ -98,7 +98,7 @@ class Piece:
 
     # -- views ---------------------------------------------------------------------------------------------
     def end(self):
-        out = 0.0
+        out = float(self.meta.get("length", 0.0))  # a declared length keeps a written-out silence at the end
         for e in self.events:
             if e["kind"] == "note":
                 out = max(out, e["t"] + e["dur"] + e["release"])

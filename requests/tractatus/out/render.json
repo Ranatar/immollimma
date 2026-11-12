@@ -1,0 +1,132 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso",
+  "vsco"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "afl_sus@sso": 1,
+  "bsn_sus@plain": 66,
+  "cb_pizz@plain": 108,
+  "cb_sus@plain": 14,
+  "celesta@sso": 258,
+  "choir@sso": 25,
+  "cl_sus@plain": 106,
+  "crotales@sso": 1,
+  "eh_sus@sso": 18,
+  "fl_sus@plain": 15,
+  "harp@plain": 157,
+  "hn_stac@vsco": 64,
+  "hn_sus@plain": 24,
+  "marimba@vsco": 82,
+  "ob_sus@plain": 21,
+  "org_loud@plain": 4,
+  "org_quiet@plain": 67,
+  "picc_sus@vsco": 2,
+  "tbn_stac@vsco": 64,
+  "tbn_sus@plain": 15,
+  "timp@plain": 3,
+  "timp_roll@plain": 2,
+  "tpt_mute@plain": 9,
+  "tpt_stac@vsco": 64,
+  "tpt_sus@plain": 3,
+  "vc_pizz@plain": 88,
+  "vc_sus@plain": 16,
+  "vla_sus@plain": 21,
+  "vln_harm@sso": 31,
+  "vln_sus@plain": 35,
+  "vln_sus@sso": 2,
+  "xylo@vsco": 32
+ },
+ "substitutions": {
+  "vln_sus": "plain unavailable → sso"
+ },
+ "missing": {},
+ "out_of_range_rescued": {
+  "vln_sus": 2
+ },
+ "sfizz_notes": 342,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  390.0
+ ],
+ "seconds": 390.0,
+ "mp3": "/home/claude/immollimma/requests/tractatus/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/tractatus/out/score.mid",
+  "lost": {
+   "notes with a glissando inside": 11,
+   "notes with detune (out-of-tune doubles)": 2
+  },
+  "musicxml": "/home/claude/immollimma/requests/tractatus/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/tractatus/out/score.pdf",
+  "grid": [
+   4
+  ]
+ },
+ "qa": {
+  "gaps": [
+   [
+    159.2,
+    160.4
+   ],
+   [
+    349.2,
+    350.6
+   ],
+   [
+    353.2,
+    354.4
+   ]
+  ],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   5.8,
+   65.0,
+   112.8,
+   160.5,
+   190.8,
+   224.0,
+   264.8,
+   282.2,
+   310.5,
+   348.0,
+   350.8,
+   362.8
+  ],
+  "png": "/home/claude/immollimma/requests/tractatus/out/report.png"
+ },
+ "parts_lufs": {
+  "Bassoon": -21.2,
+  "Clarinet": -22.5,
+  "Trumpet": -23.1,
+  "Horn": -23.6,
+  "Flute": -23.7,
+  "Choir": -23.9,
+  "Alto flute": -24.9,
+  "Oboe": -25.3,
+  "English horn": -25.4,
+  "Harp": -26.4,
+  "Cellos": -27.3,
+  "Marimba": -27.6,
+  "Piccolo": -27.7,
+  "Violins": -27.9,
+  "Organ": -28.4,
+  "Basses": -28.9,
+  "Violas": -29.7,
+  "Celesta": -31.6,
+  "Xylophone": -32.4,
+  "Timpani": -32.9,
+  "Trombone": -33.9,
+  "Crotales": -37.9
+ },
+ "seconds_taken": 161.5
+}

@@ -1,0 +1,223 @@
+{
+ "title": "Tractatus: sieben Sätze",
+ "styles": [
+  "minimalism",
+  "impressionist",
+  "sacred_choral"
+ ],
+ "seconds": 390,
+ "tempo_bpm": 96,
+ "meter": "4/4",
+ "key": null,
+ "language": "mixed",
+ "library": "plain",
+ "library_notes": [
+  "afl_sus, celesta, choir, eh_sus, org_reed, vibes, vln_harm есть только в Sonatina — для них Sonatina (не для рекламы)."
+ ],
+ "defaults": [
+  "sync.video_file",
+  "key",
+  "ensemble.exclude"
+ ],
+ "sections": [
+  {
+   "t0": 0,
+   "t1": 55,
+   "label": "1 Die Welt",
+   "mood": "ясность, поле",
+   "intensity": 0.35,
+   "note": "Die Welt ist alles, was der Fall ist. Логическое пространство: каждая клетка независимо звучит или нет; мир — их совокупность",
+   "leader": "маримба/арфа/челеста/пиццикато",
+   "texture": "пуантилизм: 21 звук × шестнадцатые, клетки независимы; итог — все 21 сразу",
+   "register": "wide",
+   "pulse": "сетка шестнадцатых, плотность растёт",
+   "dynamic": "p→mf"
+  },
+  {
+   "t0": 55,
+   "t1": 105,
+   "label": "2 Sachverhalte",
+   "mood": "неизменное",
+   "intensity": 0.3,
+   "note": "Was der Fall ist, die Tatsache, ist das Bestehen von Sachverhalten. Семь предметов на своих местах; меняется конфигурация — по одному",
+   "leader": "семь предметов: cb, vc, vla, hn, vln, fl, флажолеты",
+   "texture": "долгие тоны квинтовой цепи; за шаг входит/уходит один (код Грея)",
+   "register": "wide (фиксированные регистры)",
+   "pulse": "нет пульса, шаг ≈3 с",
+   "dynamic": "pp–mp"
+  },
+  {
+   "t0": 105,
+   "t1": 160,
+   "label": "3 Das Bild",
+   "mood": "проекция",
+   "intensity": 0.4,
+   "note": "Das logische Bild der Tatsachen ist der Gedanke. Факт и его картины: ускорение, обращение, растяжение — общая логическая форма",
+   "leader": "bsn_sus (факт)",
+   "texture": "мензуральный канон: челеста ×2, арфа — обращение, флажолеты ×½",
+   "register": "low→high",
+   "pulse": "умеренный, 96",
+   "dynamic": "p"
+  },
+  {
+   "t0": 160,
+   "t1": 215,
+   "label": "4 Der Satz",
+   "mood": "речь",
+   "intensity": 0.45,
+   "note": "Der Gedanke ist der sinnvolle Satz. Одна фраза — один смысл; истинна или ложна по отношению к бурдону действительности",
+   "leader": "ob/eh/tpt_mute/fl/hn — одна фраза",
+   "texture": "мелодия над органным бурдоном D; ответ струнных при «истинно»",
+   "register": "mid",
+   "pulse": "речевой",
+   "dynamic": "mp"
+  },
+  {
+   "t0": 215,
+   "t1": 275,
+   "label": "5 Wahrheitsfunktion",
+   "mood": "таблица",
+   "intensity": 0.7,
+   "note": "Der Satz ist eine Wahrheitsfunktion der Elementarsätze. 16 функций из 5.101: p, q и вердикт «истинно»",
+   "leader": "медь staccato (вердикт W)",
+   "texture": "таблица: пиццикато p, ксилофон q, медь — истинно; 5.6 — стягивание в унисон",
+   "register": "low+high",
+   "pulse": "строгий, 4 доли = 4 строки",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 275,
+   "t1": 319,
+   "label": "6 Die allgemeine Form",
+   "mood": "порождение",
+   "intensity": 0.85,
+   "note": "[p̄, ξ̄, N(ξ̄)] — отрицание как дополнение до двенадцати; рост к равновесию 6+6",
+   "leader": "хор (ξ) / медь+орган (N ξ)",
+   "texture": "аккорд и его дополнение до 12, от 1+11 до 6+6; 6.41 — четверть тона вне сетки",
+   "register": "wide",
+   "pulse": "нерегулярный, пары ≈4 с",
+   "dynamic": "f (кульм. 305)"
+  },
+  {
+   "t0": 319,
+   "t1": 350,
+   "label": "6.44 Das Mystische",
+   "mood": "мистическое",
+   "intensity": 0.3,
+   "note": "Nicht wie die Welt ist, ist das Mystische, sondern daß sie ist",
+   "leader": "хор, струнные",
+   "texture": "неподвижный ре мажор; лестница (6.54) — гамма + бесконечный подъём, обрыв",
+   "register": "high",
+   "pulse": "нет → ускоряющийся",
+   "dynamic": "pp → f"
+  },
+  {
+   "t0": 350,
+   "t1": 390,
+   "label": "7 Schweigen",
+   "mood": "молчание",
+   "intensity": 0.05,
+   "note": "Wovon man nicht sprechen kann, darüber muß man schweigen. Девиз обрывается на «Wovon»",
+   "leader": "cl_sus соло",
+   "texture": "«Wo-von» и флажолет; затем молчание",
+   "register": "high",
+   "pulse": "нет",
+   "dynamic": "ppp"
+  }
+ ],
+ "hits": [
+  {
+   "t": 310,
+   "label": "6.41 außerhalb",
+   "kind": "accent",
+   "intensity": 0.5,
+   "note": "Der Sinn der Welt muß außerhalb ihrer liegen — звук вне темперации",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 330,
+   "label": "6.54 Leiter",
+   "kind": "swell",
+   "intensity": 0.8,
+   "note": "лестница, по которой поднялись, — отбросить",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 348,
+   "label": "Leiter weg",
+   "kind": "hit",
+   "intensity": 0.9,
+   "note": "обрыв",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 360,
+   "end": 388,
+   "label": "Schweigen",
+   "kind": "silence",
+   "note": "молчание",
+   "mood": "",
+   "intensity": 0.5,
+   "characters": []
+  }
+ ],
+ "silences": [
+  {
+   "t": 360,
+   "dur": 28,
+   "note": "7: молчание"
+  }
+ ],
+ "themes": [
+  {
+   "name": "Девизы",
+   "notation": "ритм — слоги немецкого оригинала (ударный длинный, безударный короткий), высоты — буквы слогов по кругу A–G в ладу части",
+   "for": "каждое из семи утверждений, соло-кларнет",
+   "transform": "в седьмой части девиз обрывается на «Wovon»"
+  }
+ ],
+ "characters": [
+  {
+   "name": "p, q",
+   "description": "элементарные предложения: пиццикато ре и ксилофон ля",
+   "evolution": "в пятой — аргументы всех 16 функций"
+  },
+  {
+   "name": "N",
+   "description": "отрицание: дополнение звукового множества до двенадцати",
+   "evolution": "шестая: от 1+11 до 6+6"
+  }
+ ],
+ "avoid": [
+  "резкие смены материала",
+  "романтические кульминации",
+  "расстройка",
+  "иллюстративности и киношного пафоса; ударов и маршевых ритмов вне пятой части; заполнения тишины в седьмой"
+ ],
+ "devices": [
+  "девиз (кларнет, слоги оригинала)",
+  "независимая сетка",
+  "код Грея",
+  "мензуральный канон",
+  "таблица истинности",
+  "дополнение до 12",
+  "четверть тона",
+  "shepard вверх"
+ ],
+ "ending": "cut",
+ "deliver": [
+  "mp3",
+  "midi",
+  "musicxml",
+  "pdf",
+  "report"
+ ],
+ "sketch": {
+  "sketch_first": true,
+  "sketch_seconds": 110,
+  "ask_before_full": false
+ }
+}

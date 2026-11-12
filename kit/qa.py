@@ -141,7 +141,8 @@ def report(wav, out_dir, piece=None, silences=(), title=None, balance=None):
     mono = monotony(feats, step)
     nov, bounds = novelty(feats, step)
     med = np.median([v for _, v in mono]) if mono else 0
-    flat = [(a, round(a + 20, 1)) for a, v in mono if v < 0.6 * med]
+    quiet = lambda a: any(x < a + 20 and a < y for x, y in silences)  # noqa: E731 — declared silence is not monotony
+    flat = [(a, round(a + 20, 1)) for a, v in mono if v < 0.6 * med and not quiet(a)]
 
     rows = 5 if piece else 4
     fig, ax = plt.subplots(rows, 1, figsize=(18, 2.6 * rows), sharex=True)
