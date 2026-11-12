@@ -1,0 +1,123 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso",
+  "vsco"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "bsn_sus@plain": 26,
+  "cb_pizz@plain": 247,
+  "cb_sus@plain": 17,
+  "celesta@sso": 51,
+  "choir@sso": 96,
+  "fl_sus@plain": 67,
+  "glock@plain": 38,
+  "harp@plain": 52,
+  "hn_stac@vsco": 83,
+  "hn_sus@plain": 108,
+  "org_loud@plain": 2,
+  "org_quiet@plain": 19,
+  "sample@plain": 500,
+  "sample@sso": 5,
+  "tba_sus@plain": 2,
+  "tbn_stac@vsco": 41,
+  "tbn_sus@plain": 94,
+  "tbn_sus@sso": 1,
+  "timp@plain": 42,
+  "timp_roll@plain": 5,
+  "tpt_stac@vsco": 41,
+  "tpt_sus@plain": 32,
+  "tubular@vsco": 8,
+  "vc_spic@vsco": 240,
+  "vc_sus@plain": 23,
+  "vc_trem@plain": 8,
+  "vla_spic@vsco": 140,
+  "vla_sus@plain": 14,
+  "vla_trem@plain": 2,
+  "vln_harm@sso": 2,
+  "vln_pizz@plain": 28,
+  "vln_spic@vsco": 128,
+  "vln_sus@plain": 99,
+  "vln_sus@sso": 8,
+  "vln_trem@plain": 8,
+  "xylo@vsco": 18
+ },
+ "substitutions": {
+  "vln_sus": "plain unavailable → sso",
+  "tbn_sus": "plain unavailable → sso"
+ },
+ "missing": {},
+ "out_of_range_rescued": {
+  "vln_sus": 8,
+  "tbn_sus": 1
+ },
+ "sfizz_notes": 302,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  90.42105263157895
+ ],
+ "seconds": 90.42105263157895,
+ "mp3": "/home/claude/immollimma/requests/cold-peace-op/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/cold-peace-op/out/score.mid",
+  "lost": {
+   "notes with detune (out-of-tune doubles)": 32,
+   "notes with a glissando inside": 25,
+   "raw samples (noises, unpitched percussion)": 505,
+   "reversed notes": 1
+  },
+  "musicxml": "/home/claude/immollimma/requests/cold-peace-op/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/cold-peace-op/out/score.pdf",
+  "grid": [
+   4
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   6.8,
+   20.0,
+   29.5,
+   34.0,
+   60.2,
+   61.8,
+   76.0,
+   79.5,
+   81.2,
+   81.8,
+   83.5,
+   88.2
+  ],
+  "png": "/home/claude/immollimma/requests/cold-peace-op/out/report.png"
+ },
+ "parts_lufs": {
+  "Choir": -20.1,
+  "Horn": -22.5,
+  "Bassoon": -22.6,
+  "Trumpet": -23.0,
+  "Violas": -24.7,
+  "Violins": -25.4,
+  "Flute": -25.7,
+  "Organ": -26.2,
+  "Trombone": -26.3,
+  "Cellos": -28.7,
+  "Celesta": -29.3,
+  "Basses": -29.6,
+  "Harp": -31.0,
+  "Timpani": -31.2,
+  "Tubular bells": -36.5,
+  "Xylophone": -41.4,
+  "Glockenspiel": -42.1,
+  "Tuba": -56.0
+ },
+ "seconds_taken": 56.1
+}
