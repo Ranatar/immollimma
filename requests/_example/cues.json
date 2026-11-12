@@ -1,11 +1,54 @@
 {
- "version": 1, "duration_s": 75, "fps": 25, "video": "lullaby.mp4",
+ "version": 1,
+ "duration_s": 75,
+ "fps": 25,
+ "video": "lullaby.mp4",
  "cues": [
-  {"t": 0, "label": "детская", "kind": "section", "mood": "тепло", "intensity": 0.3},
-  {"t": 24, "label": "сумерки", "kind": "section", "mood": "тревога", "intensity": 0.5},
-  {"t": 38.5, "label": "скрип", "kind": "accent", "intensity": 0.6},
-  {"t": 44, "label": "пустой дом", "kind": "section", "mood": "жуть", "intensity": 0.7},
-  {"t": 52, "end": 54.5, "label": "дверь", "kind": "silence"},
-  {"t": 54.5, "label": "шкатулка", "kind": "section", "mood": "заело", "intensity": 0.4}
+  {
+   "t": 0,
+   "label": "детская",
+   "kind": "section",
+   "mood": "тепло",
+   "intensity": 0.3,
+   "note": "ночник, мать поёт"
+  },
+  {
+   "t": 24,
+   "label": "сумерки",
+   "kind": "section",
+   "mood": "тревога",
+   "intensity": 0.5,
+   "note": "тени удлиняются"
+  },
+  {
+   "t": 38.5,
+   "label": "скрип",
+   "kind": "accent",
+   "intensity": 0.6,
+   "note": "скрип половицы"
+  },
+  {
+   "t": 44,
+   "label": "пустой дом",
+   "kind": "section",
+   "mood": "жуть",
+   "intensity": 0.7,
+   "note": "комната та же, но никого нет"
+  },
+  {
+   "t": 52,
+   "end": 54.5,
+   "label": "дверь",
+   "kind": "silence",
+   "note": "дверь закрывается — музыка обрывается вместе с ней"
+  },
+  {
+   "t": 54.5,
+   "label": "шкатулка",
+   "kind": "section",
+   "mood": "заело",
+   "intensity": 0.4,
+   "note": "заела на одной фразе"
+  }
  ]
 }

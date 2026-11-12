@@ -126,7 +126,8 @@ def make(brief, used, cues=None, seed=1):
                 meter=meter, key=brief["key"], language=brief["language"] if brief["language"] != "any" else c0["harmony"]["language"],
                 library=lib, library_notes=lib_notes, defaults=used,
                 sections=[dict(t0=round(a, 2), t1=round(b, 2), label=c.get("label", ""), mood=c.get("mood", ""),
-                               intensity=c.get("intensity", 0.5), **r) for (a, b, c), r in zip(secs, rows)],
+                               intensity=c.get("intensity", 0.5), note=c.get("note", ""), **r)
+                          for (a, b, c), r in zip(secs, rows)],
                 hits=[c for c in (cues or {}).get("cues", []) if c["kind"] in ("hit", "accent", "swell", "silence", "document")],
                 silences=brief["silences"], themes=brief["themes"], characters=brief["characters"],
                 avoid=c0["avoid"] + ([brief["style"]["avoid"]] if brief["style"]["avoid"] else []),
@@ -151,7 +152,12 @@ def to_markdown(plan, brief):
         L.append(f"| {s['t0']:.1f}–{s['t1']:.1f} | {s['label']} | {s['mood']} | {s['leader']} | {s['texture']} | {s['register']} | "
                  f"{s['pulse']} | {s['dynamic']} |")
     if plan["hits"]:
-        L += ["", "## Точки синхронизации", ""] + [f"- {h['t']:.2f} с — {h['kind']}: {h.get('label', '')}" for h in plan["hits"]]
+        L += ["", "## Точки синхронизации", ""] + [
+            f"- {h['t']:.2f} с" + (f"–{h['end']:.2f}" if h.get("end") else "") + f" — {h['kind']}: {h.get('label', '')}"
+            + (f" — {h['note']}" if h.get("note") else "") for h in plan["hits"]]
+    described = [s for s in plan["sections"] if s.get("note")]
+    if described:
+        L += ["", "## Что происходит в разделах (из меток)", ""] + [f"- {s['t0']:.1f} с, {s['label']}: {s['note']}" for s in described]
     if plan["themes"] or plan["characters"]:
         L += ["", "## Темы и персонажи", ""]
         L += [f"- тема «{t.get('name', '')}» ({t.get('for', '')}): {t.get('notation', '')}; {t.get('transform', '')}" for t in plan["themes"]]
