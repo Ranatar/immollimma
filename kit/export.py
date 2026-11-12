@@ -127,7 +127,8 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
 
     from music21 import articulations, chord, clef, expressions, instrument, metadata, meter, note, stream, tempo
 
-    q = lambda t: t * piece.bpm / 60.0  # noqa: E731  seconds → quarter lengths
+    shift = float(piece.meta.get("notation_offset", 0.0))  # quarters before t=0 in the first bar (anacrusis)
+    q = lambda t: t * piece.bpm / 60.0 + shift  # noqa: E731  seconds → quarter lengths
     sc = stream.Score()
     md = metadata.Metadata()
     md.title = piece.title
@@ -146,7 +147,7 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
                 continue
             on = round(q(e["t"]) * grid) / grid
             # a note played shorter than written (legato 0.9…0.97, staccato) keeps its written length
-            ln = max(0.25, math.ceil(q(e["dur"]) * 4 - 0.15) / 4)
+            ln = max(0.25, math.ceil((q(e["dur"]) - shift) * 4 - 0.15) / 4)
             art = e.get("art") or ("staccato" if e["inst"].endswith(("_stac", "_spic")) else None)
             groups[(on, ln, _tech(e["inst"]), art)].append(m)
         staves = []  # [(end, [items])]

@@ -1,0 +1,77 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "bsn_sus@plain": 79,
+  "cb_sus@plain": 116,
+  "fl_sus@plain": 15,
+  "hpsd@sso": 257,
+  "ob_sus@plain": 116,
+  "org_loud@plain": 36,
+  "org_quiet@plain": 133,
+  "vc_sus@plain": 128,
+  "vla_sus@plain": 135,
+  "vln_sus@plain": 376
+ },
+ "substitutions": {},
+ "missing": {},
+ "out_of_range_rescued": {},
+ "sfizz_notes": 215,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  166.55172413793105
+ ],
+ "seconds": 166.55172413793105,
+ "mp3": "/home/claude/immollimma/requests/fugue-grenzen/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/fugue-grenzen/out/score.mid",
+  "lost": {},
+  "musicxml": "/home/claude/immollimma/requests/fugue-grenzen/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/fugue-grenzen/out/score.pdf",
+  "grid": [
+   4
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   4.8,
+   9.2,
+   11.0,
+   19.8,
+   29.5,
+   44.0,
+   46.2,
+   53.5,
+   54.5,
+   93.8,
+   136.2,
+   150.2
+  ],
+  "png": "/home/claude/immollimma/requests/fugue-grenzen/out/report.png"
+ },
+ "parts_lufs": {
+  "Bass": -23.3,
+  "Alto": -23.7,
+  "Bassoon": -24.2,
+  "Tenor": -25.3,
+  "Flute": -25.6,
+  "Oboe": -25.8,
+  "Soprano": -26.0,
+  "Organ": -28.9,
+  "Harpsichord": -30.6,
+  "Basses": -30.9
+ },
+ "seconds_taken": 47.9
+}

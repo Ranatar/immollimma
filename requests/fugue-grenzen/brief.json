@@ -1,0 +1,70 @@
+{
+ "version": 1,
+ "title": "Fuga: Die Grenzen meiner Sprache",
+ "purpose": "standalone",
+ "duration_s": 168,
+ "sync": {
+  "mode": "cues",
+  "cues_file": "cues.json"
+ },
+ "style": {
+  "cards": [
+   "baroque"
+  ],
+  "mood": "Строгая барочная фуга ре минор. Тема — утверждение 5.6: «Die Grenzen meiner Sprache bedeuten die Grenzen meiner Welt».",
+  "references": "Всё, что обычно бывает в фуге: тема и тональный ответ, удержанное противосложение, кодетта, интермедии на мотивах темы (секвенции), средние проведения в родственных тональностях, обращение, стретты, органный пункт на доминанте, тема в увеличении, последнее проведение над тоническим пунктом, пикардийская терция. Ни на какую конкретную фугу не ориентироваться.",
+  "avoid": "романтической агогики и пафоса; синтетических тембров"
+ },
+ "language": "tonal",
+ "key": "D minor",
+ "tempo_bpm": 58,
+ "meter": "4/4",
+ "ensemble": {
+  "size": "chamber",
+  "include": [
+   "vln_sus",
+   "vla_sus",
+   "vc_sus",
+   "cb_sus",
+   "ob_sus",
+   "fl_sus",
+   "bsn_sus",
+   "hpsd",
+   "org_quiet",
+   "org_loud"
+  ],
+  "exclude": [],
+  "noises": false,
+  "processing": false
+ },
+ "library": "auto",
+ "commercial_ad": false,
+ "dramaturgy": {
+  "arc": "экспозиция (струнные, клавесин) → интермедии и средние проведения (гобой в F, фагот с обращением, бас в a) → стретты (тутти с органом) → органный пункт → увеличение в басе → тонический пункт, ре мажор",
+  "climax_s": 130.9,
+  "ending": "cadence"
+ },
+ "themes": [
+  {
+   "name": "Тема 5.6",
+   "notation": "A4 | D4. E F. G A Bb A | C#5 Bb G D5. C Bb. G | A4 — по слогам: Die | Gren-zen mei-ner Spra-che be- | deu-ten die Gren-zen mei-ner | Welt; диапазон — ровно октава, оба «Grenzen» на её краях",
+   "for": "все проведения",
+   "transform": "тональный ответ, перенос в F мажор и A минор, зеркальное обращение (g), увеличение вдвое (бас)"
+  }
+ ],
+ "characters": [],
+ "silences": [],
+ "deliver": [
+  "mp3",
+  "midi",
+  "musicxml",
+  "pdf",
+  "report"
+ ],
+ "iteration": {
+  "sketch_first": true,
+  "sketch_seconds": 60,
+  "ask_before_full": false
+ },
+ "notes": "Заказ 2026-11-13: барочная фуга на 5.6; бриф, сценарий и партитура — на выбор Claude. Контрапункт пишется в fugue.py (поиск свободных голосов + проверка голосоведения)."
+}
