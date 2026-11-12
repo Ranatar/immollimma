@@ -1,0 +1,90 @@
+{
+ "id": "sacred_choral",
+ "name": "Духовное, хоровое, органное",
+ "summary": "Хорал, полифония, органные педали, хор без слов.",
+ "harmony": {
+  "language": "tonal",
+  "scales": [
+   "major",
+   "minor",
+   "dorian"
+  ],
+  "progressions": [
+   [
+    "I",
+    "IV",
+    "I",
+    "V",
+    "I"
+   ],
+   [
+    "i",
+    "iv",
+    "VII",
+    "III",
+    "i"
+   ],
+   [
+    "I",
+    "vi",
+    "IV",
+    "V",
+    "I"
+   ]
+  ]
+ },
+ "palette": {
+  "textures": [
+   "хор «а» аккордами",
+   "органная прелюдия (педаль + мануал)",
+   "хорал меди",
+   "канон"
+  ],
+  "leaders": [
+   "choir",
+   "org_quiet",
+   "org_reed",
+   "org_loud",
+   "tbn_sus"
+  ],
+  "registers": [
+   "low",
+   "mid",
+   "wide"
+  ],
+  "pulses": [
+   "slow",
+   "none"
+  ],
+  "dynamics": [
+   "p",
+   "mf",
+   "f"
+  ]
+ },
+ "tempo_bpm": [
+  40,
+  80
+ ],
+ "meters": [
+  "4/4",
+  "3/2",
+  "свободно"
+ ],
+ "devices": [
+  "chorale",
+  "pad (орган)",
+  "line (канон)",
+  "melody"
+ ],
+ "avoid": [
+  "шумы",
+  "обработка"
+ ],
+ "library": "sso (хор, регистры органа) + plain (орган VSCO)",
+ "traits": "Плагальные каденции, длинные педали, хоровые паузы-вдохи.",
+ "fit": {
+  "strong": "средне",
+  "weak": "хор только гласными, без слов"
+ }
+}

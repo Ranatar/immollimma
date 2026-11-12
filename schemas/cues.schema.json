@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ranatar.github.io/immollimma/schemas/cues.schema.json",
+  "title": "Метки сценария",
+  "description": "Времена событий, к которым привязывается музыка. Делается формой forms/cues.html (по видео или без) или командой `python3 -m kit scenes видео.mp4`.",
+  "type": "object",
+  "required": ["cues"],
+  "properties": {
+    "version": {"type": "integer", "default": 1},
+    "duration_s": {"type": ["number", "null"], "default": null},
+    "fps": {"type": ["number", "null"], "default": null},
+    "video": {"type": ["string", "null"], "default": null, "description": "Имя файла видео (сам файл не нужен)"},
+    "cues": {"type": "array", "items": {
+      "type": "object", "required": ["t"],
+      "properties": {
+        "t": {"type": "number", "description": "Время, с"},
+        "end": {"type": ["number", "null"], "description": "Конец (для разделов и тишины)"},
+        "label": {"type": "string", "default": ""},
+        "kind": {"enum": ["section", "hit", "accent", "swell", "silence", "document", "transition"], "default": "section",
+                 "description": "section — начало раздела; hit — удар; accent — лёгкий акцент; swell — нарастание к этой точке; silence — тишина; document — появление текста/картинки; transition — переход"},
+        "mood": {"type": "string", "default": ""},
+        "intensity": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.5},
+        "characters": {"type": "array", "items": {"type": "string"}, "default": []},
+        "note": {"type": "string", "default": ""}}}}
+  }
+}

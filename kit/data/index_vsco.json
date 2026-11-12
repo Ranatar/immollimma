@@ -1,0 +1,5546 @@
+{
+"vln_sus": [
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_A2_v1.wav",
+"named": 45,
+"vel": 1,
+"rr": "1",
+"measured": 56.94995771500078,
+"note": 57
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_A2_v2.wav",
+"named": 45,
+"vel": 2,
+"rr": "1",
+"note": 57
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_A3_v1.wav",
+"named": 57,
+"vel": 1,
+"rr": "1",
+"measured": 69.04995771500079,
+"note": 69
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_A3_v2.wav",
+"named": 57,
+"vel": 2,
+"rr": "1",
+"note": 69
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_B2_v1.wav",
+"named": 47,
+"vel": 1,
+"rr": "1",
+"measured": 59.04995771500078,
+"note": 59
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_B2_v2.wav",
+"named": 47,
+"vel": 2,
+"rr": "1",
+"note": 59
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_B4_v1.wav",
+"named": 71,
+"vel": 1,
+"rr": "1",
+"measured": 83.04995771500079,
+"note": 83
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_B4_v2.wav",
+"named": 71,
+"vel": 2,
+"rr": "1",
+"note": 83
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_C4_v1.wav",
+"named": 60,
+"vel": 1,
+"rr": "1",
+"measured": 72.04995771500079,
+"note": 72
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_C4_v2.wav",
+"named": 60,
+"vel": 2,
+"rr": "1",
+"note": 72
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_D3_v1.wav",
+"named": 50,
+"vel": 1,
+"rr": "1",
+"measured": 62.04995771500078,
+"note": 62
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_D3_v2.wav",
+"named": 50,
+"vel": 2,
+"rr": "1",
+"note": 62
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_D5_v1.wav",
+"named": 74,
+"vel": 1,
+"rr": "1",
+"measured": 86.04995771500077,
+"note": 86
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_D5_v2.wav",
+"named": 74,
+"vel": 2,
+"rr": "1",
+"note": 86
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_E4_v1.wav",
+"named": 64,
+"vel": 1,
+"rr": "1",
+"measured": 76.00002991773171,
+"note": 76
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_E4_v2.wav",
+"named": 64,
+"vel": 2,
+"rr": "1",
+"note": 76
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_F#3_v1.wav",
+"named": 54,
+"vel": 1,
+"rr": "1",
+"measured": 66.04995771500079,
+"note": 66
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_F#3_v2.wav",
+"named": 54,
+"vel": 2,
+"rr": "1",
+"note": 66
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_G2_v1.wav",
+"named": 43,
+"vel": 1,
+"rr": "1",
+"measured": 55.04995771500079,
+"note": 55
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_G2_v2.wav",
+"named": 43,
+"vel": 2,
+"rr": "1",
+"note": 55
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_G4_v1.wav",
+"named": 67,
+"vel": 1,
+"rr": "1",
+"measured": 79.04995771500077,
+"note": 79
+},
+{
+"path": "Strings/Violin Section/susVib/VlnEns_susVib_G4_v2.wav",
+"named": 67,
+"vel": 2,
+"rr": "1",
+"note": 79
+}
+],
+"vln_trem": [
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_A2_v1.wav",
+"named": 45,
+"vel": 1,
+"rr": "1",
+"measured": 57.04995771500078,
+"note": 57
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_A2_v2.wav",
+"named": 45,
+"vel": 2,
+"rr": "1",
+"note": 57
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_A3_v1.wav",
+"named": 57,
+"vel": 1,
+"rr": "1",
+"measured": 69.04995771500079,
+"note": 69
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_A3_v2.wav",
+"named": 57,
+"vel": 2,
+"rr": "1",
+"note": 69
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_B2_v1.wav",
+"named": 47,
+"vel": 1,
+"rr": "1",
+"measured": 59.04995771500078,
+"note": 59
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_B2_v2.wav",
+"named": 47,
+"vel": 2,
+"rr": "1",
+"note": 59
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_B4_v1.wav",
+"named": 71,
+"vel": 1,
+"rr": "1",
+"measured": 83.00002991773171,
+"note": 83
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_B4_v2.wav",
+"named": 71,
+"vel": 2,
+"rr": "1",
+"note": 83
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_C4_v1.wav",
+"named": 60,
+"vel": 1,
+"rr": "1",
+"measured": 72.04995771500079,
+"note": 72
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_C4_v2.wav",
+"named": 60,
+"vel": 2,
+"rr": "1",
+"note": 72
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_D3_v1.wav",
+"named": 50,
+"vel": 1,
+"rr": "1",
+"measured": 61.94995771500078,
+"note": 62
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_D3_v2.wav",
+"named": 50,
+"vel": 2,
+"rr": "1",
+"note": 62
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_D5_v1.wav",
+"named": 74,
+"vel": 1,
+"rr": "1",
+"measured": 85.94995771500078,
+"note": 86
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_D5_v2.wav",
+"named": 74,
+"vel": 2,
+"rr": "1",
+"note": 86
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_E4_v1.wav",
+"named": 64,
+"vel": 1,
+"rr": "1",
+"measured": 75.94995771500078,
+"note": 76
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_E4_v2.wav",
+"named": 64,
+"vel": 2,
+"rr": "1",
+"note": 76
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_F#3_v1.wav",
+"named": 54,
+"vel": 1,
+"rr": "1",
+"measured": 65.94995771500078,
+"note": 66
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_G2_v1.wav",
+"named": 43,
+"vel": 1,
+"rr": "1",
+"note": 55
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_G2_v2.wav",
+"named": 43,
+"vel": 2,
+"rr": "1",
+"measured": 54.849957715000784,
+"note": 55
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_G4_v1.wav",
+"named": 67,
+"vel": 1,
+"rr": "1",
+"note": 79
+},
+{
+"path": "Strings/Violin Section/Trem/VlnEns_Trem_G4_v2.wav",
+"named": 67,
+"vel": 2,
+"rr": "1",
+"measured": 79.04995771500077,
+"note": 79
+}
+],
+"vln_pizz": [
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_A2_v1_rr1.wav",
+"named": 45,
+"vel": 1,
+"rr": "1",
+"measured": 57.04995771500078,
+"note": 57
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_A2_v1_rr2.wav",
+"named": 45,
+"vel": 1,
+"rr": "2",
+"note": 57
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_A2_v2_rr1.wav",
+"named": 45,
+"vel": 2,
+"rr": "1",
+"note": 57
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_A2_v2_rr2.wav",
+"named": 45,
+"vel": 2,
+"rr": "2",
+"note": 57
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_A3_v1_rr1.wav",
+"named": 57,
+"vel": 1,
+"rr": "1",
+"measured": 57.14995771500078,
+"note": 69
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_A3_v1_rr2.wav",
+"named": 57,
+"vel": 1,
+"rr": "2",
+"note": 69
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_A3_v2_rr1.wav",
+"named": 57,
+"vel": 2,
+"rr": "1",
+"note": 69
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_A3_v2_rr2.wav",
+"named": 57,
+"vel": 2,
+"rr": "2",
+"note": 69
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_B2_v1_rr1.wav",
+"named": 47,
+"vel": 1,
+"rr": "1",
+"measured": 59.14995771500079,
+"note": 59
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_B2_v1_rr2.wav",
+"named": 47,
+"vel": 1,
+"rr": "2",
+"note": 59
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_B2_v2_rr1.wav",
+"named": 47,
+"vel": 2,
+"rr": "1",
+"note": 59
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_B2_v2_rr2.wav",
+"named": 47,
+"vel": 2,
+"rr": "2",
+"note": 59
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_B4_v1_rr1.wav",
+"named": 71,
+"vel": 1,
+"rr": "1",
+"measured": 82.94995771500078,
+"note": 83
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_B4_v1_rr2.wav",
+"named": 71,
+"vel": 1,
+"rr": "2",
+"note": 83
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_B4_v2_rr1.wav",
+"named": 71,
+"vel": 2,
+"rr": "1",
+"note": 83
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_B4_v2_rr2.wav",
+"named": 71,
+"vel": 2,
+"rr": "2",
+"note": 83
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_C4_v1_rr1.wav",
+"named": 60,
+"vel": 1,
+"rr": "1",
+"measured": 71.84995771500078,
+"note": 72
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_C4_v1_rr2.wav",
+"named": 60,
+"vel": 1,
+"rr": "2",
+"note": 72
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_C4_v2_rr1.wav",
+"named": 60,
+"vel": 2,
+"rr": "1",
+"note": 72
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_C4_v2_rr2.wav",
+"named": 60,
+"vel": 2,
+"rr": "2",
+"note": 72
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_D3_v1_rr1.wav",
+"named": 50,
+"vel": 1,
+"rr": "1",
+"measured": 62.04995771500078,
+"note": 62
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_D3_v1_rr2.wav",
+"named": 50,
+"vel": 1,
+"rr": "2",
+"note": 62
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_D3_v2_rr1.wav",
+"named": 50,
+"vel": 2,
+"rr": "1",
+"note": 62
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_D3_v2_rr2.wav",
+"named": 50,
+"vel": 2,
+"rr": "2",
+"note": 62
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_D5_v1_rr1.wav",
+"named": 74,
+"vel": 1,
+"rr": "1",
+"measured": 67.04995771500079,
+"note": 86
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_D5_v1_rr2.wav",
+"named": 74,
+"vel": 1,
+"rr": "2",
+"note": 86
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_D5_v2_rr1.wav",
+"named": 74,
+"vel": 2,
+"rr": "1",
+"note": 86
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_D5_v2_rr2.wav",
+"named": 74,
+"vel": 2,
+"rr": "2",
+"note": 86
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_E4_v1_rr1.wav",
+"named": 64,
+"vel": 1,
+"rr": "1",
+"measured": 76.04995771500077,
+"note": 76
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_E4_v1_rr2.wav",
+"named": 64,
+"vel": 1,
+"rr": "2",
+"note": 76
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_E4_v2_rr1.wav",
+"named": 64,
+"vel": 2,
+"rr": "1",
+"note": 76
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_E4_v2_rr2.wav",
+"named": 64,
+"vel": 2,
+"rr": "2",
+"note": 76
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_F#3_v1_rr1.wav",
+"named": 54,
+"vel": 1,
+"rr": "1",
+"measured": 66.10002991773172,
+"note": 66
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_F#3_v1_rr2.wav",
+"named": 54,
+"vel": 1,
+"rr": "2",
+"note": 66
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_F#3_v2_rr1.wav",
+"named": 54,
+"vel": 2,
+"rr": "1",
+"note": 66
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_F#3_v2_rr2.wav",
+"named": 54,
+"vel": 2,
+"rr": "2",
+"note": 66
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_G2_v1_rr1.wav",
+"named": 43,
+"vel": 1,
+"rr": "1",
+"measured": 55.04995771500079,
+"note": 55
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_G2_v1_rr2.wav",
+"named": 43,
+"vel": 1,
+"rr": "2",
+"note": 55
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_G2_v2_rr1.wav",
+"named": 43,
+"vel": 2,
+"rr": "1",
+"note": 55
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_G2_v2_rr2.wav",
+"named": 43,
+"vel": 2,
+"rr": "2",
+"note": 55
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_G4_v1_rr1.wav",
+"named": 67,
+"vel": 1,
+"rr": "1",
+"measured": 59.94995771500078,
+"note": 79
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_G4_v1_rr2.wav",
+"named": 67,
+"vel": 1,
+"rr": "2",
+"note": 79
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_G4_v2_rr1.wav",
+"named": 67,
+"vel": 2,
+"rr": "1",
+"note": 79
+},
+{
+"path": "Strings/Violin Section/Pizz/VlnEns_Pizz_G4_v2_rr2.wav",
+"named": 67,
+"vel": 2,
+"rr": "2",
+"note": 79
+}
+],
+"vla_sus": [
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_A3_v1_1.wav",
+"named": 57,
+"vel": 1,
+"rr": "1",
+"measured": 69.04995771500079,
+"note": 69
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_A3_v2_1.wav",
+"named": 57,
+"vel": 2,
+"rr": "1",
+"note": 69
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_B2_v1_1.wav",
+"named": 47,
+"vel": 1,
+"rr": "1",
+"measured": 59.04995771500078,
+"note": 59
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_B2_v2_1.wav",
+"named": 47,
+"vel": 2,
+"rr": "1",
+"note": 59
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_B4_v1_1.wav",
+"named": 71,
+"vel": 1,
+"rr": "1",
+"measured": 83.04995771500079,
+"note": 83
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_B4_v2_1.wav",
+"named": 71,
+"vel": 2,
+"rr": "1",
+"note": 83
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_C2_v1_1.wav",
+"named": 36,
+"vel": 1,
+"rr": "1",
+"measured": 48.04995771500079,
+"note": 48
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_C2_v2_1.wav",
+"named": 36,
+"vel": 2,
+"rr": "1",
+"note": 48
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_C4_v1_1.wav",
+"named": 60,
+"vel": 1,
+"rr": "1",
+"measured": 71.94995771500079,
+"note": 72
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_C4_v2_1.wav",
+"named": 60,
+"vel": 2,
+"rr": "1",
+"note": 72
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_D2_v1_1.wav",
+"named": 38,
+"vel": 1,
+"rr": "1",
+"measured": 50.04995771500078,
+"note": 50
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_D2_v2_1.wav",
+"named": 38,
+"vel": 2,
+"rr": "1",
+"note": 50
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_D3_v1_1.wav",
+"named": 50,
+"vel": 1,
+"rr": "1",
+"measured": 62.04995771500078,
+"note": 62
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_D3_v2_1.wav",
+"named": 50,
+"vel": 2,
+"rr": "1",
+"note": 62
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_D5_v1_1.wav",
+"named": 74,
+"vel": 1,
+"rr": "1",
+"measured": 86.04995771500077,
+"note": 86
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_D5_v2_1.wav",
+"named": 74,
+"vel": 2,
+"rr": "1",
+"note": 86
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_E2_v1_1.wav",
+"named": 40,
+"vel": 1,
+"rr": "1",
+"measured": 52.04995771500079,
+"note": 52
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_E2_v2_1.wav",
+"named": 40,
+"vel": 2,
+"rr": "1",
+"note": 52
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_E4_v1_1.wav",
+"named": 64,
+"vel": 1,
+"rr": "1",
+"measured": 76.00002991773171,
+"note": 76
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_E4_v2_1.wav",
+"named": 64,
+"vel": 2,
+"rr": "1",
+"note": 76
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_F3_v1_1.wav",
+"named": 53,
+"vel": 1,
+"rr": "1",
+"measured": 64.94995771500078,
+"note": 65
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_F3_v2_1.wav",
+"named": 53,
+"vel": 2,
+"rr": "1",
+"note": 65
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_G2_v1_1.wav",
+"named": 43,
+"vel": 1,
+"rr": "1",
+"measured": 54.94995771500078,
+"note": 55
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_G2_v2_1.wav",
+"named": 43,
+"vel": 2,
+"rr": "1",
+"note": 55
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_G4_v1_1.wav",
+"named": 67,
+"vel": 1,
+"rr": "1",
+"measured": 79.00002991773171,
+"note": 79
+},
+{
+"path": "Strings/Viola Section/susvib/ViolaEns_susvib_G4_v2_1.wav",
+"named": 67,
+"vel": 2,
+"rr": "1",
+"note": 79
+}
+],
+"vla_trem": [
+{
+"path": "Strings/Viola Section/trem/Violas_trem_A3_v1_rr1.wav",
+"named": 57,
+"vel": 1,
+"rr": "1",
+"measured": 68.94995771500079,
+"note": 69
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_A3_v2_rr1.wav",
+"named": 57,
+"vel": 2,
+"rr": "1",
+"note": 69
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_B2_v1_rr1.wav",
+"named": 47,
+"vel": 1,
+"rr": "1",
+"measured": 59.04995771500078,
+"note": 59
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_B2_v2_rr1.wav",
+"named": 47,
+"vel": 2,
+"rr": "1",
+"note": 59
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_B4_v1_rr1.wav",
+"named": 71,
+"vel": 1,
+"rr": "1",
+"measured": 82.94995771500078,
+"note": 83
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_B4_v2_rr1.wav",
+"named": 71,
+"vel": 2,
+"rr": "1",
+"note": 83
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_C2_v1_rr1.wav",
+"named": 36,
+"vel": 1,
+"rr": "1",
+"measured": 47.94995771500078,
+"note": 48
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_C2_v2_rr1.wav",
+"named": 36,
+"vel": 2,
+"rr": "1",
+"note": 48
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_C4_v1_rr1.wav",
+"named": 60,
+"vel": 1,
+"rr": "1",
+"measured": 71.94995771500079,
+"note": 72
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_C4_v2_rr1.wav",
+"named": 60,
+"vel": 2,
+"rr": "1",
+"note": 72
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_D3_v1_rr1.wav",
+"named": 50,
+"vel": 1,
+"rr": "1",
+"measured": 61.849957715000784,
+"note": 62
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_D3_v2_rr1.wav",
+"named": 50,
+"vel": 2,
+"rr": "1",
+"note": 62
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_D5_v1_rr1.wav",
+"named": 74,
+"vel": 1,
+"rr": "1",
+"measured": 85.94995771500078,
+"note": 86
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_D5_v2_rr1.wav",
+"named": 74,
+"vel": 2,
+"rr": "1",
+"note": 86
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_E2_v1_rr1.wav",
+"named": 40,
+"vel": 1,
+"rr": "1",
+"measured": 51.94995771500078,
+"note": 52
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_E2_v2_rr1.wav",
+"named": 40,
+"vel": 2,
+"rr": "1",
+"note": 52
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_E4_v1_rr1.wav",
+"named": 64,
+"vel": 1,
+"rr": "1",
+"measured": 75.94995771500078,
+"note": 76
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_E4_v2_rr1.wav",
+"named": 64,
+"vel": 2,
+"rr": "1",
+"note": 76
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_F3_v1_rr1.wav",
+"named": 53,
+"vel": 1,
+"rr": "1",
+"measured": 64.94995771500078,
+"note": 65
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_F3_v2_rr1.wav",
+"named": 53,
+"vel": 2,
+"rr": "1",
+"note": 65
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_G2_v1_rr1.wav",
+"named": 43,
+"vel": 1,
+"rr": "1",
+"measured": 55.04995771500079,
+"note": 55
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_G2_v2_rr1.wav",
+"named": 43,
+"vel": 2,
+"rr": "1",
+"note": 55
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_G4_v1_rr1.wav",
+"named": 67,
+"vel": 1,
+"rr": "1",
+"measured": 79.04995771500077,
+"note": 79
+},
+{
+"path": "Strings/Viola Section/trem/Violas_trem_G4_v2_rr1.wav",
+"named": 67,
+"vel": 2,
+"rr": "1",
+"note": 79
+}
+],
+"vla_pizz": [
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_A3_v1_rr1.wav",
+"named": 57,
+"vel": 1,
+"rr": "1",
+"measured": 69.14995771500078,
+"note": 69
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_A3_v1_rr2.wav",
+"named": 57,
+"vel": 1,
+"rr": "2",
+"note": 69
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_A3_v2_rr1.wav",
+"named": 57,
+"vel": 2,
+"rr": "1",
+"note": 69
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_A3_v2_rr2.wav",
+"named": 57,
+"vel": 2,
+"rr": "2",
+"note": 69
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_B2_v1_rr1.wav",
+"named": 47,
+"vel": 1,
+"rr": "1",
+"measured": 59.14995771500079,
+"note": 59
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_B2_v1_rr2.wav",
+"named": 47,
+"vel": 1,
+"rr": "2",
+"note": 59
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_B2_v2_rr1.wav",
+"named": 47,
+"vel": 2,
+"rr": "1",
+"note": 59
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_B2_v2_rr2.wav",
+"named": 47,
+"vel": 2,
+"rr": "2",
+"note": 59
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_B4_v1_rr1.wav",
+"named": 71,
+"vel": 1,
+"rr": "1",
+"measured": 71.04995771500079,
+"note": 83
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_B4_v1_rr2.wav",
+"named": 71,
+"vel": 1,
+"rr": "2",
+"note": 83
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_B4_v2_rr1.wav",
+"named": 71,
+"vel": 2,
+"rr": "1",
+"note": 83
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_B4_v2_rr2.wav",
+"named": 71,
+"vel": 2,
+"rr": "2",
+"note": 83
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_C2_v1_rr1.wav",
+"named": 36,
+"vel": 1,
+"rr": "1",
+"measured": 60.04995771500078,
+"note": 48
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_C2_v1_rr2.wav",
+"named": 36,
+"vel": 1,
+"rr": "2",
+"note": 48
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_C2_v2_rr1.wav",
+"named": 36,
+"vel": 2,
+"rr": "1",
+"note": 48
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_C2_v2_rr2.wav",
+"named": 36,
+"vel": 2,
+"rr": "2",
+"note": 48
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_C4_v1_rr1.wav",
+"named": 60,
+"vel": 1,
+"rr": "1",
+"measured": 72.04995771500079,
+"note": 72
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_C4_v1_rr2.wav",
+"named": 60,
+"vel": 1,
+"rr": "2",
+"note": 72
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_C4_v2_rr1.wav",
+"named": 60,
+"vel": 2,
+"rr": "1",
+"note": 72
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_C4_v2_rr2.wav",
+"named": 60,
+"vel": 2,
+"rr": "2",
+"note": 72
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_D3_v1_rr1.wav",
+"named": 50,
+"vel": 1,
+"rr": "1",
+"measured": 61.94995771500078,
+"note": 62
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_D3_v1_rr2.wav",
+"named": 50,
+"vel": 1,
+"rr": "2",
+"note": 62
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_D3_v2_rr1.wav",
+"named": 50,
+"vel": 2,
+"rr": "1",
+"note": 62
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_D3_v2_rr2.wav",
+"named": 50,
+"vel": 2,
+"rr": "2",
+"note": 62
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_D5_v1_rr1.wav",
+"named": 74,
+"vel": 1,
+"rr": "1",
+"measured": 85.84995771500078,
+"note": 86
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_D5_v1_rr2.wav",
+"named": 74,
+"vel": 1,
+"rr": "2",
+"note": 86
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_E2_v1_rr1.wav",
+"named": 40,
+"vel": 1,
+"rr": "1",
+"note": 52
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_E2_v1_rr2.wav",
+"named": 40,
+"vel": 1,
+"rr": "2",
+"note": 52
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_E2_v2_rr1.wav",
+"named": 40,
+"vel": 2,
+"rr": "1",
+"measured": 52.04995771500079,
+"note": 52
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_E2_v2_rr2.wav",
+"named": 40,
+"vel": 2,
+"rr": "2",
+"note": 52
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_E4_v1_rr1.wav",
+"named": 64,
+"vel": 1,
+"rr": "1",
+"note": 76
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_E4_v1_rr2.wav",
+"named": 64,
+"vel": 1,
+"rr": "2",
+"note": 76
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_E4_v2_rr1.wav",
+"named": 64,
+"vel": 2,
+"rr": "1",
+"measured": 75.94995771500078,
+"note": 76
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_E4_v2_rr2.wav",
+"named": 64,
+"vel": 2,
+"rr": "2",
+"note": 76
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_F3_v1_rr1.wav",
+"named": 53,
+"vel": 1,
+"rr": "1",
+"note": 65
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_F3_v1_rr2.wav",
+"named": 53,
+"vel": 1,
+"rr": "2",
+"note": 65
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_F3_v2_rr1.wav",
+"named": 53,
+"vel": 2,
+"rr": "1",
+"measured": 65.04995771500077,
+"note": 65
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_F3_v2_rr2.wav",
+"named": 53,
+"vel": 2,
+"rr": "2",
+"note": 65
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_G2_v1_rr1.wav",
+"named": 43,
+"vel": 1,
+"rr": "1",
+"note": 55
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_G2_v1_rr2.wav",
+"named": 43,
+"vel": 1,
+"rr": "2",
+"note": 55
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_G2_v2_rr1.wav",
+"named": 43,
+"vel": 2,
+"rr": "1",
+"measured": 54.94995771500078,
+"note": 55
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_G2_v2_rr2.wav",
+"named": 43,
+"vel": 2,
+"rr": "2",
+"note": 55
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_G4_v1_rr1.wav",
+"named": 67,
+"vel": 1,
+"rr": "1",
+"note": 79
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_G4_v1_rr2.wav",
+"named": 67,
+"vel": 1,
+"rr": "2",
+"note": 79
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_G4_v2_rr1.wav",
+"named": 67,
+"vel": 2,
+"rr": "1",
+"measured": 60.14995771500078,
+"note": 79
+},
+{
+"path": "Strings/Viola Section/pizz/ViolaEns_pizz_G4_v2_rr2.wav",
+"named": 67,
+"vel": 2,
+"rr": "2",
+"note": 79
+}
+],
+"vc_sus": [
+{
+"path": "Strings/Cello Section/susvib/susvib_A2_v1_1.wav",
+"named": 45,
+"vel": 1,
+"rr": "1",
+"measured": 56.94995771500078,
+"note": 57
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_A2_v3_1.wav",
+"named": 45,
+"vel": 3,
+"rr": "1",
+"note": 57
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_B1_v1_1.wav",
+"named": 35,
+"vel": 1,
+"rr": "1",
+"measured": 47.04995771500078,
+"note": 47
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_B1_v3_1.wav",
+"named": 35,
+"vel": 3,
+"rr": "1",
+"note": 47
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_B3_v1_1.wav",
+"named": 59,
+"vel": 1,
+"rr": "1",
+"measured": 70.94995771500078,
+"note": 71
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_B3_v3_1.wav",
+"named": 59,
+"vel": 3,
+"rr": "1",
+"note": 71
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_C1_v1_1.wav",
+"named": 24,
+"vel": 1,
+"rr": "1",
+"measured": 35.94995771500078,
+"note": 36
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_C1_v3_1.wav",
+"named": 24,
+"vel": 3,
+"rr": "1",
+"note": 36
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_C3_v1_1.wav",
+"named": 48,
+"vel": 1,
+"rr": "1",
+"measured": 60.04995771500078,
+"note": 60
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_C3_v3_1.wav",
+"named": 48,
+"vel": 3,
+"rr": "1",
+"note": 60
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_D2_v1_1.wav",
+"named": 38,
+"vel": 1,
+"rr": "1",
+"measured": 50.04995771500078,
+"note": 50
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_D2_v3_1.wav",
+"named": 38,
+"vel": 3,
+"rr": "1",
+"note": 50
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_D4_v1_1.wav",
+"named": 62,
+"vel": 1,
+"rr": "1",
+"measured": 74.04995771500079,
+"note": 74
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_D4_v3_1.wav",
+"named": 62,
+"vel": 3,
+"rr": "1",
+"note": 74
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_E1_v1_1.wav",
+"named": 28,
+"vel": 1,
+"rr": "1",
+"measured": 39.94995771500078,
+"note": 40
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_E1_v1_2.wav",
+"named": 28,
+"vel": 1,
+"rr": "2",
+"note": 40
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_E1_v3_1.wav",
+"named": 28,
+"vel": 3,
+"rr": "1",
+"measured": 39.94995771500078,
+"note": 40
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_E3_v1_1.wav",
+"named": 52,
+"vel": 1,
+"rr": "1",
+"note": 64
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_E3_v3_1.wav",
+"named": 52,
+"vel": 3,
+"rr": "1",
+"measured": 63.94995771500078,
+"note": 64
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_F2_v1_1.wav",
+"named": 41,
+"vel": 1,
+"rr": "1",
+"note": 53
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_F2_v3_1.wav",
+"named": 41,
+"vel": 3,
+"rr": "1",
+"measured": 53.04995771500078,
+"note": 53
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_F4_v1_1.wav",
+"named": 65,
+"vel": 1,
+"rr": "1",
+"note": 77
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_F4_v3_1.wav",
+"named": 65,
+"vel": 3,
+"rr": "1",
+"measured": 77.00002991773171,
+"note": 77
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_G1_v1_1.wav",
+"named": 31,
+"vel": 1,
+"rr": "1",
+"note": 43
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_G1_v3_1.wav",
+"named": 31,
+"vel": 3,
+"rr": "1",
+"measured": 43.04995771500078,
+"note": 43
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_G3_v1_1.wav",
+"named": 55,
+"vel": 1,
+"rr": "1",
+"note": 67
+},
+{
+"path": "Strings/Cello Section/susvib/susvib_G3_v3_1.wav",
+"named": 55,
+"vel": 3,
+"rr": "1",
+"measured": 66.94995771500078,
+"note": 67
+}
+],
+"vc_trem": [
+{
+"path": "Strings/Cello Section/trem/trem_A2_v1_1.wav",
+"named": 45,
+"vel": 1,
+"rr": "1",
+"measured": 57.04995771500078,
+"note": 57
+},
+{
+"path": "Strings/Cello Section/trem/trem_A2_v2_1.wav",
+"named": 45,
+"vel": 2,
+"rr": "1",
+"note": 57
+},
+{
+"path": "Strings/Cello Section/trem/trem_B1_v1_1.wav",
+"named": 35,
+"vel": 1,
+"rr": "1",
+"measured": 47.04995771500078,
+"note": 47
+},
+{
+"path": "Strings/Cello Section/trem/trem_B2_v2_1.wav",
+"named": 47,
+"vel": 2,
+"rr": "1",
+"note": 59
+},
+{
+"path": "Strings/Cello Section/trem/trem_B3_v1_1.wav",
+"named": 59,
+"vel": 1,
+"rr": "1",
+"measured": 71.04995771500079,
+"note": 71
+},
+{
+"path": "Strings/Cello Section/trem/trem_B3_v2_1.wav",
+"named": 59,
+"vel": 2,
+"rr": "1",
+"note": 71
+},
+{
+"path": "Strings/Cello Section/trem/trem_C1_v2_1.wav",
+"named": 24,
+"vel": 2,
+"rr": "1",
+"measured": 35.94995771500078,
+"note": 36
+},
+{
+"path": "Strings/Cello Section/trem/trem_C3_v1_1.wav",
+"named": 48,
+"vel": 1,
+"rr": "1",
+"note": 60
+},
+{
+"path": "Strings/Cello Section/trem/trem_C3_v2_1.wav",
+"named": 48,
+"vel": 2,
+"rr": "1",
+"measured": 59.94995771500078,
+"note": 60
+},
+{
+"path": "Strings/Cello Section/trem/trem_D2_v1_1.wav",
+"named": 38,
+"vel": 1,
+"rr": "1",
+"note": 50
+},
+{
+"path": "Strings/Cello Section/trem/trem_D2_v2_1.wav",
+"named": 38,
+"vel": 2,
+"rr": "1",
+"measured": 49.94995771500078,
+"note": 50
+},
+{
+"path": "Strings/Cello Section/trem/trem_D4_v1_1.wav",
+"named": 62,
+"vel": 1,
+"rr": "1",
+"note": 74
+},
+{
+"path": "Strings/Cello Section/trem/trem_D4_v2_1.wav",
+"named": 62,
+"vel": 2,
+"rr": "1",
+"measured": 73.94995771500078,
+"note": 74
+},
+{
+"path": "Strings/Cello Section/trem/trem_E1_v1_1.wav",
+"named": 28,
+"vel": 1,
+"rr": "1",
+"note": 40
+},
+{
+"path": "Strings/Cello Section/trem/trem_E1_v2_1.wav",
+"named": 28,
+"vel": 2,
+"rr": "1",
+"measured": 39.94995771500078,
+"note": 40
+},
+{
+"path": "Strings/Cello Section/trem/trem_E3_v1_1.wav",
+"named": 52,
+"vel": 1,
+"rr": "1",
+"note": 64
+},
+{
+"path": "Strings/Cello Section/trem/trem_E3_v2_1.wav",
+"named": 52,
+"vel": 2,
+"rr": "1",
+"measured": 63.94995771500078,
+"note": 64
+},
+{
+"path": "Strings/Cello Section/trem/trem_F2_v1_1.wav",
+"named": 41,
+"vel": 1,
+"rr": "1",
+"note": 53
+},
+{
+"path": "Strings/Cello Section/trem/trem_F2_v2_1.wav",
+"named": 41,
+"vel": 2,
+"rr": "1",
+"measured": 52.94995771500078,
+"note": 53
+},
+{
+"path": "Strings/Cello Section/trem/trem_F4_v1_1.wav",
+"named": 65,
+"vel": 1,
+"rr": "1",
+"note": 77
+},
+{
+"path": "Strings/Cello Section/trem/trem_F4_v2_1.wav",
+"named": 65,
+"vel": 2,
+"rr": "1",
+"measured": 76.94995771500078,
+"note": 77
+},
+{
+"path": "Strings/Cello Section/trem/trem_G1_v1_1.wav",
+"named": 31,
+"vel": 1,
+"rr": "1",
+"note": 43
+},
+{
+"path": "Strings/Cello Section/trem/trem_G1_v2_1.wav",
+"named": 31,
+"vel": 2,
+"rr": "1",
+"measured": 43.04995771500078,
+"note": 43
+},
+{
+"path": "Strings/Cello Section/trem/trem_G3_v1_1.wav",
+"named": 55,
+"vel": 1,
+"rr": "1",
+"note": 67
+},
+{
+"path": "Strings/Cello Section/trem/trem_G3_v2_1.wav",
+"named": 55,
+"vel": 2,
+"rr": "1",
+"measured": 66.94995771500078,
+"note": 67
+}
+],
+"vc_pizz": [
+{
+"path": "Strings/Cello Section/pizzT/pizzT_A2_v1_RR1.wav",
+"named": 45,
+"vel": 1,
+"rr": "1",
+"measured": 57.04995771500078,
+"note": 57
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_A2_v1_RR2.wav",
+"named": 45,
+"vel": 1,
+"rr": "2",
+"note": 57
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_A2_v2_RR1.wav",
+"named": 45,
+"vel": 2,
+"rr": "1",
+"note": 57
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_A2_v2_RR2.wav",
+"named": 45,
+"vel": 2,
+"rr": "2",
+"note": 57
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_B1_v1_RR1.wav",
+"named": 35,
+"vel": 1,
+"rr": "1",
+"note": 47
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_B1_v1_RR2.wav",
+"named": 35,
+"vel": 1,
+"rr": "2",
+"measured": 47.04995771500078,
+"note": 47
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_B1_v2_RR1.wav",
+"named": 35,
+"vel": 2,
+"rr": "1",
+"note": 47
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_B1_v2_RR2.wav",
+"named": 35,
+"vel": 2,
+"rr": "2",
+"note": 47
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_B3_v1_RR1.wav",
+"named": 59,
+"vel": 1,
+"rr": "1",
+"note": 71
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_B3_v1_RR2.wav",
+"named": 59,
+"vel": 1,
+"rr": "2",
+"note": 71
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_B3_v2_RR1.wav",
+"named": 59,
+"vel": 2,
+"rr": "1",
+"measured": 71.04995771500079,
+"note": 71
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_B3_v2_RR2.wav",
+"named": 59,
+"vel": 2,
+"rr": "2",
+"note": 71
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_C1_v1_RR1.wav",
+"named": 24,
+"vel": 1,
+"rr": "1",
+"note": 36
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_C1_v1_RR2.wav",
+"named": 24,
+"vel": 1,
+"rr": "2",
+"note": 36
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_C1_v2_RR1.wav",
+"named": 24,
+"vel": 2,
+"rr": "1",
+"note": 36
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_C1_v2_RR2.wav",
+"named": 24,
+"vel": 2,
+"rr": "2",
+"measured": 35.94995771500078,
+"note": 36
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_C3_v1_RR1.wav",
+"named": 48,
+"vel": 1,
+"rr": "1",
+"note": 60
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_C3_v1_RR2.wav",
+"named": 48,
+"vel": 1,
+"rr": "2",
+"note": 60
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_C3_v2_RR1.wav",
+"named": 48,
+"vel": 2,
+"rr": "1",
+"note": 60
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_C3_v2_RR2.wav",
+"named": 48,
+"vel": 2,
+"rr": "2",
+"note": 60
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_D2_v1_RR1.wav",
+"named": 38,
+"vel": 1,
+"rr": "1",
+"measured": 49.94995771500078,
+"note": 50
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_D2_v1_RR2.wav",
+"named": 38,
+"vel": 1,
+"rr": "2",
+"note": 50
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_D2_v2_RR1.wav",
+"named": 38,
+"vel": 2,
+"rr": "1",
+"note": 50
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_D2_v2_RR2.wav",
+"named": 38,
+"vel": 2,
+"rr": "2",
+"note": 50
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_D4_v1_RR1.wav",
+"named": 62,
+"vel": 1,
+"rr": "1",
+"note": 74
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_D4_v1_RR2.wav",
+"named": 62,
+"vel": 1,
+"rr": "2",
+"measured": 48.38825596524636,
+"note": 74
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_D4_v2_RR1.wav",
+"named": 62,
+"vel": 2,
+"rr": "1",
+"note": 74
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_D4_v2_RR2.wav",
+"named": 62,
+"vel": 2,
+"rr": "2",
+"note": 74
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_E1_v1_RR1.wav",
+"named": 28,
+"vel": 1,
+"rr": "1",
+"note": 40
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_E1_v1_RR2.wav",
+"named": 28,
+"vel": 1,
+"rr": "2",
+"note": 40
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_E1_v2_RR1.wav",
+"named": 28,
+"vel": 2,
+"rr": "1",
+"measured": 39.94995771500078,
+"note": 40
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_E1_v2_RR2.wav",
+"named": 28,
+"vel": 2,
+"rr": "2",
+"note": 40
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_E3_v1_RR1.wav",
+"named": 52,
+"vel": 1,
+"rr": "1",
+"note": 64
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_E3_v1_RR2.wav",
+"named": 52,
+"vel": 1,
+"rr": "2",
+"note": 64
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_E3_v2_RR1.wav",
+"named": 52,
+"vel": 2,
+"rr": "1",
+"note": 64
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_E3_v2_RR2.wav",
+"named": 52,
+"vel": 2,
+"rr": "2",
+"measured": 64.04995771500079,
+"note": 64
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_F2_v1_RR1.wav",
+"named": 41,
+"vel": 1,
+"rr": "1",
+"note": 53
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_F2_v1_RR2.wav",
+"named": 41,
+"vel": 1,
+"rr": "2",
+"note": 53
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_F2_v2_RR1.wav",
+"named": 41,
+"vel": 2,
+"rr": "1",
+"note": 53
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_F2_v2_RR2.wav",
+"named": 41,
+"vel": 2,
+"rr": "2",
+"note": 53
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_F4_v1_RR1.wav",
+"named": 65,
+"vel": 1,
+"rr": "1",
+"measured": 40.80002991773171,
+"note": 77
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_F4_v1_RR2.wav",
+"named": 65,
+"vel": 1,
+"rr": "2",
+"note": 77
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_F4_v2_RR1.wav",
+"named": 65,
+"vel": 2,
+"rr": "1",
+"note": 77
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_F4_v2_RR2.wav",
+"named": 65,
+"vel": 2,
+"rr": "2",
+"note": 77
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_G1_v1_RR1.wav",
+"named": 31,
+"vel": 1,
+"rr": "1",
+"note": 43
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_G1_v1_RR2.wav",
+"named": 31,
+"vel": 1,
+"rr": "2",
+"measured": 42.94995771500078,
+"note": 43
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_G1_v2_RR1.wav",
+"named": 31,
+"vel": 2,
+"rr": "1",
+"note": 43
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_G1_v2_RR2.wav",
+"named": 31,
+"vel": 2,
+"rr": "2",
+"note": 43
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_G3_v1_RR1.wav",
+"named": 55,
+"vel": 1,
+"rr": "1",
+"note": 67
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_G3_v1_RR2.wav",
+"named": 55,
+"vel": 1,
+"rr": "2",
+"note": 67
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_G3_v2_RR1.wav",
+"named": 55,
+"vel": 2,
+"rr": "1",
+"measured": 67.04995771500079,
+"note": 67
+},
+{
+"path": "Strings/Cello Section/pizzT/pizzT_G3_v2_RR2.wav",
+"named": 55,
+"vel": 2,
+"rr": "2",
+"note": 67
+}
+],
+"cb_sus": [
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_A#0_v1_rr1.wav",
+"named": 22,
+"vel": 1,
+"rr": "1",
+"measured": 34.04995771500079,
+"note": 34
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_A#0_v3_rr1.wav",
+"named": 22,
+"vel": 3,
+"rr": "1",
+"note": 34
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_A1_v1_rr1.wav",
+"named": 33,
+"vel": 1,
+"rr": "1",
+"measured": 45.04995771500078,
+"note": 45
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_A1_v3_rr1.wav",
+"named": 33,
+"vel": 3,
+"rr": "1",
+"note": 45
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_B2_v1_rr1.wav",
+"named": 47,
+"vel": 1,
+"rr": "1",
+"measured": 59.04995771500078,
+"note": 59
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_B2_v3_rr1.wav",
+"named": 47,
+"vel": 3,
+"rr": "1",
+"note": 59
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_C#2_v1_rr1.wav",
+"named": 37,
+"vel": 1,
+"rr": "1",
+"measured": 49.04995771500079,
+"note": 49
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_C#2_v3_rr1.wav",
+"named": 37,
+"vel": 3,
+"rr": "1",
+"note": 49
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_C1_v1_rr1.wav",
+"named": 24,
+"vel": 1,
+"rr": "1",
+"measured": 36.04995771500079,
+"note": 36
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_C1_v3_rr1.wav",
+"named": 24,
+"vel": 3,
+"rr": "1",
+"note": 36
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_D1_v1_rr1.wav",
+"named": 26,
+"vel": 1,
+"rr": "1",
+"measured": 38.04995771500078,
+"note": 38
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_D1_v3_rr1.wav",
+"named": 26,
+"vel": 3,
+"rr": "1",
+"note": 38
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_E1_v1_rr1.wav",
+"named": 28,
+"vel": 1,
+"rr": "1",
+"measured": 40.04995771500078,
+"note": 40
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_E1_v3_rr1.wav",
+"named": 28,
+"vel": 3,
+"rr": "1",
+"note": 40
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_E2_v1_rr1.wav",
+"named": 40,
+"vel": 1,
+"rr": "1",
+"measured": 52.04995771500079,
+"note": 52
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_E2_v3_rr1.wav",
+"named": 40,
+"vel": 3,
+"rr": "1",
+"note": 52
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_F#0_v1_rr1.wav",
+"named": 18,
+"vel": 1,
+"rr": "1",
+"measured": 30.049957715000787,
+"note": 30
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_F#0_v3_rr1.wav",
+"named": 18,
+"vel": 3,
+"rr": "1",
+"note": 30
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_F#1_v1_rr1.wav",
+"named": 30,
+"vel": 1,
+"rr": "1",
+"measured": 41.94995771500078,
+"note": 42
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_F#1_v3_rr1.wav",
+"named": 30,
+"vel": 3,
+"rr": "1",
+"note": 42
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_G#1_v1_rr1.wav",
+"named": 32,
+"vel": 1,
+"rr": "1",
+"measured": 44.04995771500078,
+"note": 44
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_G#1_v3_rr1.wav",
+"named": 32,
+"vel": 3,
+"rr": "1",
+"note": 44
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_G#2_v1_rr1.wav",
+"named": 44,
+"vel": 1,
+"rr": "1",
+"measured": 56.04995771500078,
+"note": 56
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_G#2_v3_rr1.wav",
+"named": 44,
+"vel": 3,
+"rr": "1",
+"note": 56
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_G0_v1_rr1.wav",
+"named": 19,
+"vel": 1,
+"rr": "1",
+"measured": 30.949957715000778,
+"note": 31
+},
+{
+"path": "Strings/Solo Contrabass/SusVib/BKCtbss_SusVib_G0_v3_rr1.wav",
+"named": 19,
+"vel": 3,
+"rr": "1",
+"note": 31
+}
+],
+"cb_trem": [
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_B2_v1_rr1.wav",
+"named": 47,
+"vel": 1,
+"rr": "1",
+"measured": 59.04995771500078,
+"note": 59
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_B2_v2_rr1.wav",
+"named": 47,
+"vel": 2,
+"rr": "1",
+"measured": 59.04995771500078,
+"note": 59
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_C1_v1_rr1.wav",
+"named": 24,
+"vel": 1,
+"rr": "1",
+"measured": 35.94995771500078,
+"note": 36
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_C1_v2_rr1.wav",
+"named": 24,
+"vel": 2,
+"rr": "1",
+"measured": 35.84995771500078,
+"note": 36
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_E0_v1_rr1.wav",
+"named": 16,
+"vel": 1,
+"rr": "1",
+"measured": 27.849957715000784,
+"note": 28
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_E0_v2_rr1.wav",
+"named": 16,
+"vel": 2,
+"rr": "1",
+"measured": 28.04995771500078,
+"note": 28
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_E1_v1_rr1.wav",
+"named": 28,
+"vel": 1,
+"rr": "1",
+"measured": 39.74995771500078,
+"note": 40
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_E1_v2_rr1.wav",
+"named": 28,
+"vel": 2,
+"rr": "1",
+"measured": 39.80002991773171,
+"note": 40
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_E2_v1_rr1.wav",
+"named": 40,
+"vel": 1,
+"rr": "1",
+"measured": 51.900029917731715,
+"note": 52
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_E2_v2_rr1.wav",
+"named": 40,
+"vel": 2,
+"rr": "1",
+"measured": 51.849957715000784,
+"note": 52
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_G#1_v1_rr1.wav",
+"named": 32,
+"vel": 1,
+"rr": "1",
+"measured": 43.84995771500078,
+"note": 44
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_G#1_v2_rr1.wav",
+"named": 32,
+"vel": 2,
+"rr": "1",
+"measured": 43.84995771500078,
+"note": 44
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_G#2_v1_rr1.wav",
+"named": 44,
+"vel": 1,
+"rr": "1",
+"measured": 55.749957715000775,
+"note": 56
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_G#2_v2_rr1.wav",
+"named": 44,
+"vel": 2,
+"rr": "1",
+"measured": 55.749957715000775,
+"note": 56
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_G0_v1_rr1.wav",
+"named": 19,
+"vel": 1,
+"rr": "1",
+"measured": 43.749957715000775,
+"note": 31
+},
+{
+"path": "Strings/Solo Contrabass/Trem/BKCtbss_Trem_G0_v2_rr1.wav",
+"named": 19,
+"vel": 2,
+"rr": "1",
+"measured": 43.64995771500078,
+"note": 31
+}
+],
+"cb_pizz": [
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_A#0_v1_rr1.wav",
+"named": 22,
+"vel": 1,
+"rr": "1",
+"measured": 34.04995771500079,
+"note": 34
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_A#0_v1_rr2.wav",
+"named": 22,
+"vel": 1,
+"rr": "2",
+"note": 34
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_A#0_v3_rr1.wav",
+"named": 22,
+"vel": 3,
+"rr": "1",
+"note": 34
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_A#0_v3_rr2.wav",
+"named": 22,
+"vel": 3,
+"rr": "2",
+"note": 34
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_A1_v1_rr1.wav",
+"named": 33,
+"vel": 1,
+"rr": "1",
+"measured": 45.14995771500078,
+"note": 45
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_A1_v1_rr2.wav",
+"named": 33,
+"vel": 1,
+"rr": "2",
+"note": 45
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_B2_v1_rr1.wav",
+"named": 47,
+"vel": 1,
+"rr": "1",
+"note": 59
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_B2_v1_rr2.wav",
+"named": 47,
+"vel": 1,
+"rr": "2",
+"note": 59
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C#2_v1_rr1.wav",
+"named": 37,
+"vel": 1,
+"rr": "1",
+"measured": 49.04995771500079,
+"note": 49
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C#2_v1_rr2.wav",
+"named": 37,
+"vel": 1,
+"rr": "2",
+"note": 49
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C1_v1_rr1.wav",
+"named": 24,
+"vel": 1,
+"rr": "1",
+"note": 36
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C1_v1_rr2.wav",
+"named": 24,
+"vel": 1,
+"rr": "2",
+"note": 36
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C1_v3_rr1.wav",
+"named": 24,
+"vel": 3,
+"rr": "1",
+"measured": 36.04995771500079,
+"note": 36
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C1_v3_rr2.wav",
+"named": 24,
+"vel": 3,
+"rr": "2",
+"note": 36
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_D1_v1_rr1.wav",
+"named": 26,
+"vel": 1,
+"rr": "1",
+"note": 38
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_D1_v1_rr2.wav",
+"named": 26,
+"vel": 1,
+"rr": "2",
+"note": 38
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E0_v1_rr1.wav",
+"named": 16,
+"vel": 1,
+"rr": "1",
+"measured": 20.900029917731715,
+"note": 28
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E0_v1_rr2.wav",
+"named": 16,
+"vel": 1,
+"rr": "2",
+"note": 28
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E0_v3_rr1.wav",
+"named": 16,
+"vel": 3,
+"rr": "1",
+"note": 28
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E0_v3_rr2.wav",
+"named": 16,
+"vel": 3,
+"rr": "2",
+"note": 28
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E1_v1_rr1.wav",
+"named": 28,
+"vel": 1,
+"rr": "1",
+"measured": 39.54995771500078,
+"note": 40
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E1_v1_rr2.wav",
+"named": 28,
+"vel": 1,
+"rr": "2",
+"note": 40
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E1_v3_rr1.wav",
+"named": 28,
+"vel": 3,
+"rr": "1",
+"note": 40
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E1_v3_rr2.wav",
+"named": 28,
+"vel": 3,
+"rr": "2",
+"note": 40
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E2_v1_rr1.wav",
+"named": 40,
+"vel": 1,
+"rr": "1",
+"measured": 52.04995771500079,
+"note": 52
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E2_v1_rr2.wav",
+"named": 40,
+"vel": 1,
+"rr": "2",
+"note": 52
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_F#0_v1_rr1.wav",
+"named": 18,
+"vel": 1,
+"rr": "1",
+"note": 30
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_F#0_v1_rr2.wav",
+"named": 18,
+"vel": 1,
+"rr": "2",
+"note": 30
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_F#0_v3_rr1.wav",
+"named": 18,
+"vel": 3,
+"rr": "1",
+"measured": 29.949957715000778,
+"note": 30
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_F#0_v3_rr2.wav",
+"named": 18,
+"vel": 3,
+"rr": "2",
+"note": 30
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_F#1_v1_rr1.wav",
+"named": 30,
+"vel": 1,
+"rr": "1",
+"note": 42
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_F#1_v1_rr2.wav",
+"named": 30,
+"vel": 1,
+"rr": "2",
+"note": 42
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G#1_v1_rr1.wav",
+"named": 32,
+"vel": 1,
+"rr": "1",
+"measured": 44.14995771500079,
+"note": 44
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G#1_v1_rr2.wav",
+"named": 32,
+"vel": 1,
+"rr": "2",
+"note": 44
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G#2_v1_rr1.wav",
+"named": 44,
+"vel": 1,
+"rr": "1",
+"note": 56
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G#2_v1_rr2.wav",
+"named": 44,
+"vel": 1,
+"rr": "2",
+"note": 56
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G0_v1_rr1.wav",
+"named": 19,
+"vel": 1,
+"rr": "1",
+"measured": 30.749957715000782,
+"note": 31
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G0_v1_rr2.wav",
+"named": 19,
+"vel": 1,
+"rr": "2",
+"note": 31
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G0_v3_rr1.wav",
+"named": 19,
+"vel": 3,
+"rr": "1",
+"note": 31
+},
+{
+"path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G0_v3_rr2.wav",
+"named": 19,
+"vel": 3,
+"rr": "2",
+"note": 31
+}
+],
+"hn_sus": [
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_A#1_v1_1.wav",
+"named": 34,
+"vel": 1,
+"rr": "1",
+"measured": 46.04995771500079,
+"note": 46
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_A#1_v2_1.wav",
+"named": 34,
+"vel": 2,
+"rr": "1",
+"note": 46
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_A#1_v3_1.wav",
+"named": 34,
+"vel": 3,
+"rr": "1",
+"measured": 46.04995771500079,
+"note": 46
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_A0_v1_1.wav",
+"named": 21,
+"vel": 1,
+"rr": "1",
+"note": 33
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_A2_v1_1.wav",
+"named": 45,
+"vel": 1,
+"rr": "1",
+"measured": 56.94995771500078,
+"note": 57
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_A2_v2_1.wav",
+"named": 45,
+"vel": 2,
+"rr": "1",
+"note": 57
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_A2_v3_1.wav",
+"named": 45,
+"vel": 3,
+"rr": "1",
+"measured": 56.94995771500078,
+"note": 57
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_C1_v1_1.wav",
+"named": 24,
+"vel": 1,
+"rr": "1",
+"note": 36
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_C1_v2_1.wav",
+"named": 24,
+"vel": 2,
+"rr": "1",
+"measured": 35.94995771500078,
+"note": 36
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_C1_v3_1.wav",
+"named": 24,
+"vel": 3,
+"rr": "1",
+"note": 36
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_C3_v1_1.wav",
+"named": 48,
+"vel": 1,
+"rr": "1",
+"measured": 60.04995771500078,
+"note": 60
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_C3_v2_1.wav",
+"named": 48,
+"vel": 2,
+"rr": "1",
+"note": 60
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_C3_v3_1.wav",
+"named": 48,
+"vel": 3,
+"rr": "1",
+"measured": 59.94995771500078,
+"note": 60
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_C3_v4_1.wav",
+"named": 48,
+"vel": 4,
+"rr": "1",
+"note": 60
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_D#1_v1_1.wav",
+"named": 27,
+"vel": 1,
+"rr": "1",
+"measured": 38.94995771500078,
+"note": 39
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_D#1_v2_1.wav",
+"named": 27,
+"vel": 2,
+"rr": "1",
+"note": 39
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_D#1_v3_1.wav",
+"named": 27,
+"vel": 3,
+"rr": "1",
+"measured": 39.04995771500079,
+"note": 39
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_D2_v1_1.wav",
+"named": 38,
+"vel": 1,
+"rr": "1",
+"note": 50
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_D2_v2_1.wav",
+"named": 38,
+"vel": 2,
+"rr": "1",
+"measured": 49.94995771500078,
+"note": 50
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_D2_v3_1.wav",
+"named": 38,
+"vel": 3,
+"rr": "1",
+"note": 50
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_D2_v4_1.wav",
+"named": 38,
+"vel": 4,
+"rr": "1",
+"measured": 50.04995771500078,
+"note": 50
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_D4_v1_1.wav",
+"named": 62,
+"vel": 1,
+"rr": "1",
+"note": 74
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_F2_v1_1.wav",
+"named": 41,
+"vel": 1,
+"rr": "1",
+"measured": 52.94995771500078,
+"note": 53
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_F2_v2_1.wav",
+"named": 41,
+"vel": 2,
+"rr": "1",
+"note": 53
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_F2_v3_1.wav",
+"named": 41,
+"vel": 3,
+"rr": "1",
+"measured": 52.94995771500078,
+"note": 53
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_F4_v1_1.wav",
+"named": 65,
+"vel": 1,
+"rr": "1",
+"note": 77
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_G1_v1_1.wav",
+"named": 31,
+"vel": 1,
+"rr": "1",
+"measured": 42.94995771500078,
+"note": 43
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_G1_v2_1.wav",
+"named": 31,
+"vel": 2,
+"rr": "1",
+"note": 43
+},
+{
+"path": "Brass/F Horn/sus/MOHorn_sus_G1_v3_1.wav",
+"named": 31,
+"vel": 3,
+"rr": "1",
+"measured": 42.94995771500078,
+"note": 43
+}
+],
+"hn_mute": [
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_A#1_v1_1.wav",
+"named": 34,
+"vel": 1,
+"rr": "1",
+"measured": 46.00002991773171,
+"note": 46
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_A#1_v2_1.wav",
+"named": 34,
+"vel": 2,
+"rr": "1",
+"measured": 46.04995771500079,
+"note": 46
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_A#3_v1_1.wav",
+"named": 58,
+"vel": 1,
+"rr": "1",
+"measured": 70.04995771500077,
+"note": 70
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_A#3_v2_1.wav",
+"named": 58,
+"vel": 2,
+"rr": "1",
+"measured": 70.04995771500077,
+"note": 70
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_C3_v1_1.wav",
+"named": 48,
+"vel": 1,
+"rr": "1",
+"measured": 60.04995771500078,
+"note": 60
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_C3_v2_1.wav",
+"named": 48,
+"vel": 2,
+"rr": "1",
+"measured": 60.04995771500078,
+"note": 60
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_C3_v3_1.wav",
+"named": 48,
+"vel": 3,
+"rr": "1",
+"measured": 59.94995771500078,
+"note": 60
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_D#2_v1_1.wav",
+"named": 39,
+"vel": 1,
+"rr": "1",
+"measured": 51.04995771500078,
+"note": 51
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_D#2_v2_1.wav",
+"named": 39,
+"vel": 2,
+"rr": "1",
+"measured": 51.04995771500078,
+"note": 51
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_D#3_v1_1.wav",
+"named": 51,
+"vel": 1,
+"rr": "1",
+"measured": 63.04995771500078,
+"note": 63
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_D#3_v2_1.wav",
+"named": 51,
+"vel": 2,
+"rr": "1",
+"measured": 63.04995771500078,
+"note": 63
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_D4_v1_1.wav",
+"named": 62,
+"vel": 1,
+"rr": "1",
+"measured": 74.04995771500079,
+"note": 74
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_F2_v1_1.wav",
+"named": 41,
+"vel": 1,
+"rr": "1",
+"measured": 53.04995771500078,
+"note": 53
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_F2_v2_1.wav",
+"named": 41,
+"vel": 2,
+"rr": "1",
+"measured": 53.04995771500078,
+"note": 53
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_F4_v1_1.wav",
+"named": 65,
+"vel": 1,
+"rr": "1",
+"measured": 77.04995771500079,
+"note": 77
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_G#3_v1_1.wav",
+"named": 56,
+"vel": 1,
+"rr": "1",
+"measured": 68.04995771500079,
+"note": 68
+},
+{
+"path": "Brass/F Horn/mute/MOHorn_mute_G#3_v2_1.wav",
+"named": 56,
+"vel": 2,
+"rr": "1",
+"measured": 68.04995771500079,
+"note": 68
+}
+],
+"tbn_sus": [
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_A#0_v1_1.wav",
+"named": 22,
+"vel": 1,
+"rr": "1",
+"measured": 34.04995771500079,
+"note": 34
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_A#0_v2_1.wav",
+"named": 22,
+"vel": 2,
+"rr": "1",
+"note": 34
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_A#1_v1_1.wav",
+"named": 34,
+"vel": 1,
+"rr": "1",
+"note": 46
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_A#1_v2_1.wav",
+"named": 34,
+"vel": 2,
+"rr": "1",
+"measured": 45.94995771500078,
+"note": 46
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_A#1_v3_1.wav",
+"named": 34,
+"vel": 3,
+"rr": "1",
+"note": 46
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_C#1_v1_1.wav",
+"named": 25,
+"vel": 1,
+"rr": "1",
+"note": 37
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_C#1_v2_1.wav",
+"named": 25,
+"vel": 2,
+"rr": "1",
+"measured": 37.04995771500079,
+"note": 37
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_C#3_v1_1.wav",
+"named": 49,
+"vel": 1,
+"rr": "1",
+"note": 61
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_C#3_v2_1.wav",
+"named": 49,
+"vel": 2,
+"rr": "1",
+"note": 61
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_C#3_v3_1.wav",
+"named": 49,
+"vel": 3,
+"rr": "1",
+"measured": 61.04995771500079,
+"note": 61
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_C3_v1_1.wav",
+"named": 48,
+"vel": 1,
+"rr": "1",
+"note": 60
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_C3_v2_1.wav",
+"named": 48,
+"vel": 2,
+"rr": "1",
+"note": 60
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_C3_v3_1.wav",
+"named": 48,
+"vel": 3,
+"rr": "1",
+"measured": 60.04995771500078,
+"note": 60
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_D#1_v1_1.wav",
+"named": 27,
+"vel": 1,
+"rr": "1",
+"note": 39
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_D#1_v2_1.wav",
+"named": 27,
+"vel": 2,
+"rr": "1",
+"note": 39
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_D#1_v3_1.wav",
+"named": 27,
+"vel": 3,
+"rr": "1",
+"measured": 38.94995771500078,
+"note": 39
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_D#3_v1_1.wav",
+"named": 51,
+"vel": 1,
+"rr": "1",
+"note": 63
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_D#3_v2_1.wav",
+"named": 51,
+"vel": 2,
+"rr": "1",
+"note": 63
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_D#3_v3_1.wav",
+"named": 51,
+"vel": 3,
+"rr": "1",
+"measured": 63.04995771500078,
+"note": 63
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_D2_v1_1.wav",
+"named": 38,
+"vel": 1,
+"rr": "1",
+"note": 50
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_D2_v2_1.wav",
+"named": 38,
+"vel": 2,
+"rr": "1",
+"note": 50
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_D2_v3_1.wav",
+"named": 38,
+"vel": 3,
+"rr": "1",
+"measured": 50.04995771500078,
+"note": 50
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_F1_v1_1.wav",
+"named": 29,
+"vel": 1,
+"rr": "1",
+"note": 41
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_F1_v2_1.wav",
+"named": 29,
+"vel": 2,
+"rr": "1",
+"note": 41
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_F1_v3_1.wav",
+"named": 29,
+"vel": 3,
+"rr": "1",
+"measured": 40.94995771500078,
+"note": 41
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_F2_v1_1.wav",
+"named": 41,
+"vel": 1,
+"rr": "1",
+"note": 53
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_F2_v2_1.wav",
+"named": 41,
+"vel": 2,
+"rr": "1",
+"note": 53
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_F2_v3_1.wav",
+"named": 41,
+"vel": 3,
+"rr": "1",
+"measured": 53.04995771500078,
+"note": 53
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_F3_v1_1.wav",
+"named": 53,
+"vel": 1,
+"rr": "1",
+"note": 65
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_F3_v2_1.wav",
+"named": 53,
+"vel": 2,
+"rr": "1",
+"note": 65
+},
+{
+"path": "Brass/Tenor Trombone/sus/tenortbn_sus_F3_v3_1.wav",
+"named": 53,
+"vel": 3,
+"rr": "1",
+"measured": 65.04995771500077,
+"note": 65
+}
+],
+"tba_sus": [
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_A#0_v1_rr1_Mid.wav",
+"named": 22,
+"vel": 1,
+"rr": "1",
+"measured": 33.94995771500078,
+"note": 34
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_A#0_v2_rr1_Mid.wav",
+"named": 22,
+"vel": 2,
+"rr": "1",
+"note": 34
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_A#0_v3_rr1_Mid.wav",
+"named": 22,
+"vel": 3,
+"rr": "1",
+"measured": 33.94995771500078,
+"note": 34
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_A#1_v1_rr1_Mid.wav",
+"named": 34,
+"vel": 1,
+"rr": "1",
+"note": 46
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_A#1_v2_rr1_Mid.wav",
+"named": 34,
+"vel": 2,
+"rr": "1",
+"measured": 46.04995771500079,
+"note": 46
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_A#1_v3_rr1_Mid.wav",
+"named": 34,
+"vel": 3,
+"rr": "1",
+"note": 46
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_A#2_v1_rr1_Mid.wav",
+"named": 46,
+"vel": 1,
+"rr": "1",
+"measured": 58.000029917731716,
+"note": 58
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_A#2_v2_rr1_Mid.wav",
+"named": 46,
+"vel": 2,
+"rr": "1",
+"note": 58
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_A#2_v3_rr1_Mid.wav",
+"named": 46,
+"vel": 3,
+"rr": "1",
+"measured": 58.04995771500079,
+"note": 58
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_D#1_v1_rr1_Mid.wav",
+"named": 27,
+"vel": 1,
+"rr": "1",
+"note": 39
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_D#1_v2_rr1_Mid.wav",
+"named": 27,
+"vel": 2,
+"rr": "1",
+"measured": 39.04995771500079,
+"note": 39
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_D#1_v3_rr1_Mid.wav",
+"named": 27,
+"vel": 3,
+"rr": "1",
+"note": 39
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_D2_v1_rr1_Mid.wav",
+"named": 38,
+"vel": 1,
+"rr": "1",
+"measured": 50.04995771500078,
+"note": 50
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_D2_v2_rr1_Mid.wav",
+"named": 38,
+"vel": 2,
+"rr": "1",
+"note": 50
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_D2_v3_rr1_Mid.wav",
+"named": 38,
+"vel": 3,
+"rr": "1",
+"measured": 49.94995771500078,
+"note": 50
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_D3_v1_rr1_Mid.wav",
+"named": 50,
+"vel": 1,
+"rr": "1",
+"note": 62
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_F0_v1_rr1_Mid.wav",
+"named": 17,
+"vel": 1,
+"rr": "1",
+"measured": 28.849957715000784,
+"note": 29
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_F1_v1_rr1_Mid.wav",
+"named": 29,
+"vel": 1,
+"rr": "1",
+"note": 41
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_F1_v2_rr1_Mid.wav",
+"named": 29,
+"vel": 2,
+"rr": "1",
+"measured": 41.04995771500078,
+"note": 41
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_F1_v3_rr1_Mid.wav",
+"named": 29,
+"vel": 3,
+"rr": "1",
+"note": 41
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_F2_v1_rr1_Mid.wav",
+"named": 41,
+"vel": 1,
+"rr": "1",
+"measured": 53.04995771500078,
+"note": 53
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_F2_v2_rr1_Mid.wav",
+"named": 41,
+"vel": 2,
+"rr": "1",
+"note": 53
+},
+{
+"path": "Brass/Tuba/sus/Tuba3_sus_F2_v3_rr1_Mid.wav",
+"named": 41,
+"vel": 3,
+"rr": "1",
+"measured": 52.94995771500078,
+"note": 53
+}
+],
+"tpt_sus": [
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_A#3_v1_rr1.wav",
+"named": 58,
+"vel": 1,
+"rr": "1",
+"measured": 70.04995771500077,
+"note": 70
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_A#3_v3_rr1.wav",
+"named": 58,
+"vel": 3,
+"rr": "1",
+"note": 70
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_A2_v1_rr1.wav",
+"named": 45,
+"vel": 1,
+"rr": "1",
+"measured": 56.94995771500078,
+"note": 57
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_A2_v3_rr1.wav",
+"named": 45,
+"vel": 3,
+"rr": "1",
+"note": 57
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_A4_v1_rr1.wav",
+"named": 69,
+"vel": 1,
+"rr": "1",
+"measured": 80.94995771500078,
+"note": 81
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_A4_v3_rr1.wav",
+"named": 69,
+"vel": 3,
+"rr": "1",
+"note": 81
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_C3_v1_rr1.wav",
+"named": 48,
+"vel": 1,
+"rr": "1",
+"measured": 59.94995771500078,
+"note": 60
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_C3_v3_rr1.wav",
+"named": 48,
+"vel": 3,
+"rr": "1",
+"note": 60
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_C5_v1_rr1.wav",
+"named": 72,
+"vel": 1,
+"rr": "1",
+"measured": 84.04995771500079,
+"note": 84
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_C5_v3_rr1.wav",
+"named": 72,
+"vel": 3,
+"rr": "1",
+"note": 84
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_D#3_v1_rr1.wav",
+"named": 51,
+"vel": 1,
+"rr": "1",
+"measured": 63.04995771500078,
+"note": 63
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_D#3_v3_rr1.wav",
+"named": 51,
+"vel": 3,
+"rr": "1",
+"note": 63
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_D4_v1_rr1.wav",
+"named": 62,
+"vel": 1,
+"rr": "1",
+"measured": 74.04995771500079,
+"note": 74
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_D4_v3_rr1.wav",
+"named": 62,
+"vel": 3,
+"rr": "1",
+"note": 74
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_F2_v1_rr1.wav",
+"named": 41,
+"vel": 1,
+"rr": "1",
+"measured": 53.04995771500078,
+"note": 53
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_F2_v3_rr1.wav",
+"named": 41,
+"vel": 3,
+"rr": "1",
+"note": 53
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_F4_v1_rr1.wav",
+"named": 65,
+"vel": 1,
+"rr": "1",
+"measured": 77.04995771500079,
+"note": 77
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_F4_v3_rr1.wav",
+"named": 65,
+"vel": 3,
+"rr": "1",
+"note": 77
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_G3_v1_rr1.wav",
+"named": 55,
+"vel": 1,
+"rr": "1",
+"measured": 67.04995771500079,
+"note": 67
+},
+{
+"path": "Brass/Trumpet/sus/Sum_SHTrumpet_sus_G3_v3_rr1.wav",
+"named": 55,
+"vel": 3,
+"rr": "1",
+"note": 67
+}
+],
+"tpt_mute": [
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_A#2_v1_rr1.wav",
+"named": 46,
+"vel": 1,
+"rr": "1",
+"measured": 57.94995771500078,
+"note": 58
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_A#2_v3_rr1.wav",
+"named": 46,
+"vel": 3,
+"rr": "1",
+"measured": 58.04995771500079,
+"note": 58
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_A#3_v1_rr1.wav",
+"named": 58,
+"vel": 1,
+"rr": "1",
+"measured": 70.04995771500077,
+"note": 70
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_A#3_v3_rr1.wav",
+"named": 58,
+"vel": 3,
+"rr": "1",
+"measured": 69.94995771500078,
+"note": 70
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_A4_v1_rr1.wav",
+"named": 69,
+"vel": 1,
+"rr": "1",
+"measured": 81.04995771500077,
+"note": 81
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_A4_v3_rr1.wav",
+"named": 69,
+"vel": 3,
+"rr": "1",
+"measured": 81.04995771500077,
+"note": 81
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_C3_v1_rr1.wav",
+"named": 48,
+"vel": 1,
+"rr": "1",
+"measured": 60.04995771500078,
+"note": 60
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_C3_v3_rr1.wav",
+"named": 48,
+"vel": 3,
+"rr": "1",
+"measured": 59.94995771500078,
+"note": 60
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_D3_v1_rr1.wav",
+"named": 50,
+"vel": 1,
+"rr": "1",
+"measured": 62.04995771500078,
+"note": 62
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_D3_v3_rr1.wav",
+"named": 50,
+"vel": 3,
+"rr": "1",
+"measured": 61.94995771500078,
+"note": 62
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_D4_v1_rr1.wav",
+"named": 62,
+"vel": 1,
+"rr": "1",
+"measured": 73.94995771500078,
+"note": 74
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_D4_v3_rr1.wav",
+"named": 62,
+"vel": 3,
+"rr": "1",
+"measured": 73.94995771500078,
+"note": 74
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_F4_v1_rr1.wav",
+"named": 65,
+"vel": 1,
+"rr": "1",
+"measured": 77.04995771500079,
+"note": 77
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_F4_v3_rr1.wav",
+"named": 65,
+"vel": 3,
+"rr": "1",
+"measured": 76.94995771500078,
+"note": 77
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_G3_v1_rr1.wav",
+"named": 55,
+"vel": 1,
+"rr": "1",
+"measured": 67.04995771500079,
+"note": 67
+},
+{
+"path": "Brass/Trumpet/straightM-sus/Sum_SHTrumpet_straightM-sus_G3_v3_rr1.wav",
+"named": 55,
+"vel": 3,
+"rr": "1",
+"measured": 66.94995771500078,
+"note": 67
+}
+],
+"fl_sus": [
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_A3_v1_1.wav",
+"named": 57,
+"vel": 1,
+"rr": "1",
+"measured": 69.04995771500079,
+"note": 69
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_A3_v3_1.wav",
+"named": 57,
+"vel": 3,
+"rr": "1",
+"measured": 69.04995771500079,
+"note": 69
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_A4_v1_1.wav",
+"named": 69,
+"vel": 1,
+"rr": "1",
+"measured": 81.04995771500077,
+"note": 81
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_A4_v3_1.wav",
+"named": 69,
+"vel": 3,
+"rr": "1",
+"measured": 81.04995771500077,
+"note": 81
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_A5_v1_1.wav",
+"named": 81,
+"vel": 1,
+"rr": "1",
+"measured": 93.04995771500079,
+"note": 93
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_A5_v3_1.wav",
+"named": 81,
+"vel": 3,
+"rr": "1",
+"measured": 93.04995771500079,
+"note": 93
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_C3_v1_1.wav",
+"named": 48,
+"vel": 1,
+"rr": "1",
+"measured": 60.04995771500078,
+"note": 60
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_C3_v3_1.wav",
+"named": 48,
+"vel": 3,
+"rr": "1",
+"measured": 59.94995771500078,
+"note": 60
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_C4_v1_1.wav",
+"named": 60,
+"vel": 1,
+"rr": "1",
+"measured": 72.04995771500079,
+"note": 72
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_C4_v3_1.wav",
+"named": 60,
+"vel": 3,
+"rr": "1",
+"measured": 72.04995771500079,
+"note": 72
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_C5_v1_1.wav",
+"named": 72,
+"vel": 1,
+"rr": "1",
+"measured": 84.04995771500079,
+"note": 84
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_C5_v2_1.wav",
+"named": 72,
+"vel": 2,
+"rr": "1",
+"measured": 84.04995771500079,
+"note": 84
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_C6_v1_1.wav",
+"named": 84,
+"vel": 1,
+"rr": "1",
+"measured": 96.04995771500079,
+"note": 96
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_E3_v1_1.wav",
+"named": 52,
+"vel": 1,
+"rr": "1",
+"measured": 64.04995771500079,
+"note": 64
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_E3_v3_1.wav",
+"named": 52,
+"vel": 3,
+"rr": "1",
+"measured": 64.04995771500079,
+"note": 64
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_E4_v1_1.wav",
+"named": 64,
+"vel": 1,
+"rr": "1",
+"measured": 76.04995771500077,
+"note": 76
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_E4_v3_1.wav",
+"named": 64,
+"vel": 3,
+"rr": "1",
+"measured": 76.04995771500077,
+"note": 76
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_E5_v1_1.wav",
+"named": 76,
+"vel": 1,
+"rr": "1",
+"measured": 88.04995771500077,
+"note": 88
+},
+{
+"path": "Woodwinds/Flute/susNV/LDFlute_susNV_E5_v2_1.wav",
+"named": 76,
+"vel": 2,
+"rr": "1",
+"measured": 88.04995771500077,
+"note": 88
+}
+],
+"ob_sus": [
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_A#2_v1_Main.wav",
+"named": 46,
+"vel": 1,
+"rr": "1",
+"measured": 58.04995771500079,
+"note": 58
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_A#2_v3_Main.wav",
+"named": 46,
+"vel": 3,
+"rr": "1",
+"measured": 58.04995771500079,
+"note": 58
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_A#3_v1_Main.wav",
+"named": 58,
+"vel": 1,
+"rr": "1",
+"measured": 69.94995771500078,
+"note": 70
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_A#3_v3_Main.wav",
+"named": 58,
+"vel": 3,
+"rr": "1",
+"measured": 70.04995771500077,
+"note": 70
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_A#4_v1_Main.wav",
+"named": 70,
+"vel": 1,
+"rr": "1",
+"measured": 82.04995771500077,
+"note": 82
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_A#4_v3_Main.wav",
+"named": 70,
+"vel": 3,
+"rr": "1",
+"measured": 81.94995771500078,
+"note": 82
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_D3_v1_Main.wav",
+"named": 50,
+"vel": 1,
+"rr": "1",
+"measured": 62.04995771500078,
+"note": 62
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_D3_v3_Main.wav",
+"named": 50,
+"vel": 3,
+"rr": "1",
+"measured": 62.04995771500078,
+"note": 62
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_D4_v1_Main.wav",
+"named": 62,
+"vel": 1,
+"rr": "1",
+"measured": 74.04995771500079,
+"note": 74
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_D4_v3_Main.wav",
+"named": 62,
+"vel": 3,
+"rr": "1",
+"measured": 74.04995771500079,
+"note": 74
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_D5_v1_Main.wav",
+"named": 74,
+"vel": 1,
+"rr": "1",
+"measured": 85.94995771500078,
+"note": 86
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_D5_v3_Main.wav",
+"named": 74,
+"vel": 3,
+"rr": "1",
+"measured": 86.04995771500077,
+"note": 86
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_F3_v1_Main.wav",
+"named": 53,
+"vel": 1,
+"rr": "1",
+"measured": 65.00002991773171,
+"note": 65
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_F3_v3_Main.wav",
+"named": 53,
+"vel": 3,
+"rr": "1",
+"measured": 65.04995771500077,
+"note": 65
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_F4_v1_Main.wav",
+"named": 65,
+"vel": 1,
+"rr": "1",
+"measured": 77.04995771500079,
+"note": 77
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_F4_v3_Main.wav",
+"named": 65,
+"vel": 3,
+"rr": "1",
+"measured": 89.04995771500079,
+"note": 77
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_F5_v1_Main.wav",
+"named": 77,
+"vel": 1,
+"rr": "1",
+"measured": 89.04995771500079,
+"note": 89
+},
+{
+"path": "Woodwinds/Oboe/Sus/Oboe_Sus_F5_v3_Main.wav",
+"named": 77,
+"vel": 3,
+"rr": "1",
+"measured": 89.04995771500079,
+"note": 89
+}
+],
+"cl_sus": [
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_A#2_v1_rr1_sum.wav",
+"named": 46,
+"vel": 1,
+"rr": "1",
+"measured": 58.04995771500079,
+"note": 58
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_A#2_v2_rr1_sum.wav",
+"named": 46,
+"vel": 2,
+"rr": "1",
+"note": 58
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_A#2_v3_rr1_sum.wav",
+"named": 46,
+"vel": 3,
+"rr": "1",
+"note": 58
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_A#3_v1_rr1_sum.wav",
+"named": 58,
+"vel": 1,
+"rr": "1",
+"measured": 70.04995771500077,
+"note": 70
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_A#3_v2_rr1_sum.wav",
+"named": 58,
+"vel": 2,
+"rr": "1",
+"note": 70
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_A#3_v3_rr1_sum.wav",
+"named": 58,
+"vel": 3,
+"rr": "1",
+"note": 70
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_A#4_v1_rr1_sum.wav",
+"named": 70,
+"vel": 1,
+"rr": "1",
+"measured": 82.04995771500077,
+"note": 82
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_A#4_v2_rr1_sum.wav",
+"named": 70,
+"vel": 2,
+"rr": "1",
+"note": 82
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_A#4_v3_rr1_sum.wav",
+"named": 70,
+"vel": 3,
+"rr": "1",
+"note": 82
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_D2_v1_rr1_sum.wav",
+"named": 38,
+"vel": 1,
+"rr": "1",
+"measured": 50.04995771500078,
+"note": 50
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_D2_v2_rr1_sum.wav",
+"named": 38,
+"vel": 2,
+"rr": "1",
+"note": 50
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_D2_v3_rr1_sum.wav",
+"named": 38,
+"vel": 3,
+"rr": "1",
+"note": 50
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_D3_v1_rr1_sum.wav",
+"named": 50,
+"vel": 1,
+"rr": "1",
+"measured": 62.04995771500078,
+"note": 62
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_D3_v2_rr1_sum.wav",
+"named": 50,
+"vel": 2,
+"rr": "1",
+"note": 62
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_D3_v3_rr1_sum.wav",
+"named": 50,
+"vel": 3,
+"rr": "1",
+"note": 62
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_D4_v1_rr1_sum.wav",
+"named": 62,
+"vel": 1,
+"rr": "1",
+"measured": 74.04995771500079,
+"note": 74
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_D4_v2_rr1_sum.wav",
+"named": 62,
+"vel": 2,
+"rr": "1",
+"note": 74
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_D4_v3_rr1_sum.wav",
+"named": 62,
+"vel": 3,
+"rr": "1",
+"note": 74
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_D5_v1_rr1_sum.wav",
+"named": 74,
+"vel": 1,
+"rr": "1",
+"measured": 86.04995771500077,
+"note": 86
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_D5_v2_rr1_sum.wav",
+"named": 74,
+"vel": 2,
+"rr": "1",
+"note": 86
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_D5_v3_rr1_sum.wav",
+"named": 74,
+"vel": 3,
+"rr": "1",
+"note": 86
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_F#5_v1_rr1_sum.wav",
+"named": 78,
+"vel": 1,
+"rr": "1",
+"measured": 89.04995771500079,
+"note": 90
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_F#5_v2_rr1_sum.wav",
+"named": 78,
+"vel": 2,
+"rr": "1",
+"note": 90
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_F#5_v3_rr1_sum.wav",
+"named": 78,
+"vel": 3,
+"rr": "1",
+"note": 90
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_F2_v1_rr1_sum.wav",
+"named": 41,
+"vel": 1,
+"rr": "1",
+"measured": 53.04995771500078,
+"note": 53
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_F2_v2_rr1_sum.wav",
+"named": 41,
+"vel": 2,
+"rr": "1",
+"note": 53
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_F2_v3_rr1_sum.wav",
+"named": 41,
+"vel": 3,
+"rr": "1",
+"note": 53
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_F3_v1_rr1_sum.wav",
+"named": 53,
+"vel": 1,
+"rr": "1",
+"measured": 65.04995771500077,
+"note": 65
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_F3_v2_rr1_sum.wav",
+"named": 53,
+"vel": 2,
+"rr": "1",
+"note": 65
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_F3_v3_rr1_sum.wav",
+"named": 53,
+"vel": 3,
+"rr": "1",
+"note": 65
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_F4_v1_rr1_sum.wav",
+"named": 65,
+"vel": 1,
+"rr": "1",
+"measured": 77.04995771500079,
+"note": 77
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_F4_v2_rr1_sum.wav",
+"named": 65,
+"vel": 2,
+"rr": "1",
+"note": 77
+},
+{
+"path": "Woodwinds/Clarinet/susLong/DCClar_susLong_F4_v3_rr1_sum.wav",
+"named": 65,
+"vel": 3,
+"rr": "1",
+"note": 77
+}
+],
+"bsn_sus": [
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_A#0_v1_1.wav",
+"named": 22,
+"vel": 1,
+"rr": "1",
+"measured": 34.04995771500079,
+"note": 34
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_A#0_v2_1.wav",
+"named": 22,
+"vel": 2,
+"rr": "1",
+"note": 34
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_A#1_v1_1.wav",
+"named": 34,
+"vel": 1,
+"rr": "1",
+"measured": 46.04995771500079,
+"note": 46
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_A#1_v2_1.wav",
+"named": 34,
+"vel": 2,
+"rr": "1",
+"note": 46
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_A1_v1_1.wav",
+"named": 33,
+"vel": 1,
+"rr": "1",
+"measured": 44.94995771500078,
+"note": 45
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_A1_v2_1.wav",
+"named": 33,
+"vel": 2,
+"rr": "1",
+"note": 45
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_A3_v1_1.wav",
+"named": 57,
+"vel": 1,
+"rr": "1",
+"measured": 69.04995771500079,
+"note": 69
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_A3_v2_1.wav",
+"named": 57,
+"vel": 2,
+"rr": "1",
+"note": 69
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_C#1_v1_1.wav",
+"named": 25,
+"vel": 1,
+"rr": "1",
+"measured": 36.94995771500078,
+"note": 37
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_C#1_v2_1.wav",
+"named": 25,
+"vel": 2,
+"rr": "1",
+"note": 37
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_C2_v1_1.wav",
+"named": 36,
+"vel": 1,
+"rr": "1",
+"measured": 48.04995771500079,
+"note": 48
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_C2_v2_1.wav",
+"named": 36,
+"vel": 2,
+"rr": "1",
+"note": 48
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_C3_v1_1.wav",
+"named": 48,
+"vel": 1,
+"rr": "1",
+"measured": 60.04995771500078,
+"note": 60
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_C3_v2_1.wav",
+"named": 48,
+"vel": 2,
+"rr": "1",
+"note": 60
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_C4_v1_1.wav",
+"named": 60,
+"vel": 1,
+"rr": "1",
+"measured": 72.04995771500079,
+"note": 72
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_C4_v2_1.wav",
+"named": 60,
+"vel": 2,
+"rr": "1",
+"note": 72
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_D#3_v1_1.wav",
+"named": 51,
+"vel": 1,
+"rr": "1",
+"measured": 63.04995771500078,
+"note": 63
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_D#3_v2_1.wav",
+"named": 51,
+"vel": 2,
+"rr": "1",
+"note": 63
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_D#4_v2_1.wav",
+"named": 63,
+"vel": 2,
+"rr": "1",
+"measured": 75.04995771500079,
+"note": 75
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_F1_v1_1.wav",
+"named": 29,
+"vel": 1,
+"rr": "1",
+"note": 41
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_F1_v2_1.wav",
+"named": 29,
+"vel": 2,
+"rr": "1",
+"measured": 41.04995771500078,
+"note": 41
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_G#3_v1_1.wav",
+"named": 56,
+"vel": 1,
+"rr": "1",
+"note": 68
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_G#3_v2_1.wav",
+"named": 56,
+"vel": 2,
+"rr": "1",
+"measured": 68.04995771500079,
+"note": 68
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_G2_v1_1.wav",
+"named": 43,
+"vel": 1,
+"rr": "1",
+"note": 55
+},
+{
+"path": "Woodwinds/Bassoon/sus/PSBassoon_G2_v2_1.wav",
+"named": 43,
+"vel": 2,
+"rr": "1",
+"measured": 55.04995771500079,
+"note": 55
+}
+],
+"harp": [
+{
+"path": "Strings/Harp/KSHarp_A2_mf.wav",
+"named": 45,
+"vel": 1,
+"rr": "1",
+"measured": 44.94995771500078,
+"note": 45
+},
+{
+"path": "Strings/Harp/KSHarp_A4_mf.wav",
+"named": 69,
+"vel": 1,
+"rr": "1",
+"note": 69
+},
+{
+"path": "Strings/Harp/KSHarp_A6_mf.wav",
+"named": 93,
+"vel": 1,
+"rr": "1",
+"measured": 92.84995771500078,
+"note": 93
+},
+{
+"path": "Strings/Harp/KSHarp_B1_mf.wav",
+"named": 35,
+"vel": 1,
+"rr": "1",
+"note": 35
+},
+{
+"path": "Strings/Harp/KSHarp_B3_mf.wav",
+"named": 59,
+"vel": 1,
+"rr": "1",
+"measured": 58.849957715000784,
+"note": 59
+},
+{
+"path": "Strings/Harp/KSHarp_B5_mf.wav",
+"named": 83,
+"vel": 1,
+"rr": "1",
+"note": 83
+},
+{
+"path": "Strings/Harp/KSHarp_B6_mf.wav",
+"named": 95,
+"vel": 1,
+"rr": "1",
+"measured": 94.94995771500078,
+"note": 95
+},
+{
+"path": "Strings/Harp/KSHarp_C3_mf.wav",
+"named": 48,
+"vel": 1,
+"rr": "1",
+"note": 48
+},
+{
+"path": "Strings/Harp/KSHarp_C5_mf.wav",
+"named": 72,
+"vel": 1,
+"rr": "1",
+"measured": 71.84995771500078,
+"note": 72
+},
+{
+"path": "Strings/Harp/KSHarp_D2_mf.wav",
+"named": 38,
+"vel": 1,
+"rr": "1",
+"note": 38
+},
+{
+"path": "Strings/Harp/KSHarp_D4_mf.wav",
+"named": 62,
+"vel": 1,
+"rr": "1",
+"measured": 61.849957715000784,
+"note": 62
+},
+{
+"path": "Strings/Harp/KSHarp_D6_mf.wav",
+"named": 86,
+"vel": 1,
+"rr": "1",
+"note": 86
+},
+{
+"path": "Strings/Harp/KSHarp_D7_f.wav",
+"named": 98,
+"vel": 1,
+"rr": "1",
+"measured": 97.94995771500078,
+"note": 98
+},
+{
+"path": "Strings/Harp/KSHarp_E1_f.wav",
+"named": 28,
+"vel": 1,
+"rr": "1",
+"note": 28
+},
+{
+"path": "Strings/Harp/KSHarp_E3_mf.wav",
+"named": 52,
+"vel": 1,
+"rr": "1",
+"measured": 51.94995771500078,
+"note": 52
+},
+{
+"path": "Strings/Harp/KSHarp_E5_mf.wav",
+"named": 76,
+"vel": 1,
+"rr": "1",
+"note": 76
+},
+{
+"path": "Strings/Harp/KSHarp_F2_mf.wav",
+"named": 41,
+"vel": 1,
+"rr": "1",
+"measured": 40.94995771500078,
+"note": 41
+},
+{
+"path": "Strings/Harp/KSHarp_F4_mf.wav",
+"named": 65,
+"vel": 1,
+"rr": "1",
+"note": 65
+},
+{
+"path": "Strings/Harp/KSHarp_F6_mf.wav",
+"named": 89,
+"vel": 1,
+"rr": "1",
+"measured": 88.94995771500078,
+"note": 89
+},
+{
+"path": "Strings/Harp/KSHarp_F7_f.wav",
+"named": 101,
+"vel": 1,
+"rr": "1",
+"note": 101
+},
+{
+"path": "Strings/Harp/KSHarp_G1_mp.wav",
+"named": 31,
+"vel": 1,
+"rr": "1",
+"measured": 30.749957715000782,
+"note": 31
+},
+{
+"path": "Strings/Harp/KSHarp_G3_mf.wav",
+"named": 55,
+"vel": 1,
+"rr": "1",
+"note": 55
+},
+{
+"path": "Strings/Harp/KSHarp_G5_mf.wav",
+"named": 79,
+"vel": 1,
+"rr": "1",
+"measured": 78.94995771500078,
+"note": 79
+}
+],
+"glock": [
+{
+"path": "Percussion/Glock/glock_medium_C5.wav",
+"named": 72,
+"vel": 1,
+"rr": "1",
+"measured": 84.1499577150008,
+"note": 84
+},
+{
+"path": "Percussion/Glock/glock_medium_C6.wav",
+"named": 84,
+"vel": 1,
+"rr": "1",
+"measured": 96.1499577150008,
+"note": 96
+},
+{
+"path": "Percussion/Glock/glock_medium_C7.wav",
+"named": 96,
+"vel": 1,
+"rr": "1",
+"measured": 96.24995771500078,
+"note": 108
+},
+{
+"path": "Percussion/Glock/glock_medium_G4.wav",
+"named": 67,
+"vel": 1,
+"rr": "1",
+"measured": 79.04995771500077,
+"note": 79
+},
+{
+"path": "Percussion/Glock/glock_medium_G5.wav",
+"named": 79,
+"vel": 1,
+"rr": "1",
+"measured": 91.14995771500078,
+"note": 91
+},
+{
+"path": "Percussion/Glock/glock_medium_G6.wav",
+"named": 91,
+"vel": 1,
+"rr": "1",
+"measured": 103.14995771500078,
+"note": 103
+}
+],
+"org_loud": [
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_01.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 24.049957715000787,
+"note": 24
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_04.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 39.04995771500079,
+"note": 39
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_07.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 30.049957715000787,
+"note": 30
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_10.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 33.04995771500079,
+"note": 33
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_13.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 36.04995771500079,
+"note": 36
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_16.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 39.04995771500079,
+"note": 39
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_19.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 42.04995771500079,
+"note": 42
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_22.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 44.94995771500078,
+"note": 45
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_25.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 59.94995771500078,
+"note": 60
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_28.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 50.94995771500078,
+"note": 51
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_31.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 53.94995771500078,
+"note": 54
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_34.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 69.04995771500079,
+"note": 69
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_37.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 59.94995771500078,
+"note": 60
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_40.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 62.94995771500078,
+"note": 63
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_43.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 65.94995771500078,
+"note": 66
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_46.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 68.94995771500079,
+"note": 69
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_49.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 71.94995771500079,
+"note": 72
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_52.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 74.94995771500079,
+"note": 75
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_55.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 77.94995771500078,
+"note": 78
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_58.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 80.94995771500078,
+"note": 81
+},
+{
+"path": "Keys/Organ/Loud/Rode_Man3Open_61.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 95.94995771500079,
+"note": 96
+},
+{
+"path": "Keys/Organ/Loud/Rode_Pedal_01.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 23.949957715000778,
+"note": 24
+},
+{
+"path": "Keys/Organ/Loud/Rode_Pedal_04.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 26.949957715000778,
+"note": 27
+},
+{
+"path": "Keys/Organ/Loud/Rode_Pedal_07.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 29.949957715000778,
+"note": 30
+},
+{
+"path": "Keys/Organ/Loud/Rode_Pedal_10.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 32.94995771500078,
+"note": 33
+},
+{
+"path": "Keys/Organ/Loud/Rode_Pedal_13.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 35.94995771500078,
+"note": 36
+},
+{
+"path": "Keys/Organ/Loud/Rode_Pedal_16.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 39.04995771500079,
+"note": 39
+},
+{
+"path": "Keys/Organ/Loud/Rode_Pedal_19.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 41.94995771500078,
+"note": 42
+},
+{
+"path": "Keys/Organ/Loud/Rode_Pedal_22.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 32.94995771500078,
+"note": 33
+},
+{
+"path": "Keys/Organ/Loud/Rode_Pedal_25.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 47.94995771500078,
+"note": 48
+},
+{
+"path": "Keys/Organ/Loud/Rode_Pedal_28.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 50.94995771500078,
+"note": 51
+},
+{
+"path": "Keys/Organ/Loud/Rode_Pedal_31.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 41.94995771500078,
+"note": 42
+}
+],
+"org_quiet": [
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_122_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 35.94995771500078,
+"note": 36
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_125_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 58.04995771500079,
+"note": 58
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_128_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 42.14995771500078,
+"note": 42
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_131_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 45.04995771500078,
+"note": 45
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_134_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 48.04995771500079,
+"note": 48
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_137_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 51.04995771500078,
+"note": 51
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_140_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 54.04995771500078,
+"note": 54
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_143_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 57.04995771500078,
+"note": 57
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_146_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 60.04995771500078,
+"note": 60
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_149_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 63.04995771500078,
+"note": 63
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_152_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 66.04995771500079,
+"note": 66
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_155_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 68.94995771500079,
+"note": 69
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_158_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 71.94995771500079,
+"note": 72
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_161_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 74.94995771500079,
+"note": 75
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_164_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 78.04995771500077,
+"note": 78
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_167_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 81.04995771500077,
+"note": 81
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_170_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 83.94995771500078,
+"note": 84
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_173_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 86.94995771500079,
+"note": 87
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_176_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 89.94995771500078,
+"note": 90
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_179_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 92.94995771500078,
+"note": 93
+},
+{
+"path": "Keys/Organ/Quiet/NT5_Man3Quiet_182_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 96.04995771500079,
+"note": 96
+},
+{
+"path": "Keys/Organ/Quiet/NT5_PedalQuiet_064_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 36.04995771500079,
+"note": 36
+},
+{
+"path": "Keys/Organ/Quiet/NT5_PedalQuiet_067_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 39.04995771500079,
+"note": 39
+},
+{
+"path": "Keys/Organ/Quiet/NT5_PedalQuiet_070_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 41.94995771500078,
+"note": 42
+},
+{
+"path": "Keys/Organ/Quiet/NT5_PedalQuiet_073_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 44.94995771500078,
+"note": 45
+},
+{
+"path": "Keys/Organ/Quiet/NT5_PedalQuiet_076_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 47.94995771500078,
+"note": 48
+},
+{
+"path": "Keys/Organ/Quiet/NT5_PedalQuiet_079_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 50.94995771500078,
+"note": 51
+},
+{
+"path": "Keys/Organ/Quiet/NT5_PedalQuiet_082_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 54.04995771500078,
+"note": 54
+},
+{
+"path": "Keys/Organ/Quiet/NT5_PedalQuiet_085_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 56.94995771500078,
+"note": 57
+},
+{
+"path": "Keys/Organ/Quiet/NT5_PedalQuiet_088_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 59.94995771500078,
+"note": 60
+},
+{
+"path": "Keys/Organ/Quiet/NT5_PedalQuiet_091_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 63.04995771500078,
+"note": 63
+},
+{
+"path": "Keys/Organ/Quiet/NT5_PedalQuiet_094_rr1.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"measured": 66.04995771500079,
+"note": 66
+}
+],
+"timp": [
+{
+"path": "Percussion/Timpani/Timpani1_Hit_v1_rr1_Sum.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"note": 42
+},
+{
+"path": "Percussion/Timpani/Timpani1_Hit_v1_rr2_Sum.wav",
+"named": null,
+"vel": 1,
+"rr": "2",
+"note": 42
+},
+{
+"path": "Percussion/Timpani/Timpani1_Hit_v3_rr1_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "1",
+"note": 42
+},
+{
+"path": "Percussion/Timpani/Timpani1_Hit_v3_rr2_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "2",
+"note": 42
+},
+{
+"path": "Percussion/Timpani/Timpani2_Hit_v1_rr1_Sum.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"note": 46
+},
+{
+"path": "Percussion/Timpani/Timpani2_Hit_v1_rr2_Sum.wav",
+"named": null,
+"vel": 1,
+"rr": "2",
+"note": 46
+},
+{
+"path": "Percussion/Timpani/Timpani2_Hit_v3_rr1_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "1",
+"note": 46
+},
+{
+"path": "Percussion/Timpani/Timpani2_Hit_v3_rr2_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "2",
+"note": 46
+},
+{
+"path": "Percussion/Timpani/Timpani2_Hit_v4_rr1_Sum.wav",
+"named": null,
+"vel": 4,
+"rr": "1",
+"note": 46
+},
+{
+"path": "Percussion/Timpani/Timpani2_Hit_v4_rr2_Sum.wav",
+"named": null,
+"vel": 4,
+"rr": "2",
+"note": 46
+},
+{
+"path": "Percussion/Timpani/Timpani3_Hit_v1_rr1_Sum.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"note": 49
+},
+{
+"path": "Percussion/Timpani/Timpani3_Hit_v1_rr2_Sum.wav",
+"named": null,
+"vel": 1,
+"rr": "2",
+"note": 49
+},
+{
+"path": "Percussion/Timpani/Timpani3_Hit_v3_rr1_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "1",
+"note": 49
+},
+{
+"path": "Percussion/Timpani/Timpani3_Hit_v3_rr2_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "2",
+"note": 49
+},
+{
+"path": "Percussion/Timpani/Timpani3_Hit_v4_rr1_Sum.wav",
+"named": null,
+"vel": 4,
+"rr": "1",
+"note": 49
+},
+{
+"path": "Percussion/Timpani/Timpani3_Hit_v4_rr2_Sum.wav",
+"named": null,
+"vel": 4,
+"rr": "2",
+"note": 49
+},
+{
+"path": "Percussion/Timpani/Timpani4_Hit_v1_rr1_Sum.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"note": 52
+},
+{
+"path": "Percussion/Timpani/Timpani4_Hit_v1_rr2_Sum.wav",
+"named": null,
+"vel": 1,
+"rr": "2",
+"note": 52
+},
+{
+"path": "Percussion/Timpani/Timpani4_Hit_v3_rr1_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "1",
+"note": 52
+},
+{
+"path": "Percussion/Timpani/Timpani4_Hit_v3_rr2_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "2",
+"note": 52
+},
+{
+"path": "Percussion/Timpani/Timpani4_Hit_v4_rr1_Sum.wav",
+"named": null,
+"vel": 4,
+"rr": "1",
+"note": 52
+},
+{
+"path": "Percussion/Timpani/Timpani4_Hit_v4_rr2_Sum.wav",
+"named": null,
+"vel": 4,
+"rr": "2",
+"note": 52
+},
+{
+"path": "Percussion/Timpani/Timpani5_Hit_v1_rr1_Sum.wav",
+"named": null,
+"vel": 1,
+"rr": "1",
+"note": 54
+},
+{
+"path": "Percussion/Timpani/Timpani5_Hit_v1_rr2_Sum.wav",
+"named": null,
+"vel": 1,
+"rr": "2",
+"note": 54
+},
+{
+"path": "Percussion/Timpani/Timpani5_Hit_v3_rr1_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "1",
+"note": 54
+},
+{
+"path": "Percussion/Timpani/Timpani5_Hit_v3_rr2_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "2",
+"note": 54
+},
+{
+"path": "Percussion/Timpani/Timpani5_Hit_v4_rr1_Sum.wav",
+"named": null,
+"vel": 4,
+"rr": "1",
+"note": 54
+},
+{
+"path": "Percussion/Timpani/Timpani5_Hit_v4_rr2_Sum.wav",
+"named": null,
+"vel": 4,
+"rr": "2",
+"note": 54
+}
+],
+"timp_roll": [
+{
+"path": "Percussion/Timpani/Rolls/Timpani1_Roll_v3_rr1_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "1",
+"note": 42
+},
+{
+"path": "Percussion/Timpani/Rolls/Timpani1_Roll_v5_rr1_Sum.wav",
+"named": null,
+"vel": 5,
+"rr": "1",
+"note": 42
+},
+{
+"path": "Percussion/Timpani/Rolls/Timpani2_Roll_v3_rr1_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "1",
+"note": 46
+},
+{
+"path": "Percussion/Timpani/Rolls/Timpani2_Roll_v5_rr1_Sum.wav",
+"named": null,
+"vel": 5,
+"rr": "1",
+"note": 46
+},
+{
+"path": "Percussion/Timpani/Rolls/Timpani3_Roll_v3_rr1_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "1",
+"note": 49
+},
+{
+"path": "Percussion/Timpani/Rolls/Timpani3_Roll_v5_rr1_Sum.wav",
+"named": null,
+"vel": 5,
+"rr": "1",
+"note": 49
+},
+{
+"path": "Percussion/Timpani/Rolls/Timpani4_Roll_v3_rr1_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "1",
+"note": 52
+},
+{
+"path": "Percussion/Timpani/Rolls/Timpani4_Roll_v5_rr1_Sum.wav",
+"named": null,
+"vel": 5,
+"rr": "1",
+"note": 52
+},
+{
+"path": "Percussion/Timpani/Rolls/Timpani5_Roll_v3_rr1_Sum.wav",
+"named": null,
+"vel": 3,
+"rr": "1",
+"note": 54
+},
+{
+"path": "Percussion/Timpani/Rolls/Timpani5_Roll_v4_rr1_Sum.wav",
+"named": null,
+"vel": 4,
+"rr": "1",
+"note": 54
+}
+]
+}

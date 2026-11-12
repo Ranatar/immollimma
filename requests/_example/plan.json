@@ -1,0 +1,143 @@
+{
+ "title": "Колыбельная, которая портится",
+ "styles": [
+  "lullaby_musicbox",
+  "archival_grotesque"
+ ],
+ "seconds": 75,
+ "tempo_bpm": 70,
+ "meter": "3/4",
+ "key": null,
+ "language": "tonal",
+ "library": "plain",
+ "library_notes": [
+  "celesta есть только в Sonatina — для них Sonatina (не для рекламы)."
+ ],
+ "defaults": [
+  "sync.video_file",
+  "style.references",
+  "language",
+  "key",
+  "tempo_bpm",
+  "meter",
+  "ensemble.noises",
+  "ensemble.processing",
+  "library",
+  "commercial_ad",
+  "dramaturgy.arc",
+  "dramaturgy.climax_s",
+  "themes",
+  "iteration.sketch_first",
+  "iteration.sketch_seconds",
+  "iteration.ask_before_full",
+  "notes"
+ ],
+ "sections": [
+  {
+   "t0": 0,
+   "t1": 24,
+   "label": "детская",
+   "mood": "тепло",
+   "intensity": 0.3,
+   "leader": "fl_sus",
+   "texture": "шкатулка (колокольчики/челеста)",
+   "register": "mid",
+   "pulse": "slow",
+   "dynamic": "pp"
+  },
+  {
+   "t0": 24,
+   "t1": 44,
+   "label": "сумерки",
+   "mood": "тревога",
+   "intensity": 0.5,
+   "leader": "glock",
+   "texture": "напев арфы",
+   "register": "mid",
+   "pulse": "slow",
+   "dynamic": "p"
+  },
+  {
+   "t0": 44,
+   "t1": 54.5,
+   "label": "пустой дом",
+   "mood": "жуть",
+   "intensity": 0.7,
+   "leader": "org_quiet",
+   "texture": "пэд с «гнилью» (расстройка растёт со временем)",
+   "register": "wide",
+   "pulse": "irregular",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 54.5,
+   "t1": 75,
+   "label": "шкатулка",
+   "mood": "заело",
+   "intensity": 0.4,
+   "leader": "cl_sus",
+   "texture": "напев арфы",
+   "register": "mid",
+   "pulse": "slow",
+   "dynamic": "pp"
+  }
+ ],
+ "hits": [
+  {
+   "t": 38.5,
+   "label": "скрип",
+   "kind": "accent",
+   "intensity": 0.6,
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 52,
+   "end": 54.5,
+   "label": "дверь",
+   "kind": "silence",
+   "mood": "",
+   "intensity": 0.5,
+   "characters": []
+  }
+ ],
+ "silences": [
+  {
+   "t": 52,
+   "dur": 2.5,
+   "note": "дверь закрывается"
+  }
+ ],
+ "themes": [],
+ "characters": [
+  {
+   "name": "мать",
+   "description": "напев флейты",
+   "evolution": "чистый → расстроенный → обрывается"
+  }
+ ],
+ "avoid": [
+  "литавры",
+  "медь forte",
+  "шумы (в тёплом варианте)",
+  "громких ударов, меди"
+ ],
+ "devices": [
+  "music_box",
+  "melody",
+  "arpeggio",
+  "pad (тихо)"
+ ],
+ "ending": "fade",
+ "deliver": [
+  "mp3",
+  "midi",
+  "pdf",
+  "report"
+ ],
+ "sketch": {
+  "sketch_first": true,
+  "sketch_seconds": 60,
+  "ask_before_full": false
+ }
+}

@@ -1,0 +1,61 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "bsn_sus@plain": 31,
+  "cb_pizz@plain": 16,
+  "cb_sus@plain": 31,
+  "hn_sus@plain": 8,
+  "hpsd@sso": 194,
+  "ob_sus@plain": 24,
+  "org_quiet@plain": 8,
+  "vc_sus@plain": 47,
+  "vla_sus@plain": 94
+ },
+ "substitutions": {},
+ "missing": {},
+ "sfizz_notes": 37,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  48.27272727272727
+ ],
+ "seconds": 48.27272727272727,
+ "mp3": "/home/claude/immollimma/examples/chorale_prelude/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/examples/chorale_prelude/out/score.mid",
+  "lost": {},
+  "musicxml": "/home/claude/immollimma/examples/chorale_prelude/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/examples/chorale_prelude/out/score.pdf",
+  "grid": [
+   4
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   7.5,
+   11.0,
+   13.0,
+   14.0,
+   14.8,
+   16.5,
+   23.8,
+   24.8,
+   29.2,
+   40.2
+  ],
+  "png": "/home/claude/immollimma/examples/chorale_prelude/out/report.png"
+ },
+ "seconds_taken": 13.3
+}

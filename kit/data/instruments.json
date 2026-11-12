@@ -1,0 +1,958 @@
+[
+{
+"id": "vln_sus",
+"part": "Violins",
+"range": [
+55,
+103
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "vln_trem",
+"part": "Violins",
+"range": [
+55,
+103
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "vln_pizz",
+"part": "Violins",
+"range": [
+55,
+96
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "vln_spic",
+"part": "Violins",
+"range": [
+55,
+96
+],
+"libs": [
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "vln_leg",
+"part": "Violins",
+"range": [
+55,
+103
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "vln_harm",
+"part": "Violins",
+"range": [
+67,
+108
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "vln_colleg",
+"part": "Violins",
+"range": [
+55,
+96
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "vla_sus",
+"part": "Violas",
+"range": [
+48,
+91
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "vla_trem",
+"part": "Violas",
+"range": [
+48,
+91
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "vla_pizz",
+"part": "Violas",
+"range": [
+48,
+84
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "vla_spic",
+"part": "Violas",
+"range": [
+48,
+84
+],
+"libs": [
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "vla_leg",
+"part": "Violas",
+"range": [
+48,
+91
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "vla_harm",
+"part": "Violas",
+"range": [
+60,
+96
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "vc_sus",
+"part": "Cellos",
+"range": [
+36,
+84
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "vc_trem",
+"part": "Cellos",
+"range": [
+36,
+84
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "vc_pizz",
+"part": "Cellos",
+"range": [
+36,
+76
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "vc_spic",
+"part": "Cellos",
+"range": [
+36,
+76
+],
+"libs": [
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "vc_leg",
+"part": "Cellos",
+"range": [
+36,
+84
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "vc_harm",
+"part": "Cellos",
+"range": [
+48,
+91
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "vc_colleg",
+"part": "Cellos",
+"range": [
+36,
+76
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "cb_sus",
+"part": "Basses",
+"range": [
+28,
+67
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "cb_trem",
+"part": "Basses",
+"range": [
+28,
+67
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "cb_pizz",
+"part": "Basses",
+"range": [
+28,
+60
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "cb_leg",
+"part": "Basses",
+"range": [
+28,
+67
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "vln_solo",
+"part": "Violin solo",
+"range": [
+55,
+103
+],
+"libs": [
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "hn_sus",
+"part": "Horn",
+"range": [
+34,
+77
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "hn_mute",
+"part": "Horn",
+"range": [
+34,
+77
+],
+"libs": [
+"plain",
+"vsco"
+],
+"sso_only": false
+},
+{
+"id": "hn_stac",
+"part": "Horn",
+"range": [
+34,
+77
+],
+"libs": [
+"vsco"
+],
+"sso_only": false
+},
+{
+"id": "hn_leg",
+"part": "Horn",
+"range": [
+34,
+77
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "hns_sus",
+"part": "Horns",
+"range": [
+34,
+77
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "tpt_sus",
+"part": "Trumpet",
+"range": [
+54,
+84
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "tpt_mute",
+"part": "Trumpet",
+"range": [
+54,
+84
+],
+"libs": [
+"plain",
+"vsco"
+],
+"sso_only": false
+},
+{
+"id": "tpt_harmon",
+"part": "Trumpet",
+"range": [
+54,
+84
+],
+"libs": [
+"vsco"
+],
+"sso_only": false
+},
+{
+"id": "tpt_stac",
+"part": "Trumpet",
+"range": [
+54,
+84
+],
+"libs": [
+"vsco"
+],
+"sso_only": false
+},
+{
+"id": "tpt_leg",
+"part": "Trumpet",
+"range": [
+54,
+84
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "tbn_sus",
+"part": "Trombone",
+"range": [
+40,
+72
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "tbn_stac",
+"part": "Trombone",
+"range": [
+40,
+72
+],
+"libs": [
+"vsco"
+],
+"sso_only": false
+},
+{
+"id": "tbn_leg",
+"part": "Trombone",
+"range": [
+40,
+72
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "btbn_sus",
+"part": "Bass trombone",
+"range": [
+34,
+67
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "tba_sus",
+"part": "Tuba",
+"range": [
+28,
+58
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "tba_stac",
+"part": "Tuba",
+"range": [
+28,
+58
+],
+"libs": [
+"vsco"
+],
+"sso_only": false
+},
+{
+"id": "picc_sus",
+"part": "Piccolo",
+"range": [
+74,
+108
+],
+"libs": [
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "fl_sus",
+"part": "Flute",
+"range": [
+60,
+96
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "fl_vib",
+"part": "Flute",
+"range": [
+60,
+96
+],
+"libs": [
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "fl_stac",
+"part": "Flute",
+"range": [
+60,
+96
+],
+"libs": [
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "fl_leg",
+"part": "Flute",
+"range": [
+60,
+96
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "afl_sus",
+"part": "Alto flute",
+"range": [
+55,
+86
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "ob_sus",
+"part": "Oboe",
+"range": [
+58,
+91
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "ob_stac",
+"part": "Oboe",
+"range": [
+58,
+91
+],
+"libs": [
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "ob_leg",
+"part": "Oboe",
+"range": [
+58,
+91
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "eh_sus",
+"part": "English horn",
+"range": [
+52,
+81
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "cl_sus",
+"part": "Clarinet",
+"range": [
+50,
+94
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "cl_stac",
+"part": "Clarinet",
+"range": [
+50,
+94
+],
+"libs": [
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "cl_leg",
+"part": "Clarinet",
+"range": [
+50,
+94
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "bcl_sus",
+"part": "Bass clarinet",
+"range": [
+34,
+77
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "bsn_sus",
+"part": "Bassoon",
+"range": [
+34,
+75
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "bsn_stac",
+"part": "Bassoon",
+"range": [
+34,
+75
+],
+"libs": [
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "cbsn_sus",
+"part": "Contrabassoon",
+"range": [
+22,
+53
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "harp",
+"part": "Harp",
+"range": [
+24,
+103
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "glock",
+"part": "Glockenspiel",
+"range": [
+79,
+108
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "xylo",
+"part": "Xylophone",
+"range": [
+65,
+108
+],
+"libs": [
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "marimba",
+"part": "Marimba",
+"range": [
+45,
+96
+],
+"libs": [
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "tubular",
+"part": "Tubular bells",
+"range": [
+60,
+77
+],
+"libs": [
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "celesta",
+"part": "Celesta",
+"range": [
+60,
+108
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "vibes",
+"part": "Vibraphone",
+"range": [
+53,
+89
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "crotales",
+"part": "Crotales",
+"range": [
+84,
+108
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "piano",
+"part": "Piano",
+"range": [
+21,
+108
+],
+"libs": [
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "hpsd",
+"part": "Harpsichord",
+"range": [
+29,
+89
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "org_loud",
+"part": "Organ",
+"range": [
+24,
+96
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "org_quiet",
+"part": "Organ",
+"range": [
+24,
+96
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "org_reed",
+"part": "Organ",
+"range": [
+36,
+96
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "choir",
+"part": "Choir",
+"range": [
+40,
+81
+],
+"libs": [
+"sso"
+],
+"sso_only": true
+},
+{
+"id": "timp",
+"part": "Timpani",
+"range": [
+38,
+57
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+},
+{
+"id": "timp_roll",
+"part": "Timpani",
+"range": [
+38,
+57
+],
+"libs": [
+"plain",
+"vsco",
+"sso"
+],
+"sso_only": false
+}
+]

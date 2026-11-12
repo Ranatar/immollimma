@@ -1,0 +1,88 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain"
+ ],
+ "licenses": [
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "bsn_sus@plain": 7,
+  "cb_pizz@plain": 20,
+  "cb_sus@plain": 84,
+  "cb_trem@plain": 11,
+  "cl_sus@plain": 33,
+  "fl_sus@plain": 62,
+  "glock@plain": 148,
+  "grains@plain": 17,
+  "harp@plain": 106,
+  "hn_mute@plain": 8,
+  "hn_sus@plain": 162,
+  "org_loud@plain": 7,
+  "org_quiet@plain": 25,
+  "sample@plain": 596,
+  "tba_sus@plain": 85,
+  "tbn_sus@plain": 58,
+  "timp@plain": 24,
+  "timp_roll@plain": 4,
+  "tpt_mute@plain": 7,
+  "tpt_sus@plain": 147,
+  "vc_pizz@plain": 160,
+  "vc_sus@plain": 75,
+  "vc_trem@plain": 10,
+  "vla_pizz@plain": 138,
+  "vla_sus@plain": 52,
+  "vla_trem@plain": 10,
+  "vln_pizz@plain": 14,
+  "vln_sus@plain": 52,
+  "vln_trem@plain": 11
+ },
+ "substitutions": {},
+ "missing": {},
+ "sfizz_notes": 0,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  446.867
+ ],
+ "seconds": 446.867,
+ "mp3": "/home/claude/immollimma/examples/rsfgr/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/examples/rsfgr/out/score.mid",
+  "lost": {
+   "notes with a glissando inside": 323,
+   "notes with detune (out-of-tune doubles)": 295,
+   "raw samples (noises, unpitched percussion)": 596,
+   "grain clouds": 17,
+   "ring-modulated notes": 9,
+   "reversed notes": 2
+  },
+  "musicxml": "/home/claude/immollimma/examples/rsfgr/out/score.musicxml",
+  "grid": [
+   4,
+   3
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   9.0,
+   79.8,
+   220.2,
+   224.5,
+   232.8,
+   235.8,
+   293.8,
+   300.5,
+   330.8,
+   356.5,
+   359.5,
+   399.0
+  ],
+  "png": "/home/claude/immollimma/examples/rsfgr/out/report.png"
+ },
+ "seconds_taken": 86.8
+}

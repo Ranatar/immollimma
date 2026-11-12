@@ -1,0 +1,63 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "afl_sus@sso": 20,
+  "cb_sus@plain": 1,
+  "celesta@sso": 32,
+  "harp@plain": 30,
+  "vc_sus@plain": 10,
+  "vibes@sso": 4,
+  "vla_sus@plain": 20,
+  "vln_harm@sso": 6,
+  "vln_sus@plain": 20
+ },
+ "substitutions": {},
+ "missing": {},
+ "sfizz_notes": 42,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  49.666666666666664
+ ],
+ "seconds": 49.666666666666664,
+ "mp3": "/home/claude/immollimma/examples/nocturne/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/examples/nocturne/out/score.mid",
+  "lost": {},
+  "musicxml": "/home/claude/immollimma/examples/nocturne/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/examples/nocturne/out/score.pdf",
+  "grid": [
+   4
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   4.8,
+   7.0,
+   11.5,
+   16.0,
+   18.0,
+   18.8,
+   20.2,
+   23.8,
+   29.2,
+   33.5,
+   38.0,
+   42.5
+  ],
+  "png": "/home/claude/immollimma/examples/nocturne/out/report.png"
+ },
+ "seconds_taken": 12.6
+}

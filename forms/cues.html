@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>immollimma — метки</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  main { grid-template-columns: minmax(0, 1fr) 380px; }
+  video { width: 100%; max-height: 46vh; background: #000; border-radius: 8px; }
+  #tl { width: 100%; height: 74px; display: block; cursor: crosshair; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: var(--muted); font-weight: normal; border-bottom: 1px solid var(--line); padding: 4px; }
+  td { border-bottom: 1px solid var(--line); padding: 3px 4px; vertical-align: middle; }
+  td input, td select { padding: 3px 5px; font-size: 13px; }
+  td input[type=number] { width: 78px; }
+  td select { min-width: 112px; }
+  tr.sel { background: var(--accent-soft); }
+  .keys { font-size: 13px; color: var(--muted); line-height: 1.9; }
+  .kind-section { color: #3f6fb0 } .kind-hit { color: #b03f3f } .kind-accent { color: #b07a3f } .kind-swell { color: #7a3fb0 }
+  .kind-silence { color: #666 } .kind-document { color: #3fa06a } .kind-transition { color: #a0963f }
+</style>
+</head>
+<body>
+<header>
+  <nav><a href="index.html">immollimma</a><a href="brief.html">бриф</a><a href="cues.html"><b>метки</b></a></nav>
+  <h1>Метки сценария</h1>
+  <p>Открой своё видео (оно не покидает компьютер) и расставляй метки клавишами по ходу просмотра — или без видео, задав длительность.
+     Результат — <code>cues.json</code> рядом с <code>brief.json</code>.</p>
+</header>
+<main>
+<div>
+  <section>
+    <div class="row">
+      <div><label>Видео (локальный файл)</label><input type="file" id="vfile" accept="video/*"></div>
+      <div><label>Длительность, с (без видео)</label><input type="number" id="dur" min="1" step="0.1" placeholder="120"></div>
+      <div><label>Кадров в секунду (привязка к кадру)</label><input type="number" id="fps" min="1" step="0.001" placeholder="30"></div>
+    </div>
+    <video id="v" controls preload="metadata"></video>
+    <canvas id="tl"></canvas>
+    <div class="hint">Щелчок по шкале — перейти; перетаскивание метки — сдвинуть; <span id="pos">0.00 с</span></div>
+  </section>
+  <section>
+    <h2>Метки</h2>
+    <table><thead><tr><th>время, с</th><th>конец</th><th>вид</th><th>метка</th><th>настроение</th><th>сила</th><th>персонажи</th><th>заметка</th><th></th></tr></thead>
+      <tbody id="rows"></tbody></table>
+  </section>
+</div>
+<aside>
+  <section>
+    <h2>Клавиши</h2>
+    <div class="keys">
+      <kbd>M</kbd> раздел (новая сцена, смена настроения)<br>
+      <kbd>H</kbd> удар &nbsp; <kbd>A</kbd> лёгкий акцент &nbsp; <kbd>W</kbd> нарастание к этой точке<br>
+      <kbd>S</kbd> тишина: начало, второе нажатие — конец<br>
+      <kbd>D</kbd> появление текста/документа &nbsp; <kbd>T</kbd> переход<br>
+      <kbd>Пробел</kbd> пауза &nbsp; <kbd>←</kbd>/<kbd>→</kbd> ±1 с &nbsp; <kbd>,</kbd>/<kbd>.</kbd> ±1 кадр<br>
+      <kbd>Del</kbd> удалить выбранную &nbsp; <kbd>Enter</kbd> перейти к выбранной
+    </div>
+  </section>
+  <section>
+    <h2>Смены сцен</h2>
+    <div class="row"><div><label>Порог (0.1 — чутко, 0.5 — грубо)</label><input type="number" id="thr" value="0.3" min="0.05" max="0.9" step="0.05"></div>
+      <div><label>Шаг, с</label><input type="number" id="step" value="0.25" min="0.05" step="0.05"></div></div>
+    <button class="ghost" onclick="detect()">Найти в видео</button>
+    <div class="hint">То же из командной строки: <code>python3 -m kit scenes видео.mp4</code></div>
+  </section>
+  <section>
+    <h2>cues.json</h2>
+    <button onclick="download()">Скачать</button>
+    <button class="ghost" onclick="copy()">Копировать</button>
+    <button class="ghost" onclick="$('load').click()">Загрузить</button>
+    <input type="file" id="load" accept=".json" hidden>
+    <button class="ghost small" onclick="if(confirm('Удалить все метки?')){cues=[];redraw();}">Очистить</button>
+    <div class="status" id="status"></div>
+    <pre id="out"></pre>
+  </section>
+</aside>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const KINDS = {section: "раздел", hit: "удар", accent: "акцент", swell: "нарастание", silence: "тишина", document: "документ", transition: "переход"};
+const COL = {section: "#3f6fb0", hit: "#b03f3f", accent: "#b07a3f", swell: "#7a3fb0", silence: "#888", document: "#3fa06a", transition: "#a0963f"};
+const KEYS = {m: "section", h: "hit", a: "accent", w: "swell", d: "document", t: "transition"};
+let cues = [], sel = -1, videoName = null, openSilence = null, drag = -1;
+const v = $("v"), tl = $("tl"), ctx = tl.getContext("2d");
+
+function duration() { return v.duration && isFinite(v.duration) ? v.duration : (+$("dur").value || 120); }
+function fps() { return +$("fps").value || null; }
+function snap(t) { const f = fps(); return f ? Math.round(t * f) / f : Math.round(t * 1000) / 1000; }
+function now() { return v.src ? v.currentTime : (window._t || 0); }
+function seek(t) { t = Math.max(0, Math.min(duration(), t)); if (v.src) v.currentTime = t; else window._t = t; drawTL(); }
+
+function add(kind, t = now()) {
+  t = snap(t);
+  const c = {t, label: kind === "section" ? `раздел ${cues.filter(x => x.kind === "section").length + 1}` : "", kind,
+             mood: "", intensity: kind === "hit" ? 0.9 : 0.5, characters: [], note: ""};
+  cues.push(c); cues.sort((a, b) => a.t - b.t); sel = cues.indexOf(c); redraw(); return c;
+}
+
+function redraw() { drawRows(); drawTL(); out(); }
+
+function drawRows() {
+  const tb = $("rows"); tb.innerHTML = "";
+  cues.forEach((c, i) => {
+    const tr = document.createElement("tr"); if (i === sel) tr.className = "sel";
+    tr.onclick = ev => { if (ev.target.tagName !== "INPUT" && ev.target.tagName !== "SELECT") { sel = i; seek(c.t); drawRows(); } };
+    const inp = (k, type = "text", w) => { const el = document.createElement("input"); el.type = type; if (type === "number") el.step = "0.01";
+      el.value = Array.isArray(c[k]) ? c[k].join(", ") : (c[k] ?? ""); if (w) el.style.width = w;
+      el.onchange = () => { c[k] = type === "number" ? (el.value === "" ? null : +el.value) : k === "characters" ? el.value.split(",").map(s => s.trim()).filter(Boolean) : el.value;
+        if (k === "t") { cues.sort((a, b) => a.t - b.t); sel = cues.indexOf(c); } redraw(); };
+      const td = document.createElement("td"); td.appendChild(el); tr.appendChild(td); };
+    inp("t", "number"); inp("end", "number");
+    const s = document.createElement("select"); Object.entries(KINDS).forEach(([k, n]) => { const o = new Option(n, k); s.add(o); });
+    s.value = c.kind; s.className = "kind-" + c.kind; s.onchange = () => { c.kind = s.value; redraw(); };
+    const td = document.createElement("td"); td.appendChild(s); tr.appendChild(td);
+    inp("label"); inp("mood");
+    const r = document.createElement("input"); r.type = "range"; r.min = 0; r.max = 1; r.step = 0.1; r.value = c.intensity; r.style.width = "70px";
+    r.oninput = () => { c.intensity = +r.value; out(); }; const tdr = document.createElement("td"); tdr.appendChild(r); tr.appendChild(tdr);
+    inp("characters"); inp("note");
+    const x = document.createElement("button"); x.className = "ghost small"; x.textContent = "×"; x.onclick = () => { cues.splice(i, 1); sel = -1; redraw(); };
+    const tdx = document.createElement("td"); tdx.appendChild(x); tr.appendChild(tdx);
+    tb.appendChild(tr);
+  });
+}
+
+function drawTL() {
+  const w = tl.width = tl.clientWidth * devicePixelRatio, h = tl.height = 74 * devicePixelRatio, D = duration();
+  const X = t => t / D * w;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue("--muted"); ctx.font = `${10 * devicePixelRatio}px monospace`;
+  const step = D > 600 ? 60 : D > 120 ? 10 : 5;
+  for (let t = 0; t <= D; t += step) { ctx.fillRect(X(t), h - 12 * devicePixelRatio, 1, 12 * devicePixelRatio); ctx.fillText(t.toFixed(0), X(t) + 2, h - 2); }
+  cues.forEach((c, i) => {
+    ctx.fillStyle = COL[c.kind] || "#888";
+    if (c.end) { ctx.globalAlpha = 0.25; ctx.fillRect(X(c.t), 0, Math.max(2, X(c.end) - X(c.t)), h - 14 * devicePixelRatio); ctx.globalAlpha = 1; }
+    ctx.fillRect(X(c.t) - (i === sel ? 2 : 1), 0, i === sel ? 4 : 2, h - 14 * devicePixelRatio);
+    if (c.kind === "section" && c.label) { ctx.fillText(c.label.slice(0, 14), X(c.t) + 3, 12 * devicePixelRatio); }
+  });
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue("--ink"); ctx.fillRect(X(now()), 0, 2, h);
+  $("pos").textContent = now().toFixed(2) + " с";
+}
+
+function build() {
+  return {version: 1, duration_s: Math.round(duration() * 1000) / 1000, fps: fps(), video: videoName,
+          cues: cues.map(c => { const o = {...c}; if (o.end == null) delete o.end; return o; })};
+}
+function out() { $("out").textContent = JSON.stringify(build(), null, 1); try { localStorage.setItem("immollimma.cues", JSON.stringify(build())); } catch (e) {} }
+function say(t) { $("status").textContent = t; setTimeout(() => $("status").textContent = "", 4000); }
+function download() { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(build(), null, 1)], {type: "application/json"}));
+  a.download = "cues.json"; a.click(); say("скачано: положи рядом с brief.json"); }
+function copy() { navigator.clipboard.writeText(JSON.stringify(build(), null, 1)).then(() => say("скопировано"), () => say("не удалось")); }
+
+$("vfile").onchange = ev => { const f = ev.target.files[0]; if (!f) return; videoName = f.name; v.src = URL.createObjectURL(f); };
+v.addEventListener("loadedmetadata", () => { $("dur").value = v.duration.toFixed(2); redraw(); });
+v.addEventListener("timeupdate", drawTL);
+$("dur").oninput = drawTL; $("fps").oninput = out;
+$("load").onchange = ev => { const f = ev.target.files[0]; if (!f) return; f.text().then(t => { try { const d = JSON.parse(t);
+  cues = (d.cues || []).sort((a, b) => a.t - b.t); if (d.fps) $("fps").value = d.fps; if (d.duration_s && !v.src) $("dur").value = d.duration_s;
+  videoName = d.video || videoName; redraw(); say("загружено"); } catch (e) { say("не JSON"); } }); };
+
+function tlTime(ev) { const r = tl.getBoundingClientRect(); return (ev.clientX - r.left) / r.width * duration(); }
+tl.onmousedown = ev => { const t = tlTime(ev), D = duration(); const near = cues.findIndex(c => Math.abs(c.t - t) < D * 0.006);
+  if (near >= 0) { drag = near; sel = near; } else seek(t); drawTL(); };
+tl.onmousemove = ev => { if (drag >= 0) { cues[drag].t = snap(Math.max(0, tlTime(ev))); drawTL(); } };
+window.onmouseup = () => { if (drag >= 0) { const c = cues[drag]; cues.sort((a, b) => a.t - b.t); sel = cues.indexOf(c); drag = -1; redraw(); } };
+
+document.addEventListener("keydown", ev => {
+  if (["INPUT", "SELECT", "TEXTAREA"].includes(ev.target.tagName)) return;
+  const k = ev.key.toLowerCase(), f = fps() || 30;
+  if (KEYS[k]) { add(KEYS[k]); ev.preventDefault(); }
+  else if (k === "s") { if (openSilence) { openSilence.end = snap(now()); openSilence = null; redraw(); } else { openSilence = add("silence"); } }
+  else if (k === " ") { if (v.src) { v.paused ? v.play() : v.pause(); } ev.preventDefault(); }
+  else if (ev.key === "ArrowLeft") seek(now() - 1); else if (ev.key === "ArrowRight") seek(now() + 1);
+  else if (k === ",") seek(now() - 1 / f); else if (k === ".") seek(now() + 1 / f);
+  else if ((ev.key === "Delete" || ev.key === "Backspace") && sel >= 0) { cues.splice(sel, 1); sel = -1; redraw(); }
+  else if (ev.key === "Enter" && sel >= 0) seek(cues[sel].t);
+});
+
+async function detect() {
+  if (!v.src) { say("сначала открой видео"); return; }
+  const thr = +$("thr").value, step = +$("step").value, c = document.createElement("canvas"); c.width = 64; c.height = 36;
+  const g = c.getContext("2d", {willReadFrequently: true}); let prev = null, found = 0, last = -99; v.pause();
+  for (let t = 0; t < v.duration; t += step) {
+    await new Promise(r => { v.onseeked = r; v.currentTime = t; });
+    g.drawImage(v, 0, 0, 64, 36); const d = g.getImageData(0, 0, 64, 36).data;
+    if (prev) { let s = 0; for (let i = 0; i < d.length; i += 4) s += Math.abs(d[i] - prev[i]) + Math.abs(d[i + 1] - prev[i + 1]) + Math.abs(d[i + 2] - prev[i + 2]);
+      const diff = s / (64 * 36 * 3 * 255);
+      if (diff > thr * 0.5 && t - last > 1.5 && !cues.some(q => Math.abs(q.t - t) < 0.5)) { add("section", t); found++; last = t; } }
+    prev = d; if (Math.round(t / step) % 20 === 0) say(`ищу… ${t.toFixed(0)} / ${v.duration.toFixed(0)} с`);
+  }
+  v.onseeked = null; say(`найдено смен: ${found}`); redraw();
+}
+
+try { const d = JSON.parse(localStorage.getItem("immollimma.cues") || "null");
+  if (d) { cues = d.cues || []; if (d.fps) $("fps").value = d.fps; if (d.duration_s) $("dur").value = d.duration_s; videoName = d.video; } } catch (e) {}
+window.addEventListener("resize", drawTL);
+redraw();
+</script>
+</body>
+</html>

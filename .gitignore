@@ -1,0 +1,11 @@
+libs/
+__pycache__/
+*.pyc
+# sound goes to the chat, not to git
+*.wav
+*.mp3
+*.mp4
+**/out/stems/
+# intermediate files
+**/out/*.ly
+**/out/*.buses.json

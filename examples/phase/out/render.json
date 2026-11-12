@@ -1,0 +1,53 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "vsco"
+ ],
+ "licenses": [
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "cb_pizz@plain": 26,
+  "cb_sus@plain": 1,
+  "cl_sus@plain": 11,
+  "glock@plain": 28,
+  "marimba@vsco": 577,
+  "vc_sus@plain": 1,
+  "vla_pizz@plain": 78
+ },
+ "substitutions": {},
+ "missing": {},
+ "sfizz_notes": 20,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  42.0
+ ],
+ "seconds": 42.0,
+ "mp3": "/home/claude/immollimma/examples/phase/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/examples/phase/out/score.mid",
+  "lost": {},
+  "musicxml": "/home/claude/immollimma/examples/phase/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/examples/phase/out/score.pdf",
+  "grid": [
+   4
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   6.0,
+   12.0,
+   17.8,
+   23.0,
+   37.5
+  ],
+  "png": "/home/claude/immollimma/examples/phase/out/report.png"
+ },
+ "seconds_taken": 11.9
+}

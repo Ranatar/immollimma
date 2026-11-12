@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>immollimma — бриф</title>
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+<header>
+  <nav><a href="index.html">immollimma</a><a href="brief.html"><b>бриф</b></a><a href="cues.html">метки</a></nav>
+  <h1>Бриф музыкального заказа</h1>
+  <p>Заполняй только то, что важно: у каждого пустого поля есть умолчание, и в плане будет сказано, что выбрано.
+     Готовый <code>brief.json</code> положи в папку <code>requests/&lt;имя&gt;/</code> репозитория (кнопка справа) или просто приложи к беседе.</p>
+</header>
+<main>
+<div>
+  <section>
+    <h2>Что и зачем</h2>
+    <div class="row">
+      <div><label>Название</label><input type="text" id="title" placeholder="Например: Ноктюрн для виртуалки"></div>
+      <div><label>Назначение</label><select id="purpose">
+        <option value="standalone">самостоятельная пьеса</option><option value="video">к видео</option>
+        <option value="game">к игре</option><option value="live">для живых исполнителей (нужны ноты)</option>
+        <option value="podcast">подложка под речь</option><option value="other">другое</option></select></div>
+      <div><label>Длительность, с</label><input type="number" id="duration_s" min="5" step="1" placeholder="по меткам или 90"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Синхронизация</h2>
+    <div class="row">
+      <div><label>Привязка</label><select id="sync.mode">
+        <option value="none">без привязки</option><option value="cues">к файлу меток (cues.json)</option>
+        <option value="scenes">к сменам сцен видео (найду сам)</option></select></div>
+      <div><label>Файл меток</label><input type="text" id="sync.cues_file" placeholder="cues.json"></div>
+      <div><label>Видео (имя файла)</label><input type="text" id="sync.video_file" placeholder="clip.mp4"></div>
+    </div>
+    <div class="hint">Метки удобно расставить в <a href="cues.html">редакторе меток</a> прямо по видео.</div>
+  </section>
+
+  <section>
+    <h2>Стиль</h2>
+    <label>Карточки стилей (можно несколько; первая главная)</label>
+    <div class="cards" id="cards"></div>
+    <div class="hint">Оранжевым — где стиль упирается в возможности библиотек.</div>
+    <label>Настроение словами</label><textarea id="style.mood" placeholder="Например: тревожная колыбельная, которая медленно портится"></textarea>
+    <label>Ориентиры: композиторы, эпохи, приёмы и что в них нравится</label>
+    <textarea id="style.references" placeholder="Например: медленные части Шостаковича — голая двухголосная фактура, флейта над контрабасами"></textarea>
+    <label>Чего не хочется</label><textarea id="style.avoid" placeholder="Например: пафоса, барабанов, мажора в конце"></textarea>
+  </section>
+
+  <section>
+    <h2>Язык, тональность, темп</h2>
+    <div class="row">
+      <div><label>Гармонический язык</label><select id="language">
+        <option value="any">по стилю</option><option value="tonal">тональный</option><option value="modal">модальный</option>
+        <option value="atonal">атональный</option><option value="mixed">смешанный</option></select></div>
+      <div><label>Тональность</label><input type="text" id="key" placeholder="D minor"></div>
+      <div><label>Темп, BPM</label><input type="number" id="tempo_bpm" min="20" max="240"></div>
+      <div><label>Размер</label><input type="text" id="meter" placeholder="4/4"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Состав</h2>
+    <div class="row">
+      <div><label>Состав</label><select id="ensemble.size">
+        <option value="auto">по стилю</option><option value="chamber">камерный</option><option value="orchestra">оркестр</option>
+        <option value="strings">струнные</option><option value="winds">деревянные</option><option value="brass">медь</option>
+        <option value="percussion">ударные</option><option value="keys">клавишные и арфа</option><option value="custom">только отмеченные</option></select></div>
+      <div><label>Библиотека</label><select id="library">
+        <option value="auto">авто (VSCO, Sonatina для недостающего)</option><option value="plain">VSCO — прежний семплер</option>
+        <option value="vsco">VSCO через SFZ</option><option value="sso">Sonatina через SFZ</option></select></div>
+    </div>
+    <span class="chk"><input type="checkbox" id="ensemble.noises" checked> можно шумы (сирены, цепи, стекло…)</span>
+    <span class="chk"><input type="checkbox" id="ensemble.processing" checked> можно обработку (расстройка, глиссандо, реверс, гранулярика)</span>
+    <span class="chk"><input type="checkbox" id="commercial_ad"> для рекламы (тогда только VSCO)</span>
+    <label>Инструменты: щелчок — обязательно, второй — исключить, третий — сбросить. Точка • — есть только в Sonatina.</label>
+    <div class="chips" id="insts"></div>
+  </section>
+
+  <section>
+    <h2>Драматургия</h2>
+    <label>Ход формы словами</label><textarea id="dramaturgy.arc" placeholder="Например: тихое начало, нарастание к 2/3, обрыв, эпилог"></textarea>
+    <div class="row">
+      <div><label>Кульминация, с</label><input type="number" id="dramaturgy.climax_s" min="0"></div>
+      <div><label>Концовка</label><select id="dramaturgy.ending">
+        <option value="cadence">каденция</option><option value="fade">затухание</option><option value="cut">обрыв</option>
+        <option value="open">открытая</option></select></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Свои темы</h2>
+    <div class="hint">Ноты через пробел (<code>D4 A4 Bb4 A4</code>) или ABC. Охраняемые мелодии не цитирую, народные и классика до XX века — можно.</div>
+    <div id="themes"></div><button class="ghost small" onclick="addRow('themes')">+ тема</button>
+  </section>
+
+  <section>
+    <h2>Силы и персонажи</h2>
+    <div class="hint">У каждого будет свой лейтмотив; «как меняется» превращается в трансформацию темы.</div>
+    <div id="characters"></div><button class="ghost small" onclick="addRow('characters')">+ персонаж</button>
+  </section>
+
+  <section>
+    <h2>Обязательная тишина</h2>
+    <div id="silences"></div><button class="ghost small" onclick="addRow('silences')">+ тишина</button>
+  </section>
+
+  <section>
+    <h2>Что отдать и как работать</h2>
+    <div id="deliver">
+      <span class="chk"><input type="checkbox" value="mp3" checked> MP3</span>
+      <span class="chk"><input type="checkbox" value="wav"> WAV</span>
+      <span class="chk"><input type="checkbox" value="stems"> стемы по группам</span>
+      <span class="chk"><input type="checkbox" value="midi" checked> MIDI</span>
+      <span class="chk"><input type="checkbox" value="musicxml"> MusicXML</span>
+      <span class="chk"><input type="checkbox" value="pdf" checked> партитура PDF</span>
+      <span class="chk"><input type="checkbox" value="report" checked> отчёт приборов</span>
+      <span class="chk"><input type="checkbox" value="video"> видео с музыкой</span>
+    </div>
+    <span class="chk"><input type="checkbox" id="iteration.sketch_first" checked> сначала эскиз</span>
+    <span class="chk"><input type="checkbox" id="iteration.ask_before_full"> ждать моего одобрения эскиза</span>
+    <div class="row"><div><label>Длина эскиза, с</label><input type="number" id="iteration.sketch_seconds" value="60" min="10"></div></div>
+    <label>Ещё</label><textarea id="notes"></textarea>
+  </section>
+</div>
+
+<aside>
+  <section>
+    <h2>brief.json</h2>
+    <div class="row"><div><label>Папка заказа (латиницей)</label><input type="text" id="slug" placeholder="nocturne-vm"></div></div>
+    <button onclick="download()">Скачать brief.json</button>
+    <button class="ghost" onclick="copy()">Копировать</button>
+    <button class="ghost" onclick="document.getElementById('load').click()">Загрузить для правки</button>
+    <input type="file" id="load" accept=".json,application/json" hidden>
+    <button class="ghost" onclick="upload()">Открыть загрузку в GitHub</button>
+    <button class="ghost small" onclick="resetAll()">Очистить</button>
+    <div class="status" id="status"></div>
+    <pre id="out"></pre>
+  </section>
+</aside>
+</main>
+
+<script>
+const REPO = "Ranatar/immollimma";
+const $ = id => document.getElementById(id);
+const ROWS = {
+  themes: [["name", "название"], ["notation", "ноты / ABC"], ["for", "чья тема"], ["transform", "как меняется"]],
+  characters: [["name", "имя"], ["description", "какой"], ["evolution", "как меняется"]],
+  silences: [["t", "с какой секунды"], ["dur", "сколько секунд"], ["note", "зачем"]],
+};
+let cards = [], cardOn = [], inst = {}, instList = [];
+
+const FALLBACK_CARDS = [
+  {id: "baroque", name: "Барокко"}, {id: "classical", name: "Классицизм"}, {id: "romantic", name: "Романтизм"},
+  {id: "impressionist", name: "Импрессионизм"}, {id: "expressionist_horror", name: "Экспрессионизм, хоррор"},
+  {id: "minimalism", name: "Минимализм"}, {id: "march_hymn", name: "Марш, гимн"}, {id: "archival_grotesque", name: "Архивный гротеск"},
+  {id: "lullaby_musicbox", name: "Колыбельная, шкатулка"}, {id: "ambient_film", name: "Кино-эмбиент"},
+  {id: "russian_stylization", name: "Русская стилизация"}, {id: "sacred_choral", name: "Духовное, хоровое"}];
+
+async function init() {
+  try { cards = await (await fetch("../kit/styles/index.json")).json(); } catch (e) { cards = FALLBACK_CARDS; }
+  try { instList = await (await fetch("../kit/data/instruments.json")).json(); } catch (e) { instList = []; }
+  drawCards(); drawInsts();
+  document.querySelectorAll("input, select, textarea").forEach(el => el.addEventListener("input", update));
+  $("load").addEventListener("change", ev => {
+    const f = ev.target.files[0]; if (!f) return;
+    f.text().then(t => { try { fill(JSON.parse(t)); say("загружено"); } catch (e) { say("не JSON: " + e.message); } });
+  });
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem("immollimma.brief") || "null"); } catch (e) {}
+  if (saved) fill(saved); else update();
+}
+
+function drawCards() {
+  $("cards").innerHTML = "";
+  cards.forEach(c => {
+    const d = document.createElement("div");
+    d.className = "card" + (cardOn.includes(c.id) ? " on" : "");
+    d.innerHTML = `<b>${c.name}</b><span>${c.summary || ""}</span>` + (c.fit && /СЛАБ|слаб|нет /.test(c.fit.weak || "") ? `<i>${c.fit.weak}</i>` : "");
+    d.onclick = () => { cardOn = cardOn.includes(c.id) ? cardOn.filter(x => x !== c.id) : [...cardOn, c.id]; drawCards(); update(); };
+    $("cards").appendChild(d);
+  });
+}
+
+function drawInsts() {
+  $("insts").innerHTML = "";
+  if (!instList.length) { $("insts").innerHTML = '<span class="hint">список инструментов не загрузился (открой форму с GitHub Pages)</span>'; return; }
+  instList.forEach(i => {
+    const s = document.createElement("span");
+    s.className = "chip" + (i.sso_only ? " sso" : "") + (inst[i.id] ? " " + inst[i.id] : "");
+    s.textContent = i.id; s.title = `${i.part}, ${i.libs.join(" / ")}`;
+    s.onclick = () => { inst[i.id] = inst[i.id] === "inc" ? "exc" : inst[i.id] === "exc" ? undefined : "inc"; drawInsts(); update(); };
+    $("insts").appendChild(s);
+  });
+}
+
+function addRow(kind, val = {}) {
+  const box = document.createElement("div"); box.className = "rep row";
+  ROWS[kind].forEach(([k, ph]) => {
+    const i = document.createElement("input"); i.type = k === "t" || k === "dur" ? "number" : "text";
+    i.placeholder = ph; i.dataset.k = k; i.value = val[k] ?? ""; i.addEventListener("input", update); box.appendChild(i);
+  });
+  const x = document.createElement("button"); x.className = "ghost small"; x.textContent = "×";
+  x.onclick = () => { box.remove(); update(); }; box.appendChild(x);
+  $(kind).appendChild(box); update();
+}
+
+function rows(kind) {
+  return [...$(kind).children].map(b => {
+    const o = {}; b.querySelectorAll("input").forEach(i => { if (i.value !== "") o[i.dataset.k] = i.type === "number" ? +i.value : i.value; });
+    return o;
+  }).filter(o => Object.keys(o).length);
+}
+
+function val(id) {
+  const el = $(id);
+  if (el.type === "checkbox") return el.checked;
+  if (el.type === "number") return el.value === "" ? null : +el.value;
+  return el.value;
+}
+
+function build() {
+  const b = {version: 1, title: val("title"), purpose: val("purpose"), duration_s: val("duration_s"),
+    sync: {mode: val("sync.mode"), cues_file: val("sync.cues_file") || "cues.json", video_file: val("sync.video_file") || null},
+    style: {cards: cardOn, mood: val("style.mood"), references: val("style.references"), avoid: val("style.avoid")},
+    language: val("language"), key: val("key") || null, tempo_bpm: val("tempo_bpm"), meter: val("meter") || null,
+    ensemble: {size: val("ensemble.size"), include: Object.keys(inst).filter(k => inst[k] === "inc"),
+               exclude: Object.keys(inst).filter(k => inst[k] === "exc"), noises: val("ensemble.noises"), processing: val("ensemble.processing")},
+    library: val("library"), commercial_ad: val("commercial_ad"),
+    dramaturgy: {arc: val("dramaturgy.arc"), climax_s: val("dramaturgy.climax_s"), ending: val("dramaturgy.ending")},
+    themes: rows("themes"), characters: rows("characters"), silences: rows("silences"),
+    deliver: [...$("deliver").querySelectorAll("input:checked")].map(i => i.value),
+    iteration: {sketch_first: val("iteration.sketch_first"), sketch_seconds: val("iteration.sketch_seconds") || 60,
+                ask_before_full: val("iteration.ask_before_full")},
+    notes: val("notes")};
+  return b;
+}
+
+function fill(b) {
+  const set = (id, v) => { const el = $(id); if (!el || v === undefined || v === null) return;
+    if (el.type === "checkbox") el.checked = !!v; else el.value = v; };
+  ["title", "purpose", "duration_s", "language", "key", "tempo_bpm", "meter", "library", "commercial_ad", "notes"].forEach(k => set(k, b[k]));
+  for (const [grp, keys] of Object.entries({sync: ["mode", "cues_file", "video_file"], style: ["mood", "references", "avoid"],
+      ensemble: ["size", "noises", "processing"], dramaturgy: ["arc", "climax_s", "ending"],
+      iteration: ["sketch_first", "sketch_seconds", "ask_before_full"]}))
+    keys.forEach(k => set(grp + "." + k, (b[grp] || {})[k]));
+  cardOn = (b.style || {}).cards || []; inst = {};
+  ((b.ensemble || {}).include || []).forEach(k => inst[k] = "inc"); ((b.ensemble || {}).exclude || []).forEach(k => inst[k] = "exc");
+  ["themes", "characters", "silences"].forEach(k => { $(k).innerHTML = ""; (b[k] || []).forEach(r => addRow(k, r)); });
+  $("deliver").querySelectorAll("input").forEach(i => i.checked = (b.deliver || ["mp3", "midi", "pdf", "report"]).includes(i.value));
+  if (b._slug) $("slug").value = b._slug;
+  drawCards(); drawInsts(); update();
+}
+
+function translit(s) {
+  const m = {а:"a",б:"b",в:"v",г:"g",д:"d",е:"e",ё:"e",ж:"zh",з:"z",и:"i",й:"i",к:"k",л:"l",м:"m",н:"n",о:"o",п:"p",р:"r",с:"s",т:"t",
+    у:"u",ф:"f",х:"h",ц:"ts",ч:"ch",ш:"sh",щ:"sch",ъ:"",ы:"y",ь:"",э:"e",ю:"yu",я:"ya"};
+  return s.toLowerCase().split("").map(c => m[c] ?? c).join("").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+}
+
+function update() {
+  const b = build();
+  if (!$("slug").value && b.title) $("slug").placeholder = translit(b.title) || "my-piece";
+  $("out").textContent = JSON.stringify(b, null, 1);
+  try { localStorage.setItem("immollimma.brief", JSON.stringify({...b, _slug: $("slug").value})); } catch (e) {}
+}
+
+function slug() { return $("slug").value || $("slug").placeholder || "my-piece"; }
+function say(t) { $("status").textContent = t; setTimeout(() => $("status").textContent = "", 4000); }
+function download() {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(build(), null, 1)], {type: "application/json"}));
+  a.download = "brief.json"; a.click(); say(`скачано; положи в requests/${slug()}/`);
+}
+function copy() {
+  navigator.clipboard.writeText(JSON.stringify(build(), null, 1)).then(() => say("скопировано"), () => say("не удалось скопировать"));
+}
+function upload() {
+  window.open(`https://github.com/${REPO}/upload/main/requests/${slug()}`, "_blank");
+  say("в открывшейся странице перетащи brief.json (и cues.json) и нажми Commit");
+}
+function resetAll() {
+  try { localStorage.removeItem("immollimma.brief"); } catch (e) {}
+  location.reload();
+}
+init();
+</script>
+</body>
+</html>

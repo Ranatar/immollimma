@@ -1,0 +1,15 @@
+{
+ "version": 1,
+ "title": "Колыбельная, которая портится",
+ "purpose": "video",
+ "duration_s": 75,
+ "sync": {"mode": "cues", "cues_file": "cues.json"},
+ "style": {"cards": ["lullaby_musicbox", "archival_grotesque"],
+           "mood": "тёплая колыбельная, которая к середине начинает фальшивить, а к концу звучит как заевшая шкатулка в пустом доме",
+           "references": "", "avoid": "громких ударов, меди"},
+ "ensemble": {"size": "chamber", "include": ["celesta", "fl_sus", "harp"], "exclude": ["tpt_sus", "tba_sus"]},
+ "dramaturgy": {"ending": "fade"},
+ "characters": [{"name": "мать", "description": "напев флейты", "evolution": "чистый → расстроенный → обрывается"}],
+ "silences": [{"t": 52, "dur": 2.5, "note": "дверь закрывается"}],
+ "deliver": ["mp3", "midi", "pdf", "report"]
+}

@@ -1,0 +1,11 @@
+{
+ "version": 1, "duration_s": 75, "fps": 25, "video": "lullaby.mp4",
+ "cues": [
+  {"t": 0, "label": "детская", "kind": "section", "mood": "тепло", "intensity": 0.3},
+  {"t": 24, "label": "сумерки", "kind": "section", "mood": "тревога", "intensity": 0.5},
+  {"t": 38.5, "label": "скрип", "kind": "accent", "intensity": 0.6},
+  {"t": 44, "label": "пустой дом", "kind": "section", "mood": "жуть", "intensity": 0.7},
+  {"t": 52, "end": 54.5, "label": "дверь", "kind": "silence"},
+  {"t": 54.5, "label": "шкатулка", "kind": "section", "mood": "заело", "intensity": 0.4}
+ ]
+}
