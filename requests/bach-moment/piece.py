@@ -1,19 +1,27 @@
 #!/usr/bin/env python3
-"""Praeludium es-moll — Музыкальный момент № 2 Рахманинова (op. 16, 1896), каким его написал бы Бах (клавесин, ≈ 3:00).
+"""Praeludium es-moll — Музыкальный момент № 2 Рахманинова (op. 16, 1896), каким его написал бы Бах (клавесин, ≈ 3:10).
 
-Сохранено: настроение (суровая мелодия сквозь непрерывный вихрь), «сюжет» (вихрь с начала до конца → мелодия
-проступает → нарастание → кульминация, мелодия «громадными аккордами» → буря стихает → Adagio: четыре аккорда,
-плагальный каданс), ми-бемоль минор. Всё остальное — баховское:
+Вторая редакция — по MIDI оригинала (присланному пользователем; в репозиторий не кладётся): 133 такта 2/4,
+четверть = 92, секстоли шестнадцатыми. Взята схема ведения такт в такт (такт оригинала = половина такта 12/8):
 
-  секстоли         → 12/8, сплошные шестнадцатые: фигура разложенного аккорда со скрытым многоголосием (Brechung)
-  мелодия          → cantus в долгих нотах против мотора (как Гольдберг-вариация 26, прелюдия e-moll ХТК I);
-                     патетика по-баховски: вздох полутоном, уменьшённая кварта, увеличенная секунда
-  развитие          → перестановка голосов (cantus сверху, мотор снизу) и проведение в параллельном мажоре;
-                     секвенции по квинтовому кругу с имитацией головы cantus; ламенто-бас (es–d–des–c–ces–b)
-  крещендо          → у клавесина нет громкости: густеет фактура (2 → 3 → 4 голоса), органный пункт на доминанте,
-                     мелодия аккордами; уменьшённый септаккорд с ферматой и выписанная каденция (как прелюдия c-moll)
-  затихание         → мотор вдвое медленнее над тоническим пунктом; Adagio — четыре аккорда, плагально,
-                     с пикардийской терцией (баховская норма конца минорной пьесы)
+  т. 1–16    фраза, повтор фразы, продолжение и каданс в es-moll         → A: P, P, Q (каданс с трелью)
+  т. 17–40   фраза; она же на кварту выше; хроматические «вздохи»;      → A′: P; P в as-moll; цепь 7–6 над
+             хроматический спуск в двух октавах                            хроматическим басом; спуск по цепи
+                                                                           септаккордов, во второй раз — в теноре
+  т. 41–44   тоника, мотор один, в теноре a–b                            → то же
+  т. 45–76   уменьшённые и доминантсептаккорды над органными пунктами   → фантазия: пункты es–f–ges–fes–g–a,
+             es → f → ges → fes → g → a; развороты арпеджио                пары V7 / vii°7, голос b–h–c; развороты
+  фермата    на уменьшённом над a                                         → то же
+  т. 77–84   каскады: Es-dur, c-moll, es-moll, Ces-dur                    → каскады вниз в тех же гармониях
+  т. 85–124  дословная реприза т. 1–40                                    → реприза с перестановкой голосов
+                                                                           (мелодия в теноре, мотор наверху)
+  т. 125–133 тоника, вздохи a–b; Adagio, сопрано ges–f–fes–es,          → то же; vii°7 – V7 – неаполитанский –
+             неаполитанский перед концом                                   I с пикардийской терцией
+
+Своё (баховское): мелодия не цитируется — сохранён её жест (кружение вокруг доминанты, скачок, хроматическое
+ламенто к вводному тону), синкопы оригинала стали задержаниями; секстоли — фигура разложенного аккорда с басом
+на первой шестнадцатой (Brechung); романтические параллельные септаккорды — цепи 7–6 и квинтовые цепи; трели на
+кадансах; реприза — с перестановкой голосов (двойной контрапункт), а не дословно.
 
     python3 -m kit run requests/bach-moment/piece.py --backend sso --parts
 """
@@ -23,7 +31,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 from kit.events import Piece  # noqa: E402
 
-BEAT = 1.0  # пунктирная четверть = 60
+BEAT = 60 / 88  # пунктирная четверть = 88 (четверть оригинала = 92)
 SIX = BEAT / 6
 
 NAMES = {"C": 0, "D": 2, "E": 4, "F": 5, "G": 7, "A": 9, "B": 11}
@@ -46,55 +54,9 @@ def chord(name):
     return pcs, b % 12
 
 
-# --- cantus (ми-бемоль минор, 8 тактов по 4 доли): (доля, длительность, midi) — в теноре (A) или сопрано (B)
-CANTUS = [(0, 1, 63), (1, 1, 70), (2, 1, 71), (3, 1, 70),          # es  b  ces b   — квинта вверх и вздох
-          (4, 1, 68), (5, 1, 66), (6, 2, 65),                      # as  ges f
-          (8, 1, 66), (9, 1, 73), (10, 1, 75), (11, 1, 73),        # ges des' es' des' — секвенция на терцию выше
-          (12, 1, 71), (13, 1, 70), (14, 2, 68),                   # ces b   as
-          (16, 1, 70), (17, 1, 71), (18, 1, 69), (19, 1, 70),      # b   ces a   b    — вводный тон к b-moll
-          (20, 1, 73), (21, 1, 72), (22, 1, 66), (23, 1, 69),      # des c   ges a    — ум. кварта, ув. секунда
-          (24, 1, 70), (25, 1, 75), (26, 1, 72), (27, 1, 69),      # b   es  c   a
-          (28, 4, 70)]                                             # b — каданс в b-moll
-HARM_A = ["Ebm", "Ebm", "Cb", "Bb",  "Abm", "Ebm/Gb", "Bb", "Bb7",
-          "Cb", "Gb", "Abm", "Db7",  "Abm", "Gb", "Bb7", "Bb7",
-          "Ebm", "Cb", "F7", "Bbm",  "Bbm", "F7", "Ebm/Gb", "F7",
-          "Bbm", "Ebm", "Cdim", "F7",  "Bbm", "Bbm", "Bbm", "Bbm"]
-# B: то же в параллельном мажоре (по ступеням es-moll → Ges-dur; гармония переносится тем же способом)
-HARM_B = ["Gb", "Gb", "Ebm", "Db",  "Cb", "Gb/Bb", "Db", "Db7",
-          "Ebm", "Bbm", "Cb", "Fhd7",  "Cb", "Bbm", "Db7", "Db7",
-          "Gb", "Ebm", "Ab7", "Db",  "Db", "Ab7", "Gb/Bb", "Ab7",
-          "Db", "Gb", "Abm", "Ab7",  "Db", "Db", "Db", "Db7"]
-ES_MOLL = [3, 5, 6, 8, 10, 11, 13]   # es f ges as b ces des (от C=0, со сдвигом октавы)
-GES_DUR = [6, 8, 10, 11, 13, 15, 17]
-
-
-def to_ges(m):
-    """по ступеням: es-moll → Ges-dur (повышенные ступени сохраняют повышение)"""
-    rel = m - 3
-    o, r = divmod(rel, 12)
-    base = [0, 2, 3, 5, 7, 8, 10]
-    k = min(range(7), key=lambda j: (abs(r - base[j]), base[j]))
-    alt = r - base[k]
-    if k in (5, 6):
-        alt = 0  # повышенные VI–VII минора — натуральные в мажоре
-    return 6 + 12 * o + [0, 2, 4, 5, 7, 9, 11][k] + alt
-
-
-# C: секвенции (по 2 доли на аккорд) и ламенто
-HARM_C1 = ["Gb", "Gb", "Cb", "Cb",  "Fhd7", "Fhd7", "Bb7", "Bb7",  "Ebm", "Ebm", "Abm", "Abm",
-           "Db7", "Db7", "Gb", "Gb",  "Cb", "Cb", "Fhd7", "Fhd7",  "Bb7", "Bb7", "Ebm", "Eb7"]
-# ламенто: i – V6 (vii°7) – v6 (III6/4) – IV6 (vii°7/C) – iv6 (VI) – V; бас — по такту на ступень
-HARM_C2 = ["Ebm", "Ebm", "Abm/Eb", "Abm/Eb",  "Bb/D", "Bb/D", "Ddim7", "Ddim7",  "Bbm/Db", "Bbm/Db", "Gb/Db", "Gb/Db",
-           "Ab/C", "Ab/C", "Adim7/C", "Adim7/C",  "Abm/Cb", "Abm/Cb", "Cb", "Cb",  "Bb7", "Bb7", "Bb7", "Bb7"]
-# D: органный пункт b; мелодия аккордами
-HARM_D = ["Ebm/Bb", "Ebm/Bb", "Cb/Bb", "Bb7",  "Abm/Bb", "Ebm/Bb", "Bb7", "Bb7",
-          "Ebm/Bb", "Abm/Bb", "Ebm/Bb", "Bb7",  "Adim7/Bb", "Adim7/Bb", "Adim7/Bb", "Adim7/Bb"]
-HEAD = [(0, 1, 0), (1, 1, 7), (2, 1, 8), (3, 1, 7)]  # голова cantus: 1–5–♭6–5 (от тоники)
-
-
 class Bach:
     def __init__(self):
-        self.p = Piece("Praeludium es-moll", bpm=90, meter=(12, 8), key="E-flat minor", seed=1896)
+        self.p = Piece("Praeludium es-moll", bpm=132, meter=(12, 8), key="E-flat minor", seed=1896)
         self.p.meta["subtitle"] = "Музыкальный момент № 2 Рахманинова, как его написал бы Бах"
         self.p.meta["sends"] = {"keys": 0.3}
         self.prev = {"RH": None, "LH": None}
@@ -162,85 +124,262 @@ class Bach:
         self.n(m, beat, dur, "LH", vel=vel)
 
 
+
+    # --- фигура с басом (Brechung): бас — первая шестнадцатая доли, дальше дуга по звукам аккорда
+    def figure(self, beat, harm, bass, ceiling, pattern=(0, 1, 2, 3, 2, 1), vel=0.55, speed=6, floor=None):
+        pcs, _ = chord(harm)
+        ups = []
+        m = max(bass + 3, floor or 0)
+        while len(ups) < 3:
+            m += 1
+            if m % 12 in pcs:
+                ups.append(m)
+        if ups[-1] > ceiling:  # не залезать на мелодию: сдвинуть дугу вниз на октаву, но не ниже баса
+            ups = [u - 12 if u - 12 > bass else u for u in ups]
+            ups.sort()
+        v = [bass] + ups
+        step = 1 / speed
+        pat = pattern if speed == 6 else (0, 2, 3)
+        for j, k in enumerate(pat):
+            mm = v[k]
+            self.n(mm, beat + j * step, step, "LH", vel=vel + (0.07 if j == 0 else 0))  # мотор — левая рука целиком
+
+    def upper_figure(self, beat, harm, floor, ceiling=86, pattern=(0, 1, 2, 3, 2, 1), vel=0.55):
+        """мотор над мелодией (при перестановке голосов)"""
+        pcs, _ = chord(harm)
+        v, m = [], floor
+        while len(v) < 4:
+            m += 1
+            if m % 12 in pcs:
+                v.append(m)
+        if v[-1] > ceiling:
+            v = [x - 12 for x in v]
+        for j, k in enumerate(pattern):
+            self.n(v[k], beat + j / 6, 1 / 6, "RH", vel=vel + (0.07 if j == 0 else 0))
+
+    def trill(self, beat, m, upper, beats, hand):
+        """трель с верхней вспомогательной, окончание — на основном звуке"""
+        k = int(beats * 12) - 2
+        for j in range(k):
+            self.n(upper if j % 2 == 0 else m, beat + j / 12, 1 / 12, hand, vel=0.55)
+        self.n(m, beat + k / 12, 2 / 12, hand, vel=0.58)
+
+    def melody(self, notes, beat0, hand, shift=0, vel=0.66, trill_at=None):
+        for b, d, m in notes:
+            if trill_at is not None and abs(b - trill_at) < 1e-9:
+                self.trill(beat0 + b, m + shift, m + shift + 1, d, hand)
+            else:
+                self.n(m + shift, beat0 + b, d, hand, vel=vel)
+
+    def sweep(self, beat, harm, lo, hi, up=True, vel=0.55):
+        """фантазия: арпеджио через две руки на две доли (12 шестнадцатых)"""
+        pcs, _ = chord(harm)
+        tones = [m for m in range(lo, hi + 1) if m % 12 in pcs]
+        k = max(1, len(tones) // 12)
+        seq = tones[::k][:12] if up else tones[::-1][::k][:12]
+        for j, m in enumerate(seq):
+            self.n(m, beat + j / 6, 1 / 6, "RH" if m >= 60 else "LH", vel=vel + (0.05 if j % 6 == 0 else 0))
+
+
+# ======================================================================================== материал
+# Фраза P (2 такта 12/8 = 4 такта оригинала): кружение вокруг доминанты (b ces a b — circulatio) и скачок с
+# хроматическим ламенто вниз к вводному тону (es ges f fes es d). Синкопы — как задержания: звук входит на
+# середине доли и переходит через долю (как у Рахманинова — мелодия на слабой восьмой).
+P_MEL = [(0, .5, 70), (.5, 1, 71), (1.5, 1, 69), (2.5, 1.5, 70),
+         (4, .5, 75), (4.5, 1, 78), (5.5, .5, 77), (6, .5, 76), (6.5, .5, 75), (7, 1, 74)]
+P_CH = ["Bb", "Cb", "Bb", "Bb7", "Ebm", "Ebm", "C7", "Bb7"]
+P_BASS = [50, 51, 53, 56, 54, 54, 52, 50]                       # d es f as | ges ges e d
+# Q (4 такта = 8 оригинала): секвенция хвоста вниз по ступеням и каданс в es-moll с трелью
+Q_MEL = [(0, 1, 78), (1, .5, 77), (1.5, .5, 76), (2, .5, 75), (2.5, 1.5, 72),
+         (4, 1, 77), (5, .5, 75), (5.5, .5, 74), (6, .5, 73), (6.5, 1.5, 70),
+         (8, 1, 75), (9, .5, 73), (9.5, .5, 72), (10, .5, 71), (10.5, 1.5, 68),
+         (12, 1, 68), (13, 1, 66), (14, 1, 65), (15, 1, 63)]
+Q_CH = ["Ebm", "Bb7", "Abm", "F7", "Bb7", "Ebm", "Gb", "Ebm", "Cb", "Db7", "Abm", "Abm", "Abm", "Ebm", "Bb7", "Ebm"]
+Q_BASS = [51, 50, 47, 45, 46, 42, 46, 39, 47, 49, 47, 44, 44, 46, 46, 39]
+# спуск по цепи септаккордов (т. 33–40 оригинала): септима одного — терция следующего, полутонами вниз
+D_CH = ["F7", "Bb7", "Eb7", "Abm", "Db7", "Gb", "Adim7", "Bb7"]
+D_SOP = [75, 74, 73, 71, 71, 70, 69, 70]
+D_BASS = [41, 46, 39, 44, 49, 42, 45, 46]
+
+
+def tr(chs, k):
+    """транспонировать имена аккордов на k полутонов"""
+    names = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "Cb"]
+    out = []
+    for c in chs:
+        root = c[0] + (c[1] if len(c) > 1 and c[1] in "b#" else "")
+        q = c[len(root):]
+        pcs_root = (NAMES[root[0]] + (-1 if root.endswith("b") else 0)) % 12
+        out.append(names[(pcs_root + k) % 12] + q)
+    return out
+
+
+def section_A(s, b0, swap=False):
+    """т. 1–16 оригинала: P, P, Q (8 тактов 12/8); swap — реприза с перестановкой голосов"""
+    for rep in range(2):
+        st = b0 + 8 * rep
+        if not swap:
+            s.melody(P_MEL, st, "RH")
+            for k in range(8):
+                s.figure(st + k, P_CH[k], P_BASS[k], 66, pattern=(0, 1, 2, 3, 2, 1) if rep == 0 else (0, 2, 1, 3, 1, 2))
+        else:
+            s.melody(P_MEL, st, "LH", shift=-12)
+            for k in range(8):
+                s.upper_figure(st + k, P_CH[k], 66)
+                s.bass(st + k, P_BASS[k] - 12, 0.5, vel=0.58)
+    st = b0 + 16
+    if not swap:
+        s.melody(Q_MEL, st, "RH", trill_at=14)
+        for k in range(16):
+            s.figure(st + k, Q_CH[k], Q_BASS[k], 62)
+    else:
+        s.melody(Q_MEL, st, "LH", shift=-12, trill_at=14)
+        for k in range(16):
+            s.upper_figure(st + k, Q_CH[k], 66)
+            s.bass(st + k, Q_BASS[k] - 12 if Q_BASS[k] - 12 >= 29 else Q_BASS[k], 0.5, vel=0.58)
+
+
+def section_A2(s, b0, swap=False):
+    """т. 17–40 оригинала: P; P на кварту выше; цепь вздохов над хроматическим басом; спуск по септаккордам"""
+    if not swap:
+        s.melody(P_MEL, b0, "RH")
+        for k in range(8):
+            s.figure(b0 + k, P_CH[k], P_BASS[k], 66)
+    else:
+        s.melody(P_MEL, b0, "LH", shift=-12)
+        for k in range(8):
+            s.upper_figure(b0 + k, P_CH[k], 66)
+            s.bass(b0 + k, P_BASS[k] - 12, 0.5, vel=0.58)
+    # P на кварту выше (as-moll)
+    st = b0 + 8
+    s.melody(P_MEL, st, "RH", shift=5)
+    for k, c in enumerate(tr(P_CH, 5)):
+        s.figure(st + k, c, P_BASS[k] + 5 - 12 if P_BASS[k] + 5 > 58 else P_BASS[k] + 5, 70)
+    # вздохи 7–6 над хроматическим басом as–g–ges–f–fes–es–d–des (по 2 доли)
+    st = b0 + 16
+    bass = [56, 55, 54, 53, 52, 51, 50, 49]
+    for k, b in enumerate(bass):
+        third = 3 if k % 2 == 0 else 4
+        t = st + 2 * k
+        sop7, sop6 = b + 10 + 12, b + 9 + 12
+        if k == 0:
+            s.n(sop6 + 1, t - 0.5, 0.5, "RH", vel=0.6)  # приготовление
+        s.n(sop7, t, 0.5, "RH", vel=0.66)                # задержание (септима) на доле
+        s.n(sop6, t + 0.5, 1.5, "RH", vel=0.6)           # разрешение в сексту
+        for j in range(2):
+            ups = [b + third + 12 * 0, b + 9, b + 12]
+            v = [b - 12] + sorted(u if u > b - 12 else u + 12 for u in ups)
+            for i, kk in enumerate((0, 1, 2, 3, 2, 1)):
+                mm = v[kk]
+                s.n(mm, t + j + i / 6, 1 / 6, "LH", vel=0.55 + (0.07 if i == 0 else 0))
+    # спуск по цепи септаккордов, затем то же октавой ниже — мелодия уходит в тенор, мотор — наверх
+    st = b0 + 32
+    for half in range(2):
+        for k in range(8):
+            t = st + 8 * half + k
+            sop = D_SOP[k] - 12 * half
+            s.n(sop, t - 0.5, 1, "RH" if half == 0 else "LH", vel=0.66)
+            if half == 0:
+                s.figure(t, D_CH[k], D_BASS[k], 66)
+            else:
+                s.upper_figure(t, D_CH[k], 66)
+                s.bass(t, D_BASS[k], 0.5, vel=0.6)
+    # каданс в es-moll (трель на вводном тоне d)
+    s.trill(st + 15.5, 62, 63, 0.5, "LH")
+
+
+def link(s, b0, beats=8, slow_motor=False):
+    """т. 41–44 оригинала: тоника, мотор один; в теноре — вздохи a–b"""
+    for k in range(beats):
+        t = b0 + k
+        if k % 4 == 0:
+            s.bass(t, 39, 4, vel=0.6)
+        c = "Ebm" if (k % 2 == 0 or not slow_motor) else "Adim7"
+        s.upper_figure(t, c, 63, pattern=(0, 1, 2, 3, 2, 1))
+        if k % 2 == 0:
+            s.n(57, t, 0.5, "LH", vel=0.6)
+            s.n(58, t + 0.5, 1.5, "LH", vel=0.62)
+
+
+# середина: органные пункты и пары аккордов (доминантсептаккорд / уменьшённый) — маршрут оригинала
+B_UNITS = [(39, "Bb7", "Adim7"),       # es: V7 / vii°7 V над тоникой
+           (41, "F7", "Fhd7"),         # f
+           (42, "Db7", "Adim7"),       # ges
+           (40, "E7", "Ehd7"),         # fes (= e): неаполитанская область
+           (43, "D7", "Dbdim7"),       # g
+           (45, "F7", "Adim7")]        # a — вводный к b: кульминация
+
+
+def middle(s, b0):
+    """т. 45–76 оригинала: фантазия над органными пунктами, хроматически восходящий голос, развороты-арпеджио"""
+    t = b0
+    for i, (ped, X, Y) in enumerate(B_UNITS):
+        # пункт держится 8 долей; голос: r – r+1 – r+2 (b–h–c оригинала), r ∈ X, r+2 ∈ Y
+        px, _ = chord(X)
+        py, _ = chord(Y)
+        r = next((m for m in range(55, 67) if m % 12 in px and (m + 2) % 12 in py), 58)
+        s.bass(t, ped, 8, vel=0.66)
+        s.bass(t, ped + 12, 8, vel=0.5)
+        for j in range(8):
+            c = X if (j // 2) % 2 == 0 else Y
+            s.upper_figure(t + j, c, 66 if i < 5 else 70, pattern=(0, 1, 2, 3, 2, 1) if j % 2 == 0 else (3, 2, 1, 0, 1, 2),
+                           vel=0.56 + 0.02 * i)
+        s.melody([(0, 1, r), (1, 1, r + 1), (2, 2, r + 2), (4, 1, r), (5, 1, r + 1), (6, 2, r + 2)], t, "LH",
+                 vel=0.64)
+        t += 8
+        if i in (0, 2):  # развороты по уменьшённому септаккорду (т. 49–52, 61–62 оригинала)
+            for j in range(0, 8 if i == 0 else 4, 2):
+                s.sweep(t + j, Y, 48 + 2 * j, 84 + j // 2, up=(j // 2) % 2 == 0)
+            if i == 0:
+                s.bass(t, ped, 8, vel=0.6)
+            t += 8 if i == 0 else 4
+    return t
+
+
+def cascade(s, b0):
+    """т. 77–84 оригинала: после ферматы — каскады вниз: Es-dur, c-moll, es-moll, Ces-dur"""
+    plan = [("Eb", 39), ("Cm", 36), ("Cm", 36), ("Cm", 36), ("Ebm", 39), ("Ebm", 39), ("Cb", 35), ("Cb", 35)]
+    for k, (c, b) in enumerate(plan):
+        t = b0 + 2 * k
+        s.bass(t, b, 2, vel=0.68)
+        s.bass(t, b + 12, 2, vel=0.55)
+        s.sweep(t, c, 48, 89, up=False, vel=0.6)
+
+
+def coda(s, b0):
+    """т. 125–133: тоника и вздохи; Adagio — сопрано ges–f–fes–es: vii°7, V7, неаполитанский, I (пикардийская терция)"""
+    link(s, b0, 8)
+    link(s, b0 + 8, 4, slow_motor=True)
+    t = b0 + 12
+    finals = [([39, 51, 57, 60, 63, 66], 1), ([39, 50, 56, 58, 62, 65], 1), ([44, 52, 56, 59, 64], 1),
+              ([39, 51, 55, 58, 63, 67], 3)]
+    for j, (ch_, d) in enumerate(finals):
+        for i, m in enumerate(ch_):
+            s.n(m, t, d, "RH" if m >= 60 else "LH", vel=0.62, late=0.05 * i)
+        t += d
+
+
 def build(ctx):
     s = Bach()
-    # исполнение: фермата на ум. септаккорде, каденция свободнее, затихание, Adagio
-    s.slow += [(124, 128, 1.8), (128, 132, 1.25), (140, 148, 1.15), (148, 156, 2.4)]
-    marks = [(0, "A: cantus в теноре"), (32, "B: перестановка, Ges-dur"), (64, "C: секвенции"),
-             (88, "Ламенто-бас"), (112, "D: пункт на доминанте"), (124, "Фермата, каденция"),
-             (132, "Затихание"), (148, "Adagio")]
-    # --- A (такты 1–8): мотор в правой руке, cantus в левой (тенор)
-    for k, h in enumerate(HARM_A):
-        s.motor(k, h, "RH", 67, 88)
-    s.line(CANTUS, 0, "LH", shift=-12)
-    # --- B (9–16): перестановка голосов, Ges-dur; cantus сверху, мотор в левой; бас на сильных долях
-    cant_b = [(b, d, to_ges(m)) for b, d, m in CANTUS]
-    for k, h in enumerate(HARM_B):
-        s.motor(32 + k, h, "LH", 48, 66)
-        if k % 2 == 0:
-            _, bp = chord(h)
-            s.bass(32 + k, 36 + (bp - 36) % 12, 2, vel=0.55)
-    s.line(cant_b, 32, "RH", shift=0)
-    # --- C1 (17–22): секвенции по квинтам; мотор переходит из руки в руку по тактам, голова cantus в имитации
-    for k, h in enumerate(HARM_C1):
-        beat = 64 + k
-        bar = k // 4
-        hand = "RH" if bar % 2 == 0 else "LH"
-        s.motor(beat, h, hand, 67 if hand == "RH" else 46, 88 if hand == "RH" else 64)
-        if k % 4 == 0:  # голова cantus (1–5–♭6–5) — в другой руке; «♭6» — ближайший звук следующего аккорда
-            pcs, root = chord(HARM_C1[k])
-            pcs2, _ = chord(HARM_C1[k + 2])
-            base = (54 if hand == "RH" else 70) + (root - (54 if hand == "RH" else 70)) % 12
-            fifth = base + 7
-            six = next(x for x in range(fifth + 1, fifth + 6) if x % 12 in pcs2)
-            back = min((x for x in range(fifth - 3, fifth + 4) if x % 12 in pcs2), key=lambda x: abs(x - fifth))
-            other = "LH" if hand == "RH" else "RH"
-            s.line([(0, 1, base), (1, 1, fifth), (2, 1, six), (3, 1, back)], beat, other, vel=0.64)
-    # --- C2 (23–28): ламенто-бас es–d–des–c–ces–b; мотор в правой, вздохи cantus в теноре
-    lament = [51, 50, 49, 48, 47, 46]
-    for k, h in enumerate(HARM_C2):
-        s.motor(88 + k, h, "RH", 65, 88)
-    for j, m in enumerate(lament):
-        s.bass(88 + 4 * j, m - 12, 4, vel=0.62)
-    sighs = [(0, 1, 68), (1, 1, 66), (2, 2, 63), (4, 1, 67), (5, 1, 65), (6, 2, 65), (8, 1, 66), (9, 1, 65),
-             (10, 2, 66), (12, 1, 65), (13, 1, 63), (14, 2, 63), (16, 1, 64), (17, 1, 63), (18, 2, 63),
-             (20, 2, 62), (22, 2, 62)]  # вздохи: задержание на доле — разрешение на секунду вниз
-    s.line(sighs, 88, "LH", shift=0, vel=0.6)
-    # --- D (29–32): органный пункт b; мотор в левой над пунктом, мелодия аккордами (голова cantus, расширенная)
-    for k, h in enumerate(HARM_D):
-        beat = 112 + k
-        s.motor(beat, h, "LH", 46, 64, vel=0.6)
-        if k % 4 == 0:
-            s.bass(beat, 34, 4, vel=0.68)
-    climax = [(0, 1, 75), (1, 1, 82), (2, 1, 83), (3, 1, 82),          # es' b' ces'' b' — голова, октавой выше
-              (4, 1, 80), (5, 1, 78), (6, 2, 77),
-              (8, 1, 78), (9, 1, 80), (10, 1, 82), (11, 1, 86),
-              (12, 4, 81)]                                               # a' — уменьшённый септаккорд, фермата
-    s.line(climax, 112, "RH", chordal=HARM_D)
-    # фермата и выписанная каденция (т. 32–33): тридцатьвторые вниз по ум. септаккорду, затем вверх к доминанте
-    run = [81, 78, 75, 72, 69, 66, 63, 60, 57, 54, 51, 48]
-    for j, m in enumerate(run):
-        s.n(m, 128 + j / 6, 1 / 6, "RH" if m >= 60 else "LH", vel=0.6)
-    up = [46, 50, 53, 56, 58, 62, 65, 68, 70, 74, 77, 80]
-    for j, m in enumerate(up):
-        s.n(m, 130 + j / 6, 1 / 6, "RH" if m >= 60 else "LH", vel=0.62)
-    # --- E (34–37): буря стихает — мотор восьмыми над тоническим пунктом, голова cantus в последний раз
-    s.prev["RH"] = None
-    harm_e = ["Ebm", "Ebm", "Cb/Eb", "Ebm", "Abm/Eb", "Abm/Eb", "Bb7/Eb", "Bb7/Eb",
-              "Ebm", "Ebm", "Cb/Eb", "Ebm", "Abm/Eb", "Abm/Eb", "Ebm", "Ebm"]
-    for k, h in enumerate(harm_e):
-        s.motor(132 + k, h, "RH", 63, 84, speed=3 if k < 12 else 3, vel=0.52)
-        if k % 4 == 0:
-            s.bass(132 + k, 39, 4, vel=0.55)
-    s.line([(b, d, 63 - 12 + iv) for b, d, iv in HEAD] + [(4, 2, 59), (6, 2, 58)], 132, "LH", vel=0.6)
-    s.line([(8, 1, 63), (9, 1, 58), (10, 1, 59), (11, 1, 58), (12, 2, 59), (14, 2, 58)], 132, "LH", vel=0.55)
-    # --- Adagio (38–39): четыре аккорда, плагально; последний — с пикардийской терцией; арпеджато, как на клавесине
-    finals = [[39, 51, 56, 59, 63, 68], [39, 51, 54, 58, 63, 66], [39, 51, 56, 59, 63, 65], [39, 51, 55, 58, 63, 67]]
-    for j, ch_ in enumerate(finals):
-        b = 148 + 2 * j
-        for i, m in enumerate(ch_):
-            m = max(29, m)
-            s.n(m, b, 2 if j < 3 else 4, "RH" if m >= 60 else "LH", vel=0.62, late=0.045 * i)
-    for b, label in marks:
-        s.p.mark(s.perf(b), label)["wt"] = b * BEAT
+    # исполнение: фермата перед каскадами, каскады свободнее, Adagio
+    B_END = 32 + 48 + 8 + 6 * 8 + 8 + 4      # конец середины (доли)
+    ADAGIO = B_END + 16 + 80 + 12
+    s.slow += [(B_END - 2, B_END, 2.0), (B_END, B_END + 16, 1.12), (ADAGIO - 2, ADAGIO, 1.3), (ADAGIO, ADAGIO + 6, 2.4)]
+    b = 0
+    marks = []
+    marks.append((b, "A: фраза, фраза, каданс")); section_A(s, b); b += 32
+    marks.append((b, "A′: на кварту выше, вздохи, спуск")); section_A2(s, b); b += 48
+    marks.append((b, "Тоника")); link(s, b); b += 8
+    marks.append((b, "B: фантазия над пунктами")); b_end = middle(s, b)
+    # фермата на уменьшённом септаккорде над пунктом a
+    for i, m in enumerate([45, 57, 60, 63, 66, 69, 72]):
+        s.n(m, b_end - 2, 2, "RH" if m >= 60 else "LH", vel=0.66, late=0.04 * i)
+    b = b_end
+    marks.append((b, "Каскады")); cascade(s, b); b += 16
+    marks.append((b, "Реприза: голоса переставлены")); section_A(s, b, swap=True); b += 32
+    section_A2(s, b, swap=True); b += 48
+    marks.append((b, "Кода, Adagio")); coda(s, b); b += 18
+    for bt, label in marks:
+        s.p.mark(s.perf(bt), label)["wt"] = bt * BEAT
+    s.p.meta["beats"] = b
     return s.p

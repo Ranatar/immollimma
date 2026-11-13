@@ -7,18 +7,18 @@
   "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising"
  ],
  "by_instrument": {
-  "hpsd@sso": 1037
+  "hpsd@sso": 1907
  },
  "substitutions": {},
  "missing": {},
  "out_of_range_rescued": {},
- "sfizz_notes": 214,
+ "sfizz_notes": 312,
  "lengthened": 0,
  "window": [
   0.0,
-  174.53099999999998
+  191.55672727272724
  ],
- "seconds": 174.53099999999998,
+ "seconds": 191.55672727272724,
  "mp3": "/home/claude/immollimma/requests/bach-moment/out/audio.mp3",
  "notation": {
   "midi": "/home/claude/immollimma/requests/bach-moment/out/score.mid",
@@ -26,8 +26,7 @@
   "musicxml": "/home/claude/immollimma/requests/bach-moment/out/score.musicxml",
   "pdf": "/home/claude/immollimma/requests/bach-moment/out/score.pdf",
   "grid": [
-   4,
-   3
+   4
   ]
  },
  "qa": {
@@ -36,24 +35,24 @@
   "clicks": [],
   "flat": [],
   "bounds": [
-   64.2,
-   68.2,
-   72.2,
-   76.2,
-   80.2,
-   84.2,
-   112.5,
-   153.5,
-   154.0,
-   158.2,
-   163.0,
-   171.5
+   20.0,
+   29.5,
+   41.2,
+   49.2,
+   103.0,
+   109.5,
+   145.2,
+   165.0,
+   179.5,
+   183.2,
+   185.5,
+   188.2
   ],
   "png": "/home/claude/immollimma/requests/bach-moment/out/report.png"
  },
  "parts_lufs": {
-  "Harpsichord RH": -40.1,
-  "Harpsichord LH": -40.3
+  "Harpsichord RH": -39.3,
+  "Harpsichord LH": -39.4
  },
- "seconds_taken": 26.5
+ "seconds_taken": 34.4
 }
