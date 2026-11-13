@@ -1,15 +1,23 @@
 #!/usr/bin/env python3
-"""Искушение Галадриэли — Лориен ночью, Фродо предлагает Кольцо (≈ 3:34).
+"""Искушение Галадриэли — Лориен ночью, Фродо предлагает Кольцо (≈ 3:34). Редакция 2.
 
-Style, not quotation: the obsession number of a stage musical (pipe organ, a pulsing quaver ostinato, a
-chromatically descending bass under a minor chord, tempter ↔ tempted, every round a semitone higher, a
-soprano vocalise climbing to the peak) joined with a Lothlórien/Ring film-score idiom (women's choir over a
-drone, Dorian/Phrygian turns, low brass and contrabassoon with tritones and minor seconds, starlight bells).
-Both themes are written here (brief.json): Galadriel D–A–B–E–D–A, the Ring D–E♭–D–G♯.
+По источникам (research.md): ход сцены Зеркала у Шора (по расшифровке Complete Recordings) и приметы «Призрака
+Оперы» (по MIDI). Мелодии обоих не цитируются: свои темы — Галадриэль D–A–B–E–D–A и Кольцо D–E♭–D–G♯.
 
-Through-processes (plan.md): the Ring's tritone shadow in the bass, growing to the peak and staying as a
-shadow at the end; rounds a semitone up (D minor → E♭ minor → E minor); the 'rot' of the tuning from 1:12 to
-the cut at 2:40, pure tuning after it.
+  0:00  Лориен ночью: женский хор над бурдоном, звёздный свет
+  0:28  Зеркало: тема Галадриэли у альтовой флейты, арфа — вода
+  0:50  видение (Шор: «Шир горит» → Око): высокие скрипки, остинато фагота восьмыми → шестнадцатыми,
+        засурдиненная труба и тромбон — мотив Кольца
+  1:00  Фродо отшатнулся (Шор: 3/4, пиццикато на каждую долю, фраза валторны), тишина, «Я отдам его вам» — орган
+  1:12  искушение, волна 1 (фа-диез минор, ♩=80): остинато виолончелей шестнадцатыми вокруг тоники, высокие
+        скрипки, валторны fp< — каждый такт выше (Шор); голос Кольца в тромбонах; в конце волны орган —
+        параллельные трезвучия хроматически вниз («Призрак»)
+  1:42  волна 2 на полтона выше (соль минор): бас бьётся восьмыми на одном звуке, литавры («Призрак»), её ответ в хоре
+  2:06  к кульминации: бас с акцентами, трубы, аккорды всё выше
+  2:15  Тёмная Королева (ля минор, ff): вокализ взбирается по целым тонам («Призрак»); аккорды обваливаются вниз и
+        литавровое тремоло (Шор) — обрыв
+  2:42  «I pass the test»: одна валторна, тема на челесте
+  3:05  уйти на Запад: фраза валторны над струнными; звёзды гаснут
 
     python3 -m kit run requests/galadriel-temptation/piece.py --sketch --parts
     python3 -m kit run requests/galadriel-temptation/piece.py --parts
@@ -35,7 +43,7 @@ class G:
     def __init__(self, ctx):
         self.cues = ctx.cues["cues"]
         self.total = ctx.cues["duration_s"]
-        self.p = Piece("Искушение Галадриэли", bpm=104, meter=(4, 4), key="D minor", seed=31)
+        self.p = Piece("Искушение Галадриэли", bpm=80, meter=(4, 4), key="D minor", seed=31)
         self.p.meta["sends"] = {"choir": 0.6, "organ": 0.5, "harp": 0.55, "winds": 0.4, "strings": 0.42, "brass": 0.35}
         self.c = Composer(self.p, lib="sso", seed=17)
         self.rng = self.c.rng
@@ -126,32 +134,51 @@ def mirror(g, t0, t1, t_acc):
     g.theme("afl_sus", [0, 7, 8], 62, t_acc + 0.8, [1.4, 1.2, 3.4], vel=0.4, gain=0.5, attack=0.3, release=1.5)
 
 
-def vision(g, t0, t_cut):
-    """0:50 — the vision: the Ring whispers (contrabassoon, bass clarinet), a semitone cluster, breathing,
-    a falling endless glissando; crescendo to the cut before the silence"""
-    dur = t_cut - t0
-    # no hole at the seam with the Mirror: the ground is there at once
-    g.n("org_quiet", 26, t0 - 0.5, dur + 0.5, vel=0.5, gain=0.4, attack=0.8, release=0.3)
-    g.n("cb_trem", 38, t0, dur, vel=0.45, gain=0.5, attack=1.2, release=0.3, pan=-0.3)
-    g.n("cb_sus", 38, t0 - 0.3, 4.0, vel=0.35, gain=0.5, attack=0.5, release=2.0)
-    g.n("vc_trem", 50, t0 + 5, dur - 5, vel=0.4, gain=0.35, attack=5.0, release=0.3, pan=-0.1)
-    g.n("vla_trem", 51, t0 + 7, dur - 7, vel=0.35, gain=0.3, attack=5.0, release=0.3, pan=0.15, detune=0.2)
-    # the Ring: D Eb D G# — low, slow; then an octave higher, then closer still
-    # each statement nearer and louder: the vision grows to the cut
-    g.theme("cbsn_sus", RING, 38, t0 + 2.0, [1.6, 1.6, 1.6, 3.5], vel=0.4, gain=0.42, attack=0.4, release=1.0)
-    g.theme("bcl_sus", RING, 50, t0 + 8.5, [1.3, 1.3, 1.3, 2.8], vel=0.5, gain=0.75, attack=0.3, release=1.0, pan=0.2)
-    g.theme("hns_sus", RING, 50, t0 + 13.0, [0.9, 0.9, 0.9, t_cut - t0 - 15.7], vel=0.65, gain=0.75, attack=0.2, release=0.3,
-            pan=-0.25)
-    # the swell: full organ creeping in under everything, to the cut
-    for m in (26, 38, 39, 45, 50, 51):
-        g.n("org_loud", m, t0 + 9.0, t_cut - t0 - 9.0, vel=0.7, gain=0.3, attack=t_cut - t0 - 9.5, release=0.2)
-    g.c.breath(t0 + 4.0, 8.0, gain=0.4)
-    g.c.shepard(t0 + 9.0, t_cut, gain=0.2, period=6.0)
-    g.c.heartbeat(t0 + 5.0, t_cut - 0.6, gain=0.28)
-    # the Eye: a tritone flickering high in harmonics, ring-modulated
-    g.n("vln_harm", 99, t0 + 10.0, t_cut - t0 - 10.2, vel=0.3, gain=0.25, attack=2.0, release=0.2, ringmod=7.0, pan=0.4)
-    g.n("vln_harm", 93, t0 + 11.0, t_cut - t0 - 11.2, vel=0.3, gain=0.22, attack=2.0, release=0.2, ringmod=5.0, pan=-0.4)
-    g.c.timp(t_cut - 3.0, D, vel=0.55, roll=2.9)
+def vision(g, t0, t1):
+    """0:50 — видение (как у Шора: «Шир горит» → Око): скрипки держат высокий звук, внизу остинато фагота
+    восьмыми, потом шестнадцатыми; засурдиненная труба и тромбон — мотив Кольца; к концу — Око"""
+    q = 0.75
+    dur = t1 - t0
+    g.n("vln_sus", 88, t0, dur, vel=0.4, gain=0.35, attack=1.5, release=0.6, pan=0.3)       # высокий E — пожар вдали
+    g.n("vln_sus", 89, t0 + dur * 0.55, dur * 0.45, vel=0.45, gain=0.3, attack=2.0, release=0.4, pan=-0.3)  # и полутон
+    g.n("cb_sus", 37, t0, dur, vel=0.4, gain=0.45, attack=1.0, release=0.5)                 # C♯ в глубине
+    # фагот: C♯–D♯–E… восьмыми, с середины — шестнадцатыми, с акцентом на доле
+    cell = [37, 39, 40, 39]
+    t, k = t0 + 0.4, 0
+    while t < t1 - 0.2:
+        fast = t > t0 + dur * 0.45
+        step = q / 4 if fast else q / 2
+        m = cell[k % 4] + (12 if fast and (k // 8) % 2 else 0)
+        g.n("bsn_sus", m + 12, t, step * 0.85, vel=0.5 + (0.12 if k % 4 == 0 else 0), gain=0.5, release=0.1, pan=-0.2)
+        g.n("cbsn_sus", m, t, step * 0.85, vel=0.45, gain=0.3, release=0.1) if k % 2 == 0 else None
+        t += step
+        k += 1
+    # Око: мотив Кольца у засурдиненной трубы, отвечает тромбон; всё ближе
+    for j, (inst, root, tt) in enumerate((("tpt_mute", 62, t0 + 4.5), ("tbn_sus", 50, t0 + 9.0),
+                                           ("tpt_mute", 63, t0 + 12.5), ("tbn_sus", 51, t0 + 15.0))):
+        g.theme(inst, RING, root, tt, [0.5, 0.5, 0.5, 1.6], vel=0.55 + 0.08 * j, gain=0.45 if inst == "tpt_mute" else 0.4,
+                attack=0.03, release=0.3, pan=0.25 if inst == "tpt_mute" else -0.25)
+    g.c.fx("tamtam", t0 + 12.4, gain=0.18, bus="perc")
+    g.c.timp(t1 - 2.2, 1, vel=0.55, roll=2.1)
+
+
+def recoil(g, t0, t1):
+    """1:00 — Фродо отшатывается: 3/4, пиццикато баса на каждую долю, аккорды струнных, длинная фраза валторны
+    (тема Галадриэли в миноре), p → mf"""
+    beat = 0.75
+    prog = [[50, 57, 62, 65], [49, 57, 61, 64], [47, 55, 62, 67], [46, 58, 62, 65]]  # Dm | A/C♯ | Gm/B | B♭
+    t, i = t0, 0
+    while t < t1 - 0.2:
+        ch = prog[(i // 3) % 4]
+        x = (t - t0) / (t1 - t0)
+        g.n("cb_pizz", ch[0] - 12, t, 0.5, vel=0.55 + 0.2 * x, gain=0.5)
+        if i % 3 == 0:
+            for m in ch[1:]:
+                g.n("vla_sus" if m < 60 else "vln_sus", m, t, 3 * beat, vel=0.35 + 0.25 * x, gain=0.28, attack=0.3, release=0.3)
+        t += beat
+        i += 1
+    g.theme("hn_sus", [0, 7, 8, 12, 10, 7], 50, t0 + 0.75, [1.5, 0.75, 1.5, 2.25, 0.75, 2.0], vel=0.5, gain=0.5,
+            attack=0.08, release=0.5, pan=-0.15)
 
 
 def offer(g, t):
@@ -166,157 +193,145 @@ def offer(g, t):
     g.c.fx("bd", t, gain=0.4, bus="perc")
 
 
-def obsession(g, t0, t1, key, round_no, swell=None):
-    """the obsession: quaver ostinato, the chromatic bass descending under the minor chord, organ blows at the
-    head of each phrase, the Ring (brass) ↔ Galadriel (choir, flute / violins); round 2 a semitone higher,
-    denser, the tuning rotting"""
-    p, c = g.p, g.c
-    q = 60.0 / 104 / 2              # a quaver
-    bar = 8 * q
-    nbars = int((t1 - t0) / bar)
-    rot = 0.08 if round_no == 1 else 0.18
-    bass = [0, -1, -2, -3, -4, -5]  # D C# C B Bb A under D minor — two bars each
+Q = 0.75  # четверть при ♩=80 — темп искушения в фильме
+
+
+def wave(g, t0, nbars, key, level, *, pulse=False, organ_riff=True, choir=False):
+    """волна искушения: остинато виолончелей шестнадцатыми вокруг тоники (как у Шора — F♯), высокие скрипки,
+    валторны — аккорды fp < , каждый такт выше; «Призрак»: бас бьётся восьмыми на одном звуке, орган в конце
+    волны — параллельные минорные трезвучия хроматически вниз; голос Кольца — тромбоны"""
+    root = in_range(key, 42, 53)  # F♯2…
+    bar = 4 * Q
+    t_end = t0 + nbars * bar
+    g.n("vln_sus", in_range(key + 7, 85, 96), t0, t_end - t0, vel=0.35 + 0.1 * level, gain=0.32, attack=1.2, release=0.4,
+        pan=0.3)
+    g.n("vln_sus", in_range(key, 81, 92), t0 + bar, t_end - t0 - bar, vel=0.32 + 0.1 * level, gain=0.28, attack=2.0,
+        release=0.4, pan=-0.3)
+    fig = [0, 3, 7, 8, 7, 3, 7, 12, 0, 3, 8, 7, 3, 7, 10, 15]   # i, ♭3, 5, ♭6 — кружение; в конце такта — взлёт
     for b in range(nbars):
         tb = t0 + b * bar
         x = b / max(1, nbars - 1)
-        # growth (full render 3: both rounds sat at one level for a minute): round 1 from −2 dB to +1.5,
-        # round 2 from +2 to +6 — the obsession grows phrase by phrase
-        g.mult = 10 ** (((-2 + 3.5 * x) if round_no == 1 else (2 + 4 * x)) / 20)
-        step = bass[(b // 2) % 6]
-        groot = in_range(key, 38, 49)
-        low = groot + step
-        last_bar = b == nbars - 1
-        # the pulse: quavers on the root, octave leap on 4 and 8
-        for k in range(8):
-            m = groot - 12 if k in (3, 7) else groot
-            v = 0.62 if k in (0, 4) else 0.45
-            if round_no == 2 or swell:
-                v += 0.08
-            g.n("vc_spic", m + 12, tb + k * q, q * 0.8, vel=v, gain=0.5, pan=-0.15, release=0.2)
-            if round_no == 2:
-                g.n("vla_spic", m + 24, tb + k * q, q * 0.8, vel=v * 0.9, gain=0.35, pan=0.2, release=0.2)
-        # the chromatic bass (the floor): contrabasses, contrabassoon, organ pedal
-        if b % 2 == 0:
-            d2 = 2 * bar
-            g.n("cb_sus", low, tb, d2 * 0.98, vel=0.6, gain=0.6, attack=0.05, release=0.6, pan=-0.3)
-            g.n("cbsn_sus", low - 12 if low - 12 >= 22 else low, tb, d2 * 0.98, vel=0.55, gain=0.45, attack=0.05, release=0.5)
-            g.n("org_quiet", low - 12, tb, d2, vel=0.5, gain=0.3, attack=0.05, release=0.5)
-            # the minor chord above the moving bass (organ manual, sustained strings)
-            ch = [in_range(key, 60, 71), in_range(key + 3, 60, 72), in_range(key + 7, 62, 74)]
-            for m in ch:
-                g.n("org_reed", m, tb, d2, vel=0.45, gain=0.3, attack=0.1, release=0.6)
-            c.pad(tb, tb + d2, (key, MIN), vel=0.45 + 0.1 * round_no, gain=0.35, attack=0.4, detune=rot,
-                  drift=-0.1 * round_no, double_gain=0.4, bass_only=False)
-        if b % 4 == 0:  # the organ blow at the head of the phrase
-            for m in [in_range(key, 26, 37), in_range(key, 38, 49), in_range(key + 7, 50, 61), in_range(key, 60, 71),
-                      in_range(key + 3, 62, 73), in_range(key + 7, 66, 77)]:
-                g.n("org_loud", m, tb, bar * 0.45, vel=0.75, gain=0.35, attack=0.02, release=1.2)
-            c.timp(tb, key, vel=0.75)
-            c.fx("bd", tb, gain=0.35, bus="perc")
-        elif round_no == 2 or swell:
-            c.fx("bd_soft", tb, gain=0.35 * g.mult, bus="perc")
-        if round_no == 2 and b >= 4 and b % 2 == 0:  # horns hold the minor chord: the room fills up
-            for m in (in_range(key, 50, 61), in_range(key + 3, 53, 64), in_range(key + 7, 55, 67)):
-                g.n("hns_sus", m, tb, 2 * bar * 0.98, vel=0.55 + 0.2 * x, gain=0.35, attack=0.6, release=0.4, pan=0.15,
-                    detune=rot * 0.6)
-        if round_no == 2 and b >= nbars - 4:  # the last four bars: timpani on every beat
-            for k in range(4):
-                c.timp(tb + k * 2 * q, key if k % 2 == 0 else key + 7, vel=0.6 + 0.3 * x)
-        # dialogue: the Ring speaks on bars 1–2 of four, Galadriel answers on 3–4
-        ph = b % 4
-        if ph == 0 and not last_bar:
-            ring_inst = ("hns_sus",) if round_no == 1 else ("tbn_sus", "tba_sus")
-            base = in_range(key, 50, 61) if round_no == 1 else in_range(key, 43, 54)
-            for inst in ring_inst:
-                o = -12 if inst == "tba_sus" else 0
-                g.theme(inst, RING + [None, 5, 4, 3, 1], base + o, tb, [q * 2, q * 2, q * 2, q * 6, q * 2, q * 2, q * 2, q * 2, q * 6],
-                        vel=0.65 + 0.1 * (round_no - 1), gain=0.5, attack=0.05, release=0.4, pan=-0.3)
-            if round_no == 2:  # the Ring's echo in the horns a bar later: the voices intertwine
-                g.theme("hns_sus", RING, in_range(key, 55, 66), tb + bar, [q * 2, q * 2, q * 2, q * 6], vel=0.55, gain=0.4,
-                        attack=0.05, pan=0.3, detune=rot)
-        if ph == 2 and not last_bar:
-            # Galadriel answers: her theme in minor with a Phrygian second (… B♭ E♭ …)
-            ans = [0, 7, 8, 13, 12, 7]
-            durs = [q * 3, q * 2, q * 3, q * 4, q * 2, q * 2]
-            if round_no == 1:
-                g.theme("choir", ans, in_range(key, 62, 73), tb, durs, vel=0.55, gain=0.5, attack=0.25, release=0.8)
-                g.theme("afl_sus", ans, in_range(key, 62, 73), tb, durs, vel=0.5, gain=0.4, attack=0.1, release=0.6, pan=0.2)
-            else:
-                g.theme("vln_leg", ans, in_range(key, 67, 78), tb, durs, vel=0.65, gain=0.5, attack=0.08, release=0.6, pan=0.3)
-                g.theme("choir", ans, in_range(key, 62, 73), tb, durs, vel=0.62, gain=0.5, attack=0.2, release=0.8)
-                g.theme("fl_sus", ans, in_range(key, 74, 85), tb, durs, vel=0.5, gain=0.35, attack=0.08, release=0.6,
-                        pan=0.35, detune=rot * 0.5)
+        g.mult = 10 ** ((-3 + 4 * x + 3 * level) / 20)
+        for j in range(16):
+            m = root + fig[j] + (2 if (b % 2 and j >= 12) else 0)
+            g.n("vc_sus", m, tb + j * Q / 4, Q / 4 * 0.95, vel=0.5 + (0.1 if j % 4 == 0 else 0), gain=0.42, attack=0.01,
+                release=0.08, pan=-0.2)
+            if level >= 1:
+                g.n("vla_sus", m + 12, tb + j * Q / 4, Q / 4 * 0.95, vel=0.42, gain=0.25, attack=0.01, release=0.08, pan=0.2)
+        # валторны: fp — и нарастание; аккорд каждый такт на ступень выше
+        sc = [0, 2, 3, 5, 7, 8, 10]
+        deg = b % 7
+        tri = [in_range(key + sc[deg], 55, 66), in_range(key + sc[(deg + 2) % 7], 58, 70), in_range(key + sc[(deg + 4) % 7], 62, 73)]
+        for m in tri:
+            g.n("hn_sus", m, tb, 0.25, vel=0.75, gain=0.4, attack=0.01, release=0.1)            # f
+            g.n("hn_sus", m, tb + 0.2, bar - 0.25, vel=0.4 + 0.35 * x, gain=0.45, attack=bar * 0.85, release=0.2)  # p <
+        if level >= 1:
+            for m in tri:
+                g.n("cl_sus", m + 12, tb + 0.2, bar - 0.25, vel=0.35 + 0.3 * x, gain=0.3, attack=bar * 0.85, release=0.2)
+        if pulse:  # «Призрак»: бас бьётся восьмыми на одном звуке, акцент на сильных
+            for k in range(8):
+                g.n("cb_sus", root - 12, tb + k * Q / 2, Q / 2 * 0.7, vel=0.55 + (0.15 if k % 2 == 0 else 0), gain=0.55,
+                    attack=0.01, release=0.08)
+                g.n("vc_spic", root, tb + k * Q / 2, Q / 2 * 0.7, vel=0.5, gain=0.3, release=0.06)
+            g.c.timp(tb, key, vel=0.6 + 0.3 * x)
+            g.c.fx("bd", tb, gain=0.3, bus="perc")
+        else:
+            g.n("cb_sus", root - 12, tb, bar * 0.98, vel=0.5, gain=0.5, attack=0.2, release=0.3)
+        # голос Кольца в тромбонах — на втором и шестом такте волны
+        if b % 4 == 1:
+            g.theme("tbn_sus", RING + [None, 5, 4], in_range(key, 43, 54), tb, [Q, Q, Q, 2 * Q, Q, Q, 2 * Q], vel=0.6 + 0.15 * level,
+                    gain=0.45, attack=0.03, release=0.3, pan=-0.3)
+        # её ответ: тема Галадриэли (в миноре) у хора / скрипок — она отвечает Кольцу
+        if choir and b % 4 == 3:
+            ans = [0, 7, 8, 12, 10, 7]
+            g.theme("choir", ans, in_range(key, 62, 73), tb, [Q, Q / 2, Q, 1.5 * Q, Q / 2, 1.5 * Q], vel=0.6 + 0.1 * level,
+                    gain=0.5, attack=0.15, release=0.6)
+    # орган в последнем такте волны: трезвучия хроматически вниз по долям — и на шестую ступень
+    if organ_riff:
+        tb = t_end - bar
+        for k, sh in enumerate((0, -1, -2, -3)):
+            r = key + sh
+            for m in (in_range(r, 26, 37), in_range(r, 57, 68), in_range(r + 3, 60, 71), in_range(r + 7, 64, 75)):
+                g.n("org_loud", m, tb + k * Q, Q * 0.95, vel=0.75 + 0.05 * level, gain=0.3, attack=0.02, release=0.3)
     g.mult = 1.0
-    if swell:  # 2:05 → 2:15: everything climbs into the Dark Queen
-        s0, s1 = swell
-        c.shepard(s0, s1, up=True, gain=0.3, period=3.0)
-        c.timp(s1 - 6.0, key, vel=0.85, roll=5.9)
-        c.fx("susp_scrape", s1 - 5.0, gain=0.3, bus="fx", dur=5.0)
-        for lane, (inst, m) in enumerate((("cb_trem", 40), ("vc_trem", 52), ("vla_trem", 59), ("vln_trem", 67))):
-            g.n(inst, m, s0, s1 - s0, vel=0.7, gain=0.4, attack=s1 - s0, release=0.3, pan=-0.3 + 0.2 * lane,
-                bend=4.0)
-        g.chord("choir", [in_range(key, 55, 66), in_range(key + 3, 60, 70), in_range(key + 7, 62, 74)], s0, s1 - s0,
-                vel=0.7, gain=0.5, attack=s1 - s0 - 0.5, release=0.3)
 
 
-def dark_queen(g, t_hit, t0, t_cut):
-    """2:15 — the Dark Queen (E minor): full organ, choir ff, a brass chorale i–♭VI–♭II–i, the vocalise
-    climbing by semitones; the rot at its worst; cut dead before the silence"""
-    E = 4
-    prog = [(E, MIN), (0, MAJ), (5, MAJ), (E, MIN)]
-    seg = (t_cut - t_hit) / len(prog)
-    for j, ch in enumerate(prog):
-        tt = t_hit + j * seg
-        d = seg if j < len(prog) - 1 else t_cut - tt
-        root = ch[0]
-        pcs = [(root + i) % 12 for i in ch[1]]
-        organ = [in_range(root, 26, 37), in_range(root, 38, 49), in_range(pcs[2], 50, 61), in_range(pcs[0], 60, 71),
-                 in_range(pcs[1], 62, 73), in_range(pcs[2], 66, 77), in_range(pcs[0], 72, 83)]
-        for m in organ:
-            g.n("org_loud", m, tt, d, vel=0.9, gain=0.33, attack=0.03, release=0.15)
-        g.chord("choir", [in_range(pcs[0], 52, 63), in_range(pcs[1], 57, 68), in_range(pcs[2], 62, 73), in_range(pcs[0], 69, 80)],
-                tt, d, vel=0.85, gain=0.55, attack=0.15, release=0.15)
-        for k, (lo, hi, deg, inst) in enumerate([(28, 40, 0, "tba_sus"), (40, 52, 2, "tbn_sus"), (47, 59, 0, "tbn_sus"),
-                                                 (52, 64, 1, "hns_sus"), (57, 69, 2, "hns_sus")]):
-            m = in_range(pcs[deg], lo, hi)
-            g.n(inst, m, tt, d * 0.97, vel=0.85, gain=0.42, pan=-0.3 + 0.15 * k, attack=0.04, release=0.15)
-            g.n(inst, m, tt + 0.03, d * 0.97, vel=0.7, gain=0.18 + 0.05 * j, pan=0.3 - 0.15 * k, attack=0.05, release=0.15,
-                detune=0.18 + 0.08 * j, bend=-0.2 * j)
-        g.c.pad(tt, tt + d, ch, vel=0.85, gain=0.5, attack=0.1, release=0.15, detune=0.15 + 0.08 * j, drift=-0.2 * j,
-                double_gain=0.5)
-        g.c.timp(tt, root, vel=0.9 if j in (0, 3) else 0.6)
-        # the Ring under it all, in the depths: E F E A#
-        g.theme("cbsn_sus", RING, 28, tt, [d / 6, d / 6, d / 6, d / 2], vel=0.75, gain=0.55, attack=0.03, release=0.15)
-    g.c.fx("tamtam", t_hit, gain=0.5, bus="perc")
-    g.c.fx("clash", t_hit, gain=0.4, bus="perc")
-    g.c.fx("gong_hit", t_hit + 0.02, gain=0.35, bus="perc")
-    # the vocalise: each phrase starts a semitone higher than the last; it climbs and climbs
-    start = 76  # E5
-    t = t0 + 0.6
-    k = 0
-    while t < t_cut - 4.0:
-        top = start + k
-        run = [top, top + 2, top + 3, top + 5, top + 7, top + 5, top + 3]
-        durs = [0.32, 0.32, 0.32, 0.32, 1.4, 0.5, 0.9]
-        # flute an octave up only while it stays in its range; quieter: a high flute cuts through everything
-        for inst, o, gn in (("vln_sus", 0, 0.55), ("fl_sus", 12 if top + 19 <= 96 else 0, 0.15), ("choir", -12, 0.3)):
-            g.theme(inst, [x - top for x in run], top + o, t, durs, vel=0.8, gain=gn, attack=0.04, release=0.3,
-                    pan=0.3 if inst == "vln_sus" else 0.0)
-        t += sum(durs) + 0.35
+def swell(g, t0, t1, key):
+    """к кульминации (как у Шора с т. 3152): бас восьмыми с акцентами, литавры, трубы; аккорды ff всё выше"""
+    root = in_range(key, 42, 53)
+    t, k = t0, 0
+    while t < t1 - 0.05:
+        x = (t - t0) / (t1 - t0)
+        g.n("cb_sus", root - 12, t, Q / 2 * 0.7, vel=0.7 + 0.2 * x, gain=0.6, attack=0.01, release=0.06)
+        g.n("vc_spic", root + (7 if k % 2 else 0), t, Q / 2 * 0.7, vel=0.65 + 0.2 * x, gain=0.4, release=0.06)
+        if k % 2 == 0:
+            g.c.timp(t, key if k % 4 == 0 else key + 7, vel=0.55 + 0.4 * x)
+        t += Q / 2
         k += 1
-    # the last held note: as high as she can — and it sinks: despair; cut dead
-    last = start + k + 7
-    hold = t_cut - t
-    # the piccolo very soft: in this register it would drown the whole orchestra (full render 1: −1.8 LUFS)
-    for inst, o, gn in (("vln_sus", 0, 0.6), ("picc_sus", 12 if last + 12 <= 103 else 0, 0.06), ("vln_harm", 12, 0.12),
-                        ("choir", -12 if last - 12 <= 84 else -24, 0.35)):
-        g.n(inst, last + o, t, hold, vel=0.9, gain=gn, attack=0.08, release=0.12, bend=-0.6)
-    # the ostinato keeps driving under the queen
-    q = 60.0 / 104 / 2
-    tt = t_hit
-    while tt < t_cut - q:
-        g.n("vc_spic", 52 if int((tt - t_hit) / q) % 4 != 3 else 40, tt, q * 0.8, vel=0.7, gain=0.45, pan=-0.15, release=0.1)
-        tt += q
+    bar = 4 * Q
+    for j in range(int((t1 - t0) / bar) + 1):
+        tb = t0 + j * bar
+        if tb >= t1 - 0.3:
+            break
+        tri = [in_range(key + 7 + 2 * j, 60, 72), in_range(key + 10 + 2 * j, 63, 75), in_range(key + 14 + 2 * j, 67, 79)]
+        for inst, o, gn in (("hn_sus", -12, 0.45), ("tpt_sus", 0, 0.35), ("tbn_sus", -24, 0.35), ("choir", 0, 0.4)):
+            for m in tri:
+                g.n(inst, m + o, tb, bar * 0.98, vel=0.65 + 0.12 * j, gain=gn, attack=bar * 0.7, release=0.1)
+    g.c.shepard(t0, t1, up=True, gain=0.22, period=3.0)
+    g.c.fx("susp_scrape", t1 - 4.0, gain=0.3, bus="fx", dur=4.0)
+
+
+def dark_queen(g, t_hit, t_cut, key):
+    """2:15 — Тёмная Королева: ff; бас бьётся восьмыми; вокализ взбирается по целым тонам (как финал «Призрака»);
+    за два такта до конца — аккорды обваливаются вниз (как у Шора), литавровое тремоло — и обрыв"""
+    root = in_range(key, 40, 51)
+    bar = 4 * Q
+    t_fall = t_cut - 2 * bar
+    # удар
+    for m in (in_range(key, 26, 37), in_range(key, 38, 49), in_range(key + 7, 50, 61), in_range(key, 60, 71),
+              in_range(key + 3, 62, 73), in_range(key + 7, 66, 77)):
+        g.n("org_loud", m, t_hit, t_fall - t_hit, vel=0.85, gain=0.3, attack=0.02, release=0.2)
+    g.c.fx("tamtam", t_hit, gain=0.45, bus="perc")
+    g.c.fx("clash", t_hit, gain=0.4, bus="perc")
+    g.c.timp(t_hit, key, vel=0.95)
+    # бас и мотор
+    t, k = t_hit, 0
+    while t < t_fall - 0.05:
+        g.n("cb_sus", root - 12, t, Q / 2 * 0.7, vel=0.8, gain=0.6, attack=0.01, release=0.06)
+        g.n("vc_spic", root, t, Q / 2 * 0.7, vel=0.75, gain=0.4, release=0.06)
+        if k % 4 == 0:
+            g.c.fx("bd", t, gain=0.35, bus="perc")
+        t += Q / 2
+        k += 1
+    # гармония под вокализом: i – ♭VI – ♭VII – i, каждые два такта сдвиг на целый тон вверх
+    shifts = [0, 2, 4]
+    seg = (t_fall - t_hit) / 3
+    for j, sh in enumerate(shifts):
+        tt = t_hit + j * seg
+        for sub, (r, q3) in enumerate(((0, 3), (8, 4), (10, 4), (0, 3))):
+            ts = tt + sub * seg / 4
+            rr = key + sh + r
+            for inst, lo, gn in (("hn_sus", 53, 0.4), ("tbn_sus", 43, 0.35), ("choir", 57, 0.42)):
+                for m in (in_range(rr, lo, lo + 11), in_range(rr + q3, lo + 3, lo + 14), in_range(rr + 7, lo + 5, lo + 16)):
+                    g.n(inst, m, ts, seg / 4 * 0.97, vel=0.8, gain=gn, attack=0.05, release=0.1)
+            g.n("tba_sus", in_range(rr, 28, 39), ts, seg / 4 * 0.97, vel=0.75, gain=0.4, attack=0.03, release=0.1)
+        # вокализ: фраза, каждая следующая — на целый тон выше
+        top = in_range(key + sh, 74, 85)
+        run = [top, top + 2, top + 3, top + 5, top + 7, top + 5, top + 3, top + 2]
+        durs = [Q / 2, Q / 2, Q / 2, Q / 2, 2 * Q, Q / 2, Q / 2, seg - 5 * Q]
+        for inst, o, gn in (("vln_sus", 0, 0.55), ("choir", -12, 0.32), ("fl_sus", 12 if top + 19 <= 96 else 0, 0.12)):
+            g.theme(inst, [x - top for x in run], top + o, tt, durs, vel=0.85, gain=gn, attack=0.04, release=0.2,
+                    pan=0.3 if inst == "vln_sus" else 0.0)
+    # обвал: аккорды ff вниз по ступеням, затем литавровое тремоло
+    falls = [(key + 7, 4), (key + 5, 3), (key + 3, 4), (key + 1, 4)]
+    for j, (r, q3) in enumerate(falls):
+        tt = t_fall + j * Q
+        for inst, lo, gn in (("hn_sus", 55, 0.45), ("tpt_sus", 64, 0.35), ("tbn_sus", 43, 0.4), ("vln_sus", 72, 0.4),
+                             ("choir", 60, 0.35)):
+            for m in (in_range(r, lo, lo + 11), in_range(r + q3, lo + 3, lo + 14), in_range(r + 7, lo + 5, lo + 16)):
+                g.n(inst, m, tt, Q * 0.9 if j < 3 else 1.5 * Q, vel=0.9 - 0.08 * j, gain=gn, attack=0.02, release=0.2)
+        g.c.timp(tt, r, vel=0.85 - 0.1 * j)
+    g.c.timp(t_fall + 5 * Q, key + 1, vel=0.5, roll=t_cut - t_fall - 5 * Q - 0.1)
 
 
 def passed(g, t0, t1):
@@ -327,7 +342,9 @@ def passed(g, t0, t1):
     g.n("org_quiet", 38, t0, dur, vel=0.4, gain=0.3, attack=1.5, release=2.0)
     for i, v in enumerate([[62, 66, 69, 76], [61, 66, 69, 76], [59, 66, 71, 74], [62, 66, 69, 74]]):  # D(add9) D/C# Bm D
         g.chord("choir", v, t0 + 1.0 + 5.5 * i, 6.5, vel=0.3, gain=0.45, attack=2.2, release=2.0, spread=0.12)
-    g.theme("celesta", GALADRIEL, 74, t0 + 2.0, [1.0, 0.8, 1.0, 2.0, 0.8, 2.6], vel=0.5, gain=0.5, pan=0.2)
+    # «I pass the test»: сперва одна валторна, тихо; потом тема — на челесте, как звёздный свет
+    g.theme("hn_sus", [0, 7, 9], 50, t0 + 0.5, [1.5, 1.0, 3.0], vel=0.35, gain=0.45, attack=0.2, release=1.0)
+    g.theme("celesta", GALADRIEL, 74, t0 + 6.0, [1.0, 0.8, 1.0, 2.0, 0.8, 2.6], vel=0.5, gain=0.5, pan=0.2)
     g.theme("afl_sus", GALADRIEL, 62, t0 + 10.0, [1.5, 1.0, 1.3, 2.6, 1.1, 3.6], vel=0.45, gain=0.5, attack=0.25, release=1.2)
     g.c.arpeggio(t0 + 0.1, (D, (0, 7, 14, 16, 19)), n=10, step=0.1, lo=38, gain=0.6, vel=0.4, ring=4.0)
     g.c.arpeggio(t0 + 9.8, (D, (0, 7, 14, 16, 21)), n=10, step=0.1, lo=50, gain=0.35, vel=0.3, ring=4.0)
@@ -351,7 +368,7 @@ def west(g, t0, t_stars, t_end):
         tt += d
     g.n("cb_sus", 38, t0, dur, vel=0.28, gain=0.5, attack=2.0, release=3.0)
     # the elegy: a falling line, then the theme's opening, unfinished
-    g.theme("eh_sus", [7, 5, 4, 2, 0, None, 4, 2, -3], 62, t0 + 1.0, [1.2, 0.8, 0.8, 1.2, 3.0, 0.6, 1.0, 1.0, 3.6],
+    g.theme("hn_sus", [7, 5, 4, 2, 0, None, 4, 2, -3], 50, t0 + 1.0, [1.2, 0.8, 0.8, 1.2, 3.0, 0.6, 1.0, 1.0, 3.6],
             vel=0.45, gain=0.55, attack=0.15, release=1.2, pan=0.1)
     g.theme("afl_sus", [0, 7, 9], 62, t0 + 15.0, [1.6, 1.2, 4.5], vel=0.4, gain=0.45, attack=0.3, release=2.0, pan=-0.1)
     # the shadow: the Ring's tritone, very low, under the major chord
@@ -369,17 +386,24 @@ def build(ctx):
     g = G(ctx)
     T = g.t
     t_mirror, t_acc, t_vision = T("Зеркало"), T("Вода в чаше дрогнула"), T("Видение")
-    t_sil1, t_offer, t_obs = T("Фродо протягивает Кольцо"), T("«Я отдам его вам»"), T("Искушение")
-    t_r2, t_swell, t_hit = T("Второй круг"), T("К кульминации"), T("Тёмная Королева")
-    t_peak, t_sil2, t_passed = T("Вершина"), T("Она опускает руку"), T("Испытание пройдено")
+    t_recoil, t_sil1, t_offer = T("Фродо отшатнулся"), T("Фродо протягивает Кольцо"), T("«Я отдам его вам»")
+    t_obs, t_r2, t_swell = T("Искушение"), T("Второй круг"), T("К кульминации")
+    t_hit, t_sil2, t_passed = T("Тёмная Королева"), T("Она опускает руку"), T("Испытание пройдено")
     t_west, t_stars = T("Уйти на Запад"), T("Звёзды гаснут")
+    F_SHARP, G_, A_ = 6, 7, 9
     lorien(g, 0.0, t_mirror)
     mirror(g, t_mirror, t_vision, t_acc)
-    vision(g, t_vision, t_sil1 - 0.15)
+    vision(g, t_vision, t_recoil)
+    recoil(g, t_recoil, t_sil1 - 0.1)
     offer(g, t_offer)
-    obsession(g, t_obs, t_r2, D, 1)
-    obsession(g, t_r2, t_hit, 3, 2, swell=(t_swell, t_hit))
-    dark_queen(g, t_hit, t_peak, t_sil2 - 0.1)
+    wave(g, t_obs, round((t_r2 - t_obs) / (4 * Q)), F_SHARP, 0)
+    wave(g, t_r2, round((t_swell - t_r2) / (4 * Q)), G_, 1, pulse=True, choir=True)
+    swell(g, t_swell, t_hit, G_)
+    dark_queen(g, t_hit, t_sil2 - 0.1, A_)
     passed(g, t_passed, t_west)
     west(g, t_west, t_stars, g.total - 1.0)
+    # замер `--parts`: труба (−18.6) и хор (−17) выпирали; остинато виолончелей (−30), бьющийся бас (−37),
+    # голос Кольца в тромбонах (−39.5) — главное в искушении — тонули
+    g.p.balance({"Trumpet": -7, "Choir": -4, "Bassoon": -4, "Cellos": +6, "Basses": +9, "Trombone": +12,
+                 "Violins": +5, "Violas": +8, "Timpani": +6, "Tuba": +4, "Organ": +4, "Contrabassoon": +3})
     return g.p
