@@ -1,0 +1,161 @@
+{
+ "title": "Praeludium es-moll (Рахманинов, op. 16 № 2 — как написал бы Бах)",
+ "styles": [
+  "baroque"
+ ],
+ "seconds": 176,
+ "tempo_bpm": 60,
+ "meter": "12/8",
+ "key": "E-flat minor",
+ "language": "tonal",
+ "library": "sso",
+ "library_notes": [],
+ "defaults": [
+  "sync.video_file",
+  "ensemble.exclude",
+  "characters",
+  "silences"
+ ],
+ "sections": [
+  {
+   "t0": 0.0,
+   "t1": 32.0,
+   "label": "A: cantus в теноре",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "мотор шестнадцатыми в правой руке, суровый cantus в левой; каданс в b-moll",
+   "leader": "cantus (левая рука)",
+   "texture": "мотор шестнадцатыми в правой; двухголосие; каданс в b-moll",
+   "register": "mid",
+   "pulse": "12/8, сплошные шестнадцатые",
+   "dynamic": "—"
+  },
+  {
+   "t0": 32.0,
+   "t1": 64.0,
+   "label": "B: перестановка, Ges-dur",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "голоса меняются местами: cantus сверху, мотор внизу; параллельный мажор",
+   "leader": "cantus (правая рука)",
+   "texture": "перестановка голосов, мотор в левой, бас на сильных долях; трёхголосие",
+   "register": "wide",
+   "pulse": "то же",
+   "dynamic": "—"
+  },
+  {
+   "t0": 64.0,
+   "t1": 88.0,
+   "label": "C: секвенции",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "квинтовый круг; мотор переходит из руки в руку, голова cantus в имитации",
+   "leader": "голова cantus в имитации",
+   "texture": "квинтовый круг, мотор из руки в руку",
+   "register": "wide",
+   "pulse": "то же",
+   "dynamic": "—"
+  },
+  {
+   "t0": 88.0,
+   "t1": 112.0,
+   "label": "Ламенто-бас",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "бас сползает es–d–des–c–ces–b, вздохи в теноре",
+   "leader": "бас (хроматический спуск)",
+   "texture": "вздохи в теноре, мотор в правой; четырёхголосие",
+   "register": "wide",
+   "pulse": "то же",
+   "dynamic": "—"
+  },
+  {
+   "t0": 112.0,
+   "t1": 136.2,
+   "label": "D: пункт на доминанте",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "органный пункт b, мелодия аккордами — кульминация",
+   "leader": "мелодия аккордами",
+   "texture": "органный пункт b, мотор в левой; кульминация",
+   "register": "wide",
+   "pulse": "то же",
+   "dynamic": "—"
+  },
+  {
+   "t0": 136.2,
+   "t1": 153.4,
+   "label": "Затихание",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "мотор вдвое медленнее над тоническим пунктом, голова cantus в последний раз",
+   "leader": "голова cantus",
+   "texture": "мотор восьмыми над тоническим пунктом",
+   "register": "mid",
+   "pulse": "вдвое медленнее",
+   "dynamic": "—"
+  },
+  {
+   "t0": 153.4,
+   "t1": 176,
+   "label": "Adagio",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "четыре аккорда, плагально, пикардийская терция",
+   "leader": "аккорды",
+   "texture": "четыре аккорда арпеджато, плагально, пикардийская терция",
+   "register": "wide",
+   "pulse": "Adagio",
+   "dynamic": "—"
+  }
+ ],
+ "hits": [
+  {
+   "t": 124.0,
+   "label": "Фермата, каденция",
+   "kind": "hit",
+   "note": "уменьшённый септаккорд с ферматой, выписанная каденция",
+   "mood": "",
+   "intensity": 0.5,
+   "characters": []
+  }
+ ],
+ "silences": [],
+ "themes": [
+  {
+   "name": "cantus",
+   "notation": "es b ces b | as ges f | ges des es des | ces b as | b ces a b | des c ges a | b es c a | b",
+   "for": "A, B (в Ges-dur), голова — в C, D, затихании",
+   "transform": "перестановка голосов, параллельный мажор, имитация головы, аккордами"
+  }
+ ],
+ "characters": [],
+ "avoid": [
+  "параллельные квинты и октавы",
+  "нонаккорды и кластеры",
+  "тремоло и долгие педали-пэды",
+  "крещендо внутри ноты",
+  "обработка (расстройка, реверс)",
+  "рахманиновских средств: динамики как двигателя, педали, романтических аккордов в широком расположении, рубато"
+ ],
+ "devices": [
+  "line",
+  "arpeggio(hpsd)",
+  "ostinato (шагающий бас)",
+  "chorale (струнные/орган)",
+  "melody"
+ ],
+ "ending": "cadence",
+ "deliver": [
+  "mp3",
+  "midi",
+  "musicxml",
+  "pdf",
+  "report"
+ ],
+ "sketch": {
+  "sketch_first": false,
+  "sketch_seconds": 60,
+  "ask_before_full": false
+ }
+}

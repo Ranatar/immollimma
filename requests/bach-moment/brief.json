@@ -1,0 +1,61 @@
+{
+ "version": 1,
+ "title": "Praeludium es-moll (Рахманинов, op. 16 № 2 — как написал бы Бах)",
+ "purpose": "standalone",
+ "duration_s": 176,
+ "sync": {
+  "mode": "cues",
+  "cues_file": "cues.json"
+ },
+ "style": {
+  "cards": [
+   "baroque"
+  ],
+  "mood": "Суровость и неотвязный вихрь, как у Рахманинова; средства — баховские.",
+  "references": "Музыкальный момент № 2 es-moll Рахманинова: настроение, «сюжет» и схема ведения (вихрь секстолей → мелодия сквозь него → нарастание → мелодия аккордами → затихание → Adagio, четыре аккорда, плагальный каданс). Нотный текст не цитируется. Образцы приёмов: фигурационные прелюдии ХТК (c-moll, e-moll), Гольдберг-вариация 26.",
+  "avoid": "рахманиновских средств: динамики как двигателя, педали, романтических аккордов в широком расположении, рубато"
+ },
+ "language": "tonal",
+ "key": "E-flat minor",
+ "tempo_bpm": 60,
+ "meter": "12/8",
+ "ensemble": {
+  "size": "solo",
+  "include": [
+   "hpsd"
+  ],
+  "exclude": [],
+  "noises": false,
+  "processing": false
+ },
+ "library": "sso",
+ "commercial_ad": false,
+ "dramaturgy": {
+  "arc": "A (cantus в теноре) → B (перестановка, Ges-dur) → C (секвенции, ламенто) → D (пункт на доминанте, мелодия аккордами) → фермата и каденция → затихание → Adagio",
+  "climax_s": 124.0,
+  "ending": "cadence"
+ },
+ "themes": [
+  {
+   "name": "cantus",
+   "notation": "es b ces b | as ges f | ges des es des | ces b as | b ces a b | des c ges a | b es c a | b",
+   "for": "A, B (в Ges-dur), голова — в C, D, затихании",
+   "transform": "перестановка голосов, параллельный мажор, имитация головы, аккордами"
+  }
+ ],
+ "characters": [],
+ "silences": [],
+ "deliver": [
+  "mp3",
+  "midi",
+  "musicxml",
+  "pdf",
+  "report"
+ ],
+ "iteration": {
+  "sketch_first": false,
+  "sketch_seconds": 60,
+  "ask_before_full": false
+ },
+ "notes": "Заказ 2026-11-13. Машиночитаемого текста оригинала не нашлось (ASAP: только прелюдии; поиск по GitHub — пусто); схема — по описаниям и знанию пьесы."
+}
