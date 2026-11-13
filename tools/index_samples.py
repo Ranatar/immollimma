@@ -33,6 +33,22 @@ def measure(path):
     f = f[vf] if vf.any() else f[~np.isnan(f)]
     if len(f) == 0: return None
     return float(69 + 12 * np.log2(np.median(f) / 440))
+# VSCO organs are numbered by key, every 3rd (Rode_Man3Open_01..61 = 61-key manual C2–C7). pYIN cannot read them:
+# the loud plenum's upper half carries a 16' (an octave below the key), the quiet stopped flute's twelfth (3rd
+# partial) beats its fundamental, so measured notes were off by octaves and fifths. Checked by the lowest partial.
+# family: (key offset, keep?) — the pedals overlap the manuals and the sampler would alternate the two timbres as
+# round robins, so a pedal is kept only below the manual; Man3Open_04 lacks its 8' (sounds an octave up)
+ORGAN = {"Rode_Man3Open": (35, lambda n: n != 4), "Rode_Pedal": (23, lambda n: n <= 10),
+         "NT5_Man3Quiet": (-86, lambda n: True), "NT5_PedalQuiet": (-28, lambda n: False)}
+def organ(rows):
+    kept = []
+    for r in rows:
+        k = re.match(r"(.*?)_(\d+)(?:_rr\d)?\.wav$", os.path.basename(r["path"]))
+        off, keep = ORGAN[k.group(1)]
+        if keep(int(k.group(2))):
+            r["note"] = int(k.group(2)) + off
+            kept.append(r)
+    return kept
 out = {}
 for name, d in ART.items():
     files = sorted(glob.glob(os.path.join(V, d, "*.wav")))
@@ -50,6 +66,8 @@ for name, d in ART.items():
     off = collections.Counter(diffs).most_common(1)[0][0] if diffs else 0
     for r in rows:
         r["note"] = (r["named"] + off) if r["named"] is not None else (round(r["measured"]) if r.get("measured") is not None else None)
+    if name in ("org_loud", "org_quiet"):  # органы: файлы без имён нот, номер = клавиша (см. ORGAN)
+        rows = organ(rows)
     out[name] = [r for r in rows if r["note"] is not None]
     print(f"{name:10} files {len(files):3}  offset {off:+d}  range {min(r['note'] for r in out[name])}-{max(r['note'] for r in out[name])}  vels {sorted({r['vel'] for r in rows})}", flush=True)
 pitch = {1: 42, 2: 46, 3: 49, 4: 52, 5: 54}  # VSCO's Timpani.sfz keycenters

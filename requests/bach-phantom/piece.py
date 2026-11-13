@@ -113,25 +113,64 @@ class Org:
             else:
                 self.n(m + k, beat0 + b, d, staff, reg, vel)
 
-    def walk(self, beat0, harms, k, lo=38, hi=52, reg="org_quiet", vel=0.55):
-        """ходящий бас педали восьмыми: основной тон на доле, проходящий к следующему — на слабой"""
-        roots = []
-        for h in harms:
-            pcs, b = chord(h, k)
-            roots.append(b)
+    def walk(self, beat0, harms, k, tonic=None, lo=36, hi=55, reg="org_quiet", vel=0.55):
+        """ходящий бас педали четвертями: на смене гармонии — бас аккорда, на остальных долях — другой звук того же
+        аккорда (ближайший); восьмая-проходящая — только диатоническая (натуральный минор от tonic) и не на
+        полутон от звуков аккорда, когда до следующего звука терция"""
+        tonic = k if tonic is None else tonic
+        scale = {(tonic + 2 + x) % 12 for x in (0, 2, 3, 5, 7, 8, 10)}  # d-moll = тоника D (pc 2)
+        seq = []
         prev = None
-        for j, b in enumerate(roots):
-            m = near(b, prev if prev is not None else (lo + hi) // 2)
-            m = min(max(m, lo), hi) if lo <= m <= hi else (m + 12 if m < lo else m - 12)
-            nxt = roots[j + 1] if j + 1 < len(roots) else b
-            mn = near(nxt, m)
-            pas = m + (1 if mn > m else -1) * (2 if abs(mn - m) > 2 else 0) if mn != m else m + 12 if m + 12 <= hi else m - 12
-            pcs, _ = chord(harms[j], k)
-            if abs(mn - m) in (3, 4):
-                pas = m + (2 if mn > m else -2) if (m + (2 if mn > m else -2)) % 12 in {(x) % 12 for x in range(12)} else pas
-            self.n(m, beat0 + j, 0.5, "Ped", reg, vel + 0.05)
-            self.n(pas, beat0 + j + 0.5, 0.5, "Ped", reg, vel)
+        for j, h in enumerate(harms):
+            pcs, b = chord(h, k)
+            ref = prev if prev is not None else (lo + hi) // 2
+            if j == 0 or harms[j - 1] != h:
+                m = min((x for x in range(lo, hi + 1) if x % 12 == b), key=lambda x: abs(x - ref))
+            else:  # та же гармония: шаг к другому звуку трезвучия (септима в бас не идёт), не повторяя предыдущий
+                tri, _ = chord(h.split("/")[0].replace("7", ""), k)
+                m = min((x for x in range(lo, hi + 1) if x % 12 in tri and x != ref), key=lambda x: (abs(x - ref), x))
+            seq.append((m, pcs))
             prev = m
+        for j, (m, pcs) in enumerate(seq):
+            nxt = seq[j + 1][0] if j + 1 < len(seq) else None
+            pas = None
+            if nxt is not None and abs(nxt - m) in (3, 4):
+                d = 1 if nxt > m else -1
+                for x in range(m + d, nxt, d):
+                    if x % 12 in scale and all(min((x - p) % 12, (p - x) % 12) != 1 for p in pcs):
+                        pas = x
+                        break
+            if pas is None:
+                self.n(m, beat0 + j, 1, "Ped", reg, vel + 0.05, legato=0.85)
+            else:
+                self.n(m, beat0 + j, 0.5, "Ped", reg, vel + 0.05)
+                self.n(pas, beat0 + j + 0.5, 0.5, "Ped", reg, vel)
+
+    def accomp(self, beat0, harms, k, melody, lo=53, hi=67, reg="org_quiet", vel=0.5):
+        """средние голоса левой руки: аккорд меняется вместе с гармонией; где мелодия держит долгую ноту, левая рука
+        отвечает восьмыми (комплементарный ритм), где мелодия движется — держит"""
+        onsets = {round(b * 2) / 2 for b, d, m in melody}
+        j = 0
+        while j < len(harms):
+            e = j + 1
+            while e < len(harms) and harms[e] == harms[j]:
+                e += 1
+            v = self.voicing(harms[j], k, lo, hi, "acc" + reg, 2)
+            t = j
+            while t < e:  # по долям внутри гармонии
+                if t not in onsets:  # мелодия держит — ответ восьмыми
+                    self.n(v[0], beat0 + t, 0.5, "LH", reg, vel)
+                    self.n(v[1], beat0 + t + 0.5, 0.5, "LH", reg, vel)
+                    t += 1
+                    continue
+                # мелодия ударяет: аккорд держится до следующей доли-ответа или конца гармонии
+                u = t + 1
+                while u < e and u in onsets:
+                    u += 1
+                for m in v:
+                    self.n(m, beat0 + t, u - t, "LH", reg, vel)
+                t = u
+            j = e
 
 
 # ===================================================================== ритурнель
@@ -176,25 +215,25 @@ def ritornello(o, b0, k, end="tonic", full=True):
 
 # ===================================================================== песня
 # своя тема в манере куплета: затакт повторяющимися нотами, долгие ноты, нисхождение; d-moll, 4 такта:
-# i | VI | VII7 | V
+# i – V | VI – VII – iv | VII7 – III – iv6 | V  (гармония следует за каждой долей мелодии)
 SONG = [(-1, .5, 69), (-.5, .5, 69),
         (0, 1.5, 74), (1.5, .5, 73), (2, 1, 74), (3, 1, 76),
         (4, 2, 77), (6, 1, 76), (7, 1, 74),
         (8, 1.5, 72), (9.5, .5, 70), (10, 1, 69), (11, 1, 67),
         (12, 3, 69)]
-SONG_H = ["Dm", "A7", "Dm", "C", "Bb", "Bb", "C", "Bb", "C7", "C7", "F", "C7", "A", "A", "A", "C7"]
+SONG_H = ["Dm", "Dm", "Dm", "A7", "Bb", "Bb", "C", "Gm", "C", "C7", "F", "Gm/Bb", "A", "A", "A", "A7"]
 # продолжение: секвенция головы (по терции вверх) и каданс в субдоминанте (g-moll)
 SEQ = [(-1, .5, 72), (-.5, .5, 72),
        (0, 1.5, 77), (1.5, .5, 76), (2, 1, 77), (3, 1, 79),
        (4, 2, 81), (6, 1, 79), (7, 1, 77),
        (8, 1.5, 79), (9.5, .5, 78), (10, 1, 79), (11, 1, 81),
        (12, 2, 82), (14, 1, 81), (15, 1, 79)]
-SEQ_H = ["F", "C7", "F", "C", "Dm", "Dm", "C", "Dm", "Gm", "D7", "Gm", "D7", "Gm", "Gm", "D7", "Eb"]
+SEQ_H = ["F", "F", "F", "C7", "F", "F", "C", "F", "Gm", "Gm", "Gm", "D7", "Gm", "Gm", "D7", "Gm"]
 CAD = [(0, 1, 75), (1, 1, 74), (2, 1, 72), (3, 1, 70),
        (4, 1, 69), (5, .5, 70), (5.5, .5, 72), (6, 2, 74),
        (8, 2, 70), (10, 2, 69),
        (12, 4, 67)]
-CAD_H = ["Cm", "Cm", "Cm", "Cm", "D7", "D7", "D7", "D7", "Gm/D", "Gm/D", "D7", "D7", "Gm", "Gm", "Gm", "Gm"]
+CAD_H = ["Cm", "Gm", "Cm", "Gm/Bb", "D7", "Gm", "D7", "D7", "Gm/D", "Gm/D", "D7", "D7", "Gm", "Gm", "Gm", "Gm"]
 
 
 def episode(o, b0, k, voice="S"):
@@ -203,16 +242,15 @@ def episode(o, b0, k, voice="S"):
     harms = SONG_H + SEQ_H + CAD_H
     if voice == "S":  # «Кристина»: сопрано на тихом регистре, левая рука — средние голоса, педаль ходит
         o.line(melody, b0, "RH", "org_quiet", k=k, vel=0.68, trill_at=42)
-        for j, h in enumerate(harms):
-            if j % 2 == 0:
-                o.ch(h, k, b0 + j, 2, "LH", 53, 67, "org_quiet", 0.5, size=2)
+        o.accomp(b0, harms, k, melody)
     else:  # «Призрак»: тенор на язычковом регистре, над ним фигурация шестнадцатыми
         o.line(melody, b0, "LH", "org_reed", k=k - 12, vel=0.7, trill_at=42)
         for j, h in enumerate(harms):
             v = o.voicing(h, k, 74, 93, "fig", 4)
             for i, kk in enumerate((0, 1, 2, 3)):
                 o.n(v[kk], b0 + j + i / 4, 0.25, "RH", "org_quiet", 0.5 + (0.06 if i == 0 else 0))
-    o.walk(b0, harms, k)
+    o.walk(b0, harms[:16], k, k)
+    o.walk(b0 + 16, harms[16:], k, k + 5)  # секвенция и каданс — уже в g-moll (относительно k)
 
 
 def duet(o, b0, k):
@@ -224,9 +262,7 @@ def duet(o, b0, k):
     o.walk(b0, SONG_H, k)
     # ответ сопрано — тема из d-moll в a-moll на квинту выше уже позади; теперь тема в d-moll (возврат к тонике)
     o.line(SONG, b0 + 16, "RH", "org_quiet", k=0, vel=0.7)
-    for j, h in enumerate(SONG_H):
-        if j % 2 == 0:
-            o.ch(h, 0, b0 + 16 + j, 2, "LH", 53, 67, "org_quiet", 0.5, size=2)
+    o.accomp(b0 + 16, SONG_H, 0, SONG)
     o.walk(b0 + 16, SONG_H, 0)
     # вместе: голова песни в сопрано и децимой ниже в теноре, секвенция вверх по ступеням к доминанте
     # вместе — в октаву (как герои поют вместе в кульминации дуэта); голова песни всё выше: d – g – a
@@ -234,7 +270,7 @@ def duet(o, b0, k):
         hd = [(b, d, m) for b, d, m in SONG if 0 <= b < 4]
         o.line(hd, b0 + 32 + st, "RH", "org_quiet", k=kk, vel=0.7)
         o.line(hd, b0 + 32 + st, "LH", "org_reed", k=kk - 12, vel=0.66)
-        o.walk(b0 + 32 + st, SONG_H[:4], kk)
+        o.walk(b0 + 32 + st, SONG_H[:4], kk, kk)
     # связка: доминанта к фа мажору — первая ступень «монте»
     o.ch("C7", 0, b0 + 44, 4, "RH", 64, 80, "org_quiet", 0.6, size=4)
     o.n(36, b0 + 44, 4, "Ped", "org_quiet", 0.62)

@@ -4764,15 +4764,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 24.049957715000787,
-"note": 24
-},
-{
-"path": "Keys/Organ/Loud/Rode_Man3Open_04.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 39.04995771500079,
-"note": 39
+"note": 36
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_07.wav",
@@ -4780,7 +4772,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 30.049957715000787,
-"note": 30
+"note": 42
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_10.wav",
@@ -4788,7 +4780,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 33.04995771500079,
-"note": 33
+"note": 45
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_13.wav",
@@ -4796,7 +4788,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 36.04995771500079,
-"note": 36
+"note": 48
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_16.wav",
@@ -4804,7 +4796,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 39.04995771500079,
-"note": 39
+"note": 51
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_19.wav",
@@ -4812,7 +4804,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 42.04995771500079,
-"note": 42
+"note": 54
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_22.wav",
@@ -4820,7 +4812,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 44.94995771500078,
-"note": 45
+"note": 57
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_25.wav",
@@ -4836,7 +4828,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 50.94995771500078,
-"note": 51
+"note": 63
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_31.wav",
@@ -4844,7 +4836,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 53.94995771500078,
-"note": 54
+"note": 66
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_34.wav",
@@ -4860,7 +4852,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 59.94995771500078,
-"note": 60
+"note": 72
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_40.wav",
@@ -4868,7 +4860,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 62.94995771500078,
-"note": 63
+"note": 75
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_43.wav",
@@ -4876,7 +4868,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 65.94995771500078,
-"note": 66
+"note": 78
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_46.wav",
@@ -4884,7 +4876,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 68.94995771500079,
-"note": 69
+"note": 81
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_49.wav",
@@ -4892,7 +4884,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 71.94995771500079,
-"note": 72
+"note": 84
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_52.wav",
@@ -4900,7 +4892,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 74.94995771500079,
-"note": 75
+"note": 87
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_55.wav",
@@ -4908,7 +4900,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 77.94995771500078,
-"note": 78
+"note": 90
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_58.wav",
@@ -4916,7 +4908,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 80.94995771500078,
-"note": 81
+"note": 93
 },
 {
 "path": "Keys/Organ/Loud/Rode_Man3Open_61.wav",
@@ -4957,62 +4949,6 @@
 "rr": "1",
 "measured": 32.94995771500078,
 "note": 33
-},
-{
-"path": "Keys/Organ/Loud/Rode_Pedal_13.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 35.94995771500078,
-"note": 36
-},
-{
-"path": "Keys/Organ/Loud/Rode_Pedal_16.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 39.04995771500079,
-"note": 39
-},
-{
-"path": "Keys/Organ/Loud/Rode_Pedal_19.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 41.94995771500078,
-"note": 42
-},
-{
-"path": "Keys/Organ/Loud/Rode_Pedal_22.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 32.94995771500078,
-"note": 33
-},
-{
-"path": "Keys/Organ/Loud/Rode_Pedal_25.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 47.94995771500078,
-"note": 48
-},
-{
-"path": "Keys/Organ/Loud/Rode_Pedal_28.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 50.94995771500078,
-"note": 51
-},
-{
-"path": "Keys/Organ/Loud/Rode_Pedal_31.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 41.94995771500078,
-"note": 42
 }
 ],
 "org_quiet": [
@@ -5030,7 +4966,7 @@
 "vel": 1,
 "rr": "1",
 "measured": 58.04995771500079,
-"note": 58
+"note": 39
 },
 {
 "path": "Keys/Organ/Quiet/NT5_Man3Quiet_128_rr1.wav",
@@ -5183,94 +5119,6 @@
 "rr": "1",
 "measured": 96.04995771500079,
 "note": 96
-},
-{
-"path": "Keys/Organ/Quiet/NT5_PedalQuiet_064_rr1.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 36.04995771500079,
-"note": 36
-},
-{
-"path": "Keys/Organ/Quiet/NT5_PedalQuiet_067_rr1.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 39.04995771500079,
-"note": 39
-},
-{
-"path": "Keys/Organ/Quiet/NT5_PedalQuiet_070_rr1.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 41.94995771500078,
-"note": 42
-},
-{
-"path": "Keys/Organ/Quiet/NT5_PedalQuiet_073_rr1.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 44.94995771500078,
-"note": 45
-},
-{
-"path": "Keys/Organ/Quiet/NT5_PedalQuiet_076_rr1.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 47.94995771500078,
-"note": 48
-},
-{
-"path": "Keys/Organ/Quiet/NT5_PedalQuiet_079_rr1.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 50.94995771500078,
-"note": 51
-},
-{
-"path": "Keys/Organ/Quiet/NT5_PedalQuiet_082_rr1.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 54.04995771500078,
-"note": 54
-},
-{
-"path": "Keys/Organ/Quiet/NT5_PedalQuiet_085_rr1.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 56.94995771500078,
-"note": 57
-},
-{
-"path": "Keys/Organ/Quiet/NT5_PedalQuiet_088_rr1.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 59.94995771500078,
-"note": 60
-},
-{
-"path": "Keys/Organ/Quiet/NT5_PedalQuiet_091_rr1.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 63.04995771500078,
-"note": 63
-},
-{
-"path": "Keys/Organ/Quiet/NT5_PedalQuiet_094_rr1.wav",
-"named": null,
-"vel": 1,
-"rr": "1",
-"measured": 66.04995771500079,
-"note": 66
 }
 ],
 "timp": [

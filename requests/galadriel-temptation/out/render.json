@@ -96,12 +96,12 @@
   "Choir": -21.1,
   "Bassoon": -23.7,
   "Cellos": -24.1,
+  "Organ": -24.9,
   "Horn": -25.5,
   "Clarinet": -25.6,
   "Trumpet": -25.6,
   "Flute": -25.8,
-  "Organ": -26.0,
-  "Alto flute": -26.2,
+  "Alto flute": -26.3,
   "Horns": -26.4,
   "Trombone": -27.6,
   "Basses": -27.9,
@@ -113,7 +113,7 @@
   "Celesta": -35.0,
   "Violas": -35.7,
   "Glockenspiel": -38.9,
-  "Crotales": -39.9
+  "Crotales": -39.6
  },
- "seconds_taken": 114.1
+ "seconds_taken": 214.0
 }

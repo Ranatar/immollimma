@@ -9,8 +9,8 @@
   "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
  ],
  "by_instrument": {
-  "org_loud@plain": 631,
-  "org_quiet@plain": 611,
+  "org_loud@plain": 603,
+  "org_quiet@plain": 580,
   "org_reed@sso": 82
  },
  "substitutions": {},
@@ -37,27 +37,32 @@
   "gaps": [],
   "clipped": 0,
   "clicks": [],
-  "flat": [],
+  "flat": [
+   [
+    165.0,
+    185.0
+   ]
+  ],
   "bounds": [
-   23.0,
+   30.2,
    34.5,
+   42.5,
    45.8,
-   54.5,
    68.8,
-   103.2,
-   106.5,
    114.5,
+   126.2,
+   132.8,
    145.8,
    148.8,
-   157.5,
-   163.0
+   160.2,
+   203.2
   ],
   "png": "/home/claude/immollimma/requests/bach-phantom/out/report.png"
  },
  "parts_lufs": {
-  "Organ LH": -30.4,
-  "Organ RH": -30.6,
-  "Organ Pedal": -32.2
+  "Organ RH": -29.7,
+  "Organ LH": -30.5,
+  "Organ Pedal": -32.6
  },
- "seconds_taken": 37.1
+ "seconds_taken": 39.0
 }

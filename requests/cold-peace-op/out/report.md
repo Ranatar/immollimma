@@ -1,11 +1,11 @@
 # Report: Холодный мир — опенинг
 
-- length 92.4 s; level p10/p50/p90 -33.7/-26.5/-20.4 dBFS; peak -1.0 dBFS
+- length 92.4 s; level p10/p50/p90 -33.7/-26.4/-20.3 dBFS; peak -1.0 dBFS
 - gaps ≥ 1 s below −50 dBFS: none
 - clipped samples: 0; isolated clicks at: none
-- centroid median 468 Hz; share above 2 kHz median -17.1 dB
+- centroid median 470 Hz; share above 2 kHz median -17.1 dB
 - flat stretches (diversity < 60 % of the median, 20 s windows): none
-- strongest changes (novelty peaks), s: [7.0, 17.5, 20.8, 22.2, 30.8, 32.5, 34.0, 34.8, 79.0, 81.2, 88.2]
+- strongest changes (novelty peaks), s: [7.0, 17.5, 20.8, 30.8, 32.2, 32.8, 33.2, 34.0, 34.8, 79.2, 81.2, 88.2]
 
 ## Score
 - notes: 1804, parts: 16, densest 10 s: 338 notes at 60–… s
@@ -25,8 +25,8 @@
 | Violins | -27.0 |
 | Trombone | -27.2 |
 | Celesta | -27.3 |
+| Organ | -27.6 |
 | Flute | -28.8 |
-| Organ | -29.1 |
 | Timpani | -29.7 |
 | Violas | -29.7 |
 | Harp | -31.1 |
