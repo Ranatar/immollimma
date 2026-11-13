@@ -9,14 +9,14 @@
   "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
  ],
  "by_instrument": {
-  "org_loud@plain": 603,
-  "org_quiet@plain": 580,
-  "org_reed@sso": 82
+  "org_loud@plain": 666,
+  "org_quiet@plain": 587,
+  "org_reed@sso": 83
  },
  "substitutions": {},
  "missing": {},
  "out_of_range_rescued": {},
- "sfizz_notes": 53,
+ "sfizz_notes": 54,
  "lengthened": 0,
  "window": [
   0.0,
@@ -30,7 +30,8 @@
   "musicxml": "/home/claude/immollimma/requests/bach-phantom/out/score.musicxml",
   "pdf": "/home/claude/immollimma/requests/bach-phantom/out/score.pdf",
   "grid": [
-   4
+   4,
+   3
   ]
  },
  "qa": {
@@ -56,8 +57,8 @@
  },
  "parts_lufs": {
   "Organ RH": -29.7,
-  "Organ LH": -30.5,
-  "Organ Pedal": -32.6
+  "Organ LH": -30.7,
+  "Organ Pedal": -32.1
  },
- "seconds_taken": 38.2
+ "seconds_taken": 33.9
 }

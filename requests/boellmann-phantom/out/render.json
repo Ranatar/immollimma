@@ -7,7 +7,7 @@
   "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
  ],
  "by_instrument": {
-  "org_loud@plain": 1634,
+  "org_loud@plain": 1659,
   "org_quiet@plain": 511
  },
  "substitutions": {},
@@ -42,20 +42,20 @@
    39.0,
    42.2,
    43.5,
+   47.8,
    49.8,
    50.8,
    57.2,
-   84.8,
-   85.2,
-   91.2,
+   87.5,
+   91.5,
    99.2
   ],
   "png": "/home/claude/immollimma/requests/boellmann-phantom/out/report.png"
  },
  "parts_lufs": {
-  "Organ Pedal": -27.6,
+  "Organ Pedal": -27.1,
   "Organ LH": -28.2,
-  "Organ RH": -28.2
+  "Organ RH": -28.3
  },
- "seconds_taken": 28.5
+ "seconds_taken": 26.7
 }

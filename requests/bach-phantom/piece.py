@@ -71,14 +71,28 @@ class Org:
             s += (min(beat, b1) - b0) * (f - 1)
         return (beat + s) * SPB
 
-    def n(self, m, beat, dur, staff, reg="org_quiet", vel=0.6, late=0.0, legato=0.92):
+    def n(self, m, beat, dur, staff, reg="org_quiet", vel=0.6, late=0.0, legato=0.92, art=None):
+        """нота; педаль ниже C2 (нет такой клавиши) пишется октавой выше, а звучит с 16-футовым удвоением"""
+        if staff == "Ped" and m < 36:
+            e = self.n(m + 12, beat, dur, staff, reg, vel, late, legato, art)
+            low = self.n(m, beat, dur, "Ped16", "org_loud", vel, late, legato)
+            low["notate"] = False
+            return e
         if reg == "org_quiet" and m < 36:
             reg = "org_loud"
         t0, t1 = self.perf(beat), self.perf(beat + dur)
         e = self.p.note(reg, m, t0 + late, max(0.05, (t1 - t0) * legato), vel=vel, gain=0.5, release=0.3,
-                        pan={"RH": 0.2, "LH": -0.1, "Ped": 0.0}[staff], part=f"Organ {staff}" if staff != "Ped" else "Organ Pedal")
+                        pan={"RH": 0.2, "LH": -0.1, "Ped": 0.0, "Ped16": 0.0}[staff],
+                        part=f"Organ {staff}" if staff in ("RH", "LH") else "Organ Pedal", art=art)
         e["wt"], e["wdur"] = beat * SPB, dur * SPB
         return e
+
+    def top(self, beat):
+        """верхний звук правой руки на доле (для проверки крайних голосов)"""
+        t = beat * SPB + 1e-6
+        ms = [e["midi"] for e in self.p.events if e["kind"] == "note" and e["part"] == "Organ RH"
+              and e["wt"] <= t < e["wt"] + e["wdur"]]
+        return max(ms) if ms else None
 
     def voicing(self, harm, k, lo, hi, key, size=3):
         pcs, _ = chord(harm, k)
@@ -98,9 +112,9 @@ class Org:
         self.prev[key] = best
         return best
 
-    def ch(self, harm, k, beat, dur, staff, lo, hi, reg="org_quiet", vel=0.55, size=3):
+    def ch(self, harm, k, beat, dur, staff, lo, hi, reg="org_quiet", vel=0.55, size=3, legato=0.92, art=None):
         for m in self.voicing(harm, k, lo, hi, staff + reg, size):
-            self.n(m, beat, dur, staff, reg, vel)
+            self.n(m, beat, dur, staff, reg, vel, legato=legato, art=art)
 
     def line(self, notes, beat0, staff, reg, k=0, vel=0.66, trill_at=None, tonic=None):
         """мелодия; трель (с верхней вспомогательной, шестнадцатыми с половиной) — верхний сосед по гамме
@@ -111,9 +125,12 @@ class Org:
                 scale = {(t + 2 + x) % 12 for x in (0, 2, 3, 5, 7, 8, 10)}
                 up = next(x for x in range(m + k + 1, m + k + 3) if x % 12 in scale)
                 steps = int(d * 8) - 1
+                w = self.n(m + k, beat0 + b, d, staff, reg, 0.0)  # в нотах — одна нота со знаком трели
+                w["gain"], w["art"] = 0.0, "trill"
                 for j in range(steps):
-                    self.n(up if j % 2 == 0 else m + k, beat0 + b + j / 8, 1 / 8, staff, reg, vel - 0.05, legato=0.95)
-                self.n(m + k, beat0 + b + steps / 8, 1 / 8, staff, reg, vel)
+                    self.n(up if j % 2 == 0 else m + k, beat0 + b + j / 8, 1 / 8, staff, reg, vel - 0.05,
+                           legato=0.95)["notate"] = False
+                self.n(m + k, beat0 + b + steps / 8, 1 / 8, staff, reg, vel)["notate"] = False
             else:
                 self.n(m + k, beat0 + b, d, staff, reg, vel)
 
@@ -128,11 +145,20 @@ class Org:
         for j, h in enumerate(harms):
             pcs, b = chord(h, k)
             ref = prev if prev is not None else (lo + hi) // 2
+            tri, _ = chord(h.split("/")[0].replace("7", ""), k)
             if j == 0 or harms[j - 1] != h:
                 m = min((x for x in range(lo, hi + 1) if x % 12 == b), key=lambda x: abs(x - ref))
             else:  # та же гармония: шаг к другому звуку трезвучия (септима в бас не идёт), не повторяя предыдущий
-                tri, _ = chord(h.split("/")[0].replace("7", ""), k)
                 m = min((x for x in range(lo, hi + 1) if x % 12 in tri and x != ref), key=lambda x: (abs(x - ref), x))
+            # крайние голоса: параллельные квинты и октавы с верхним голосом заменяются другим звуком трезвучия
+            t0_, t1_ = self.top(beat0 + j - 1), self.top(beat0 + j)
+            def par(x):
+                return (prev is not None and t0_ is not None and t1_ is not None and x != prev and t1_ != t0_
+                        and (t1_ - x) % 12 in (0, 7) and (t0_ - prev) % 12 == (t1_ - x) % 12)
+            if par(m):
+                alts = [x for x in range(lo, hi + 1) if x % 12 in tri and not par(x) and x != prev]
+                if alts:
+                    m = min(alts, key=lambda x: abs(x - ref))
             seq.append((m, pcs))
             prev = m
         for j, (m, pcs) in enumerate(seq):
@@ -240,10 +266,14 @@ CAD = [(0, 1, 75), (1, 1, 74), (2, 1, 72), (3, 1, 70),
 CAD_H = ["Cm", "Gm", "Cm", "Gm/Bb", "D7", "Gm", "D7", "D7", "Gm/D", "Gm/D", "D7", "D7", "Gm", "Gm", "Gm", "Gm"]
 
 
-def episode(o, b0, k, voice="S"):
-    """12 тактов: песня, секвенция, каданс (в тональности на кварту выше — как у куплетов «Призрака»)"""
+def episode(o, b0, k, voice="S", pivot=False):
+    """12 тактов: песня, секвенция, каданс (в тональности на кварту выше — как у куплетов «Призрака»).
+    pivot: последняя тоника держится полтакта, дальше — VI и уменьшённый септаккорд (as = gis), ведущий в a-moll"""
     melody = SONG + [(16 + b, d, m) for b, d, m in SEQ] + [(32 + b, d, m) for b, d, m in CAD]
     harms = SONG_H + SEQ_H + CAD_H
+    if pivot:  # c-moll → As/c → gis°/h → a-moll, бас c–h–a: энгармонический уменьшённый септаккорд вместо голого сопоставления
+        melody = melody[:-1] + [(44, 2, melody[-1][2])]
+        harms = harms[:46] + ["Eb/G", "D#dim7/F#"]  # бас c – h – (a): as/c → gis°/h → a-moll
     if voice == "S":  # «Кристина»: сопрано на тихом регистре, левая рука — средние голоса, педаль ходит
         o.line(melody, b0, "RH", "org_quiet", k=k, vel=0.68, trill_at=42, tonic=k + 5)
         o.accomp(b0, harms, k, melody)
@@ -303,15 +333,22 @@ def climax(o, b0):
             sb = st + 8 * u + 4 * j
             pcs, _ = chord(h)
             tones = [m for m in range(64, tops[u] + 1) if m % 12 in pcs]
-            seq = tones[-8:] + tones[-8:][::-1]
+            if u < 2:
+                seq = tones[-8:] + tones[-8:][::-1]
+            else:  # третий раз — не повтор: две волны только вверх (нагнетание), левая рука бьёт восьмыми
+                seq = tones[-8:] + tones[-8:]
             for q in range(16):
                 o.n(seq[q], sb + q / 4, 0.25, "RH", "org_loud", 0.64 + (0.06 if q % 4 == 0 else 0))
-            o.ch(h, 0, sb, 4, "LH", 52, 66, "org_loud", 0.62, size=4)
+            if u < 2:
+                o.ch(h, 0, sb, 4, "LH", 52, 66, "org_loud", 0.62, size=4)
+            else:
+                for e8 in range(8):
+                    o.ch(h, 0, sb + e8 / 2, 0.5, "LH", 52, 66, "org_loud", 0.62, size=4, legato=0.7)
         o.n(33, st + 8 * u, 8, "Ped", "org_loud", 0.72)
     # фермата на уменьшённом септаккорде и каденция вниз
     sf = st + 24
     for m in (37, 49, 55, 58, 61, 64, 67, 70, 73):
-        o.n(m, sf, 4, "RH" if m >= 60 else ("LH" if m >= 45 else "Ped"), "org_loud", 0.72)
+        o.n(m, sf, 4, "RH" if m >= 60 else ("LH" if m >= 45 else "Ped"), "org_loud", 0.72, art="fermata")
     run = [89, 85, 82, 79, 76, 73, 70, 67, 64, 61, 58, 55, 52, 49, 45, 43]
     for j, m in enumerate(run):
         o.n(m, sf + 4 + j / 4, 0.25, "RH" if m >= 60 else "LH", "org_loud", 0.64)
@@ -322,11 +359,12 @@ def finale(o, b0):
     """ритурнель в d-moll и конец: плагально (g/d – D) с пикардийской терцией над педалью d"""
     ritornello(o, b0, 0, end="tonic")
     b = b0 + 16
-    o.n(26, b, 8, "Ped", "org_loud", 0.75)
+    o.n(26, b, 4, "Ped", "org_loud", 0.75)
+    o.n(26, b + 4, 4, "Ped", "org_loud", 0.75, art="fermata")
     o.ch("Gm/D", 0, b, 4, "RH", 62, 82, "org_loud", 0.7, size=4)
     o.ch("Gm", 0, b, 4, "LH", 50, 62, "org_loud", 0.66, size=2)
-    o.ch("D", 0, b + 4, 4, "RH", 62, 82, "org_loud", 0.72, size=4)
-    o.ch("D", 0, b + 4, 4, "LH", 50, 62, "org_loud", 0.68, size=2)
+    o.ch("D", 0, b + 4, 4, "RH", 62, 82, "org_loud", 0.72, size=4, art="fermata")
+    o.ch("D", 0, b + 4, 4, "LH", 50, 62, "org_loud", 0.68, size=2, art="fermata")
     return b + 8
 
 
@@ -343,7 +381,7 @@ def build(ctx):
     ritornello(o, b, 0, end="dominant"); b += 16
     plan.append((b, "Эпизод 1: «Кристина»")); episode(o, b, 0, "S"); b += 48
     plan.append((b, "R в g-moll")); ritornello(o, b, 5, end="dominant"); b += 16
-    plan.append((b, "Эпизод 2: «Призрак»")); episode(o, b, 5, "T"); b += 48
+    plan.append((b, "Эпизод 2: «Призрак»")); episode(o, b, 5, "T", pivot=True); b += 48
     plan.append((b, "R в a-moll")); ritornello(o, b, 7, end="dominant"); b += 16
     plan.append((b, "Эпизод 3: дуэт")); duet(o, b, 7); b += 48
     plan.append((b, "Кульминация: монте")); b = climax(o, b)

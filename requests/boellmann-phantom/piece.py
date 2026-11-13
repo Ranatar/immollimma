@@ -93,17 +93,41 @@ class Org:
             s += (min(beat, b1) - b0) * (f - 1)
         return (beat + s) * SPB
 
-    def n(self, m, beat, dur, staff, reg="org_loud", vel=0.6, legato=0.92, gain=0.5):
+    def n(self, m, beat, dur, staff, reg="org_loud", vel=0.6, legato=0.92, gain=0.5, art=None):
+        """нота; педаль ниже C2 (нет такой клавиши) пишется октавой выше, а звучит с 16-футовым удвоением"""
+        if staff == "Ped" and m < 36:
+            e = self.n(m + 12, beat, dur, staff, reg, vel, legato, gain, art)
+            self.n(m, beat, dur, "Ped16", "org_loud", vel, legato, gain)["notate"] = False
+            return e
         if reg == "org_quiet" and m < 36:
             reg = "org_loud"
         t0, t1 = self.perf(beat), self.perf(beat + dur)
         e = self.p.note(reg, m, t0, max(0.05, (t1 - t0) * legato), vel=vel, gain=gain, release=0.35,
-                        pan={"RH": 0.2, "LH": -0.15, "Ped": 0.0}[staff],
-                        part=f"Organ {staff}" if staff != "Ped" else "Organ Pedal")
+                        pan={"RH": 0.2, "LH": -0.15, "Ped": 0.0, "Ped16": 0.0}[staff], art=art,
+                        part=f"Organ {staff}" if staff in ("RH", "LH") else "Organ Pedal")
         e["wt"], e["wdur"] = beat * SPB, dur * SPB
         return e
 
-    def voicing(self, harm, k, lo, hi, key, size=3):
+    def bass(self, beat):
+        """нижний записанный звук педали на доле"""
+        t = beat * SPB + 1e-6
+        ms = [e["midi"] for e in self.p.events if e["kind"] == "note" and e["part"] == "Organ Pedal"
+              and e.get("notate") is not False and e["wt"] <= t < e["wt"] + e["wdur"]]
+        return min(ms) if ms else None
+
+    def top(self, beat):
+        t = beat * SPB + 1e-6
+        ms = [e["midi"] for e in self.p.events if e["kind"] == "note" and e["part"] == "Organ RH"
+              and e["wt"] <= t < e["wt"] + e["wdur"]]
+        return max(ms) if ms else None
+
+    @staticmethod
+    def parallel(t0, b0, t1, b1):
+        """параллельные октавы/квинты крайних голосов"""
+        return (None not in (t0, b0, t1, b1) and t0 != t1 and b0 != b1 and (t1 - t0) * (b1 - b0) > 0
+                and (t1 - b1) % 12 in (0, 7) and (t0 - b0) % 12 == (t1 - b1) % 12)
+
+    def voicing(self, harm, k, lo, hi, key, size=3, ok=None):
         pcs = chord(harm, k)[0]
         cands = []
         for start in range(lo, hi):
@@ -117,6 +141,8 @@ class Org:
             if v[-1] <= hi:
                 cands.append(v)
         prev = self.prev.get(key)
+        if ok is not None and any(ok(v) for v in cands):
+            cands = [v for v in cands if ok(v)]
         best = cands[len(cands) // 2] if prev is None else min(cands, key=lambda v: sum(abs(a - b) for a, b in zip(v, prev)))
         self.prev[key] = best
         return best
@@ -134,16 +160,21 @@ class Org:
             pcs, _, root, q = chord(h, k)
             static = bar + 3 < len(harms) and all(harms[bar + i] == h for i in range(4)) and not q.startswith("dim")
             fifth = (root + 7) % 12
+            bs, bs0, tp0 = (self.bass(b), self.bass(b - 1), self.top(b - 1)) if staff == "RH" else (None,) * 3
+            ok = (lambda v: not self.parallel(tp0, bs0, v[2], bs)) if staff == "RH" else None
             if static:  # на неподвижной гармонии сверху — квинта, под ней два ближайших звука аккорда
                 top = max(m for m in range(lo + 5, hi + 1) if m % 12 == fifth)
                 low = [m for m in range(top - 1, top - 13, -1) if m % 12 in pcs][:2][::-1]
                 v = low + [top]
+                if ok is not None and not ok(v):  # квинта сверху дала бы параллель с басом — берём другое положение
+                    v = self.voicing(h, k, lo, hi, staff + "fig" + reg, 3, ok=ok)
             else:
-                v = self.voicing(h, k, lo, hi, staff + "fig" + reg, 3)
+                v = self.voicing(h, k, lo, hi, staff + "fig" + reg, 3, ok=ok)
             sigh = static and j % 4 == 2
             # верхний сосед квинты: у минорного — полутон (вздох a–b), у мажорного — тон, у септаккорда — по гамме
             nb = (fifth + 1) % 12 if q == "m" else (fifth + 2) % 12 if q == "" else \
                 next(x for x in range(fifth + 1, fifth + 3) if x % 12 in scale) % 12
+            sigh = sigh and v[2] % 12 == fifth
             top = v[2] + ((nb - fifth) % 12 if sigh else 0)
             for i, m in enumerate((top, v[0], v[1], v[0])):
                 self.n(m, b + i / 4, 0.25, staff, reg, 0.62, legato=0.9, gain=gain * (1.08 if i == 0 else 1.0))
@@ -161,10 +192,16 @@ class Org:
     def pulse(self, beat0, harms, k, lo=38, hi=50, reg="org_quiet", gain=0.45):
         """педаль-пульс восьмыми на басу гармонии — тень неподвижного баса «Призрака»"""
         prev = (lo + hi) // 2
+        last = None
         for j, h in enumerate(harms):
-            b = chord(h, k)[1]
+            pcs, b, _, _ = chord(h, k)
             m = min((x for x in range(lo, hi + 1) if x % 12 == b), key=lambda x: abs(x - prev))
-            prev = m
+            t0, t1 = self.top(beat0 + j - 1), self.top(beat0 + j)
+            if self.parallel(t0, last, t1, m):  # параллель с мелодией: бас — другой звук аккорда (обращение)
+                alts = [x for x in range(lo, hi + 1) if x % 12 in pcs and not self.parallel(t0, last, t1, x)]
+                if alts:
+                    m = min(alts, key=lambda x: abs(x - prev))
+            prev = last = m
             for i in range(2):
                 self.n(m, beat0 + j + i / 2, 0.5, "Ped", reg, 0.6, legato=0.6, gain=gain * (1.1 if i == 0 else 1.0))
 
@@ -241,7 +278,8 @@ def development(o, b0):
     # фермата на ум. септаккорде и пассаж вниз по нему, в конце — затакт темы в увеличении
     sf = st + 16
     for m in (33, 45, 52, 55, 58, 61, 64, 67, 70, 73, 76):
-        o.n(m, sf, 4, "Ped" if m < 50 else ("LH" if m < 62 else "RH"), "org_loud", 0.72, legato=0.97, gain=0.5)
+        o.n(m, sf, 4, "Ped" if m < 50 else ("LH" if m < 62 else "RH"), "org_loud", 0.72, legato=0.97, gain=0.5,
+            art="fermata")
     run = [x for x in range(94, 57, -1) if x % 12 in (1, 4, 7, 10)][:8]
     for j, m in enumerate(run):
         o.n(m, sf + 4 + j / 4, 0.25, "RH" if m >= 62 else "LH", "org_loud", 0.66, gain=0.55)
@@ -264,15 +302,16 @@ def coda(o, b0):
     bars = ["Dm", "Bb", "Gm/Bb", "A7", "Dm", "Gm/D", "D"]
     peds = [38, 34, 34, 33, 26, 26, 26]
     harms = [h for h in bars for _ in range(4)]
+    for j, m in enumerate(peds):
+        o.n(m, b0 + 4 * j, 4, "Ped", "org_loud", 0.7, legato=0.97 if j >= 4 else 0.9, gain=0.62)
     o.toccata(b0, harms[:16], 0, 0, gain=0.6, clo=55, chi=69)
     o.toccata(b0 + 16, harms[16:24], 0, 0, gain=0.6, clo=55, chi=69)
     # ре мажор: та же фигура в мажоре (верхний сосед — си натуральное: тоника D мажора)
     o.toccata(b0 + 24, harms[24:], 0, 0, gain=0.62, clo=54, chi=69)
-    for j, m in enumerate(peds):
-        o.n(m, b0 + 4 * j, 4, "Ped", "org_loud", 0.7, legato=0.97 if j >= 4 else 0.9, gain=0.62)
     fin = b0 + 28
     for m in (26, 38, 50, 57, 62, 66, 69, 74, 78, 81, 86):
-        o.n(m, fin, 4, "Ped" if m < 50 else ("LH" if m < 62 else "RH"), "org_loud", 0.74, legato=0.98, gain=0.5)
+        o.n(m, fin, 4, "Ped" if m < 50 else ("LH" if m < 62 else "RH"), "org_loud", 0.74, legato=0.98, gain=0.5,
+            art="fermata")
     return fin + 4
 
 

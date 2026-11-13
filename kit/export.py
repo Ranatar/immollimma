@@ -3,6 +3,7 @@ written as text: pizz., trem., con sord., col legno, harmonics) and a PDF score 
 
 What notation cannot carry is listed in the report instead: detune, glissando inside a note, ring
 modulation, reversed notes, raw samples and grain clouds."""
+import math
 import collections
 import os
 import shutil
@@ -103,7 +104,8 @@ def to_midi(piece, path, tpb=480):
             ch += 1
         tr = mido.MidiTrack()
         tr.append(mido.MetaMessage("track_name", name=name, time=0))
-        tr.append(mido.Message("program_change", program=GM.get(name, 48), channel=ch % 16, time=0))
+        fam = INSTR.get(notes[0]["inst"], {}).get("part", "") if notes else ""  # 'Organ RH' → family 'Organ'
+        tr.append(mido.Message("program_change", program=GM.get(name, GM.get(fam, 48)), channel=ch % 16, time=0))
         ev = []
         for e in notes:
             m = int(round(e["midi"]))
@@ -131,7 +133,7 @@ def _tech(inst):
 def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
     import math
 
-    from music21 import articulations, chord, clef, expressions, instrument, metadata, meter, note, stream, tempo
+    from music21 import articulations, chord, clef, expressions, instrument, metadata, meter, note, pitch, stream, tempo
 
     shift = float(piece.meta.get("notation_offset", 0.0))  # quarters before t=0 in the first bar (anacrusis)
     q = lambda t: t * piece.bpm / 60.0 + shift  # noqa: E731  seconds → quarter lengths
@@ -144,20 +146,21 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
     marks = [(q(e.get("wt", e["t"])), str(e["label"])) for e in piece.events if e["kind"] == "mark"]
     first = True
     ksig, spell = _key_spelling(piece.key)
+    names = _context_spelling(piece, q, spell)  # id(event) → pitch name of a chromatic note, chosen in context
     for name, notes in parts_of(piece).items():
         # simultaneous notes of one length → chords; what still overlaps goes to a second staff (divisi)
         grid = 12 if 3 in divisors else max(divisors)
         groups = collections.defaultdict(list)
         for e in notes:
             m = int(round(e["midi"]))
-            if not 21 <= m <= 108:
+            if not 21 <= m <= 108 or e.get("notate") is False:  # notate=False: sounds, not written (a 16' double)
                 continue
             # written time/length (wt, wdur) win over the performed ones: rubato and pedal stay out of the notation
             on = round(q(e.get("wt", e["t"])) * grid) / grid
             # a note played shorter than written (legato 0.9…0.97, staccato) keeps its written length
             ln = max(0.25, math.ceil((q(e.get("wdur", e["dur"])) - shift) * 4 - 0.15) / 4)
             art = e.get("art") or ("staccato" if e["inst"].endswith(("_stac", "_spic")) else None)
-            groups[(on, ln, _tech(e["inst"]), art)].append(m)
+            groups[(on, ln, _tech(e["inst"]), art)].append((m, names.get(id(e))))
         staves = []  # [(end, [items])]
         order = lambda k: (k[0], k[1], k[2] or "", k[3] or "")  # noqa: E731  None and text marks side by side
         for key in sorted(groups, key=order):
@@ -189,9 +192,25 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
             if name in CLEFS:
                 part.insert(0, CLEFS[name]())
             else:  # a low staff (left hand, low voice) gets the bass clef
-                ms_ = sorted(m for _, ms in all_items for m in ms)
-                if ms_ and ms_[len(ms_) // 2] < 57:
+                ms_ = sorted(m for _, ms in all_items for m, _n in ms)
+                low = bool(ms_) and ms_[len(ms_) // 2] < 57
+                if low:
                     part.insert(0, clef.BassClef())
+                if name.endswith((" RH", " LH")):  # a keyboard hand changes clef where it moves (no ledger ladders)
+                    bar_q = piece.meter[0] * 4 / piece.meter[1]
+                    per = collections.defaultdict(list)
+                    for (on, ln, tech, art), ms in all_items:
+                        per[int(on // bar_q)] += [m for m, _n in ms]
+                    for bar in sorted(per):
+                        med = sorted(per[bar])[len(per[bar]) // 2]
+                        if bar == 0:
+                            continue
+                        if not low and med < 53:
+                            low = True
+                            part.insert(bar * bar_q, clef.BassClef())
+                        elif low and med > 64:
+                            low = False
+                            part.insert(bar * bar_q, clef.TrebleClef())
             if ksig is not None:
                 part.insert(0, ksig.__class__(ksig.sharps))
             last_tech = None
@@ -200,7 +219,15 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
                 prev_end = 0.0
                 for (on, ln, tech, art), ms in items:
                     ln = max(0.25, min(ln, ln))
-                    obj = note.Note(spell(ms[0])) if len(set(ms)) == 1 else chord.Chord([spell(x) for x in sorted(set(ms))])
+                    sp = {}
+                    for m_, nm in ms:
+                        if nm:  # a name chosen in context; the octave follows the sounding note
+                            p_ = pitch.Pitch(nm + "4")
+                            p_.octave += (m_ - p_.midi) // 12
+                            sp[m_] = p_
+                        else:
+                            sp[m_] = spell(m_)
+                    obj = note.Note(sp[ms[0][0]]) if len(sp) == 1 else chord.Chord([sp[x] for x in sorted(sp)])
                     obj.quarterLength = ln
                     if on < prev_end:  # a cut-short note (more layers than staves)
                         continue
@@ -217,6 +244,10 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
                         obj.articulations.append(articulations.Staccato())
                     elif art == "accent":
                         obj.articulations.append(articulations.Accent())
+                    elif art == "fermata":
+                        obj.expressions.append(expressions.Fermata())
+                    elif art == "trill":
+                        obj.expressions.append(expressions.Trill())
                     target.insert(on, obj)
                     prev_end = on + ln
                 if target is not part:
@@ -230,6 +261,66 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
     sc = sc.quantize(quarterLengthDivisors=divisors, processOffsets=True, processDurations=True, inPlace=False)
     sc.write("musicxml", fp=path)
     return path
+
+
+# a spelled interval (semitones, letter steps) that reads as a chord interval: unison, thirds, fourth, fifth, sixths
+_CHORDAL = {(0, 0), (3, 2), (4, 2), (5, 3), (7, 4), (8, 5), (9, 5), (6, 4), (10, 6), (11, 6)}
+
+
+def _context_spelling(piece, q, spell):
+    """a chromatic note (no name in the key) is spelled by its surroundings, not by the key signature alone:
+    1) as the name that makes thirds/fifths/sixths with the notes sounding with it (F♯ in D major, G♯ in E7, not
+       G♭/A♭); 2) failing that, by where the line goes (G–F♯–G rises: sharp; A–A♭–G falls: flat); 3) the key default.
+    → {id(event): name}"""
+    from music21 import pitch
+    L = "CDEFGAB"
+    ev = [e for e in piece.notes() if e.get("notate") is not False]
+    on = [(q(e.get("wt", e["t"])), q(e.get("wt", e["t"]) + e.get("wdur", e["dur"]))) for e in ev]
+    order = sorted(range(len(ev)), key=lambda i: on[i][0])
+    pos = {id(x): j for j, x in enumerate(ev)}
+    out = {}
+    for k, i in enumerate(order):
+        e = ev[i]
+        m = int(round(e["midi"]))
+        default = spell(m)
+        alt = pitch.Pitch(midi=m)
+        alt = alt.getEnharmonic() if alt.name == default.name else alt
+        if m % 12 in getattr(spell, "diatonic", ()) or ("#" not in default.name and "-" not in default.name):
+            continue  # a note of the key (or a natural name): nothing to choose
+        if (default.name.count("#") + default.name.count("-")) > 1 or alt.name == default.name:
+            continue
+        t0, t1 = on[i]
+        lo, hi = k, k
+        while lo > 0 and on[order[lo - 1]][0] > t0 - 8:
+            lo -= 1
+        while hi < len(order) - 1 and on[order[hi + 1]][0] < max(t1, math.floor(t0 + 1e-6) + 1):
+            hi += 1
+        # the harmony around the note: everything sounding within its beat (figuration spreads a chord over a beat)
+        b0_, b1_ = math.floor(t0 + 1e-6), math.floor(t0 + 1e-6) + 1
+        others = [int(round(ev[j]["midi"])) for j in order[lo:hi + 1]
+                  if j != i and on[j][0] < b1_ - 1e-6 and on[j][1] > b0_ + 1e-6 and int(round(ev[j]["midi"])) % 12 != m % 12]
+        def score(name):
+            s_ = 0
+            for o in others:
+                on_ = spell(o).name
+                semi = (m - o) % 12
+                steps = (L.index(name[0]) - L.index(on_[0])) % 7
+                s_ += (semi, steps) in _CHORDAL
+            return s_
+        a, b = score(default.name), score(alt.name)
+        if a == b:  # the line: the next note of the same part
+            nxt = [ev[j] for j in order[k + 1:k + 40] if ev[j]["part"] == e["part"] and on[j][0] > t0 + 1e-6]
+            if nxt:
+                t_n = on[pos[id(nxt[0])]][0]
+                n_ = min((x for x in nxt if abs(on[pos[id(x)]][0] - t_n) < 1e-6), key=lambda x: abs(int(round(x["midi"])) - m))
+                d = int(round(n_["midi"])) - m
+                if d in (1, 2):
+                    b, a = (1, 0) if "#" in alt.name else (0, 1)
+                elif d in (-1, -2):
+                    b, a = (1, 0) if "-" in alt.name else (0, 1)
+        if b > a:
+            out[id(e)] = alt.name
+    return out
 
 
 def _key_spelling(key_text):
@@ -267,6 +358,7 @@ def _key_spelling(key_text):
             q_.octave += (m - q_.midi) // 12
             return q_
         return p_
+    spell.diatonic = set(scale_names)
     return ks, spell
 
 
