@@ -1,0 +1,69 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "afl_sus@sso": 49,
+  "cb_sus@plain": 13,
+  "choir@sso": 400,
+  "timp@plain": 13,
+  "vc_sus@plain": 13
+ },
+ "substitutions": {},
+ "missing": {},
+ "out_of_range_rescued": {},
+ "sfizz_notes": 82,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  174.30384615384617
+ ],
+ "seconds": 174.30384615384617,
+ "mp3": "/home/claude/immollimma/requests/namarie/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/namarie/out/score.mid",
+  "lost": {},
+  "musicxml": "/home/claude/immollimma/requests/namarie/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/namarie/out/score.pdf",
+  "grid": [
+   4,
+   3
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   17.0,
+   19.2,
+   35.5,
+   37.0,
+   56.2,
+   67.0,
+   67.5,
+   75.8,
+   113.2,
+   141.5,
+   150.2,
+   170.2
+  ],
+  "png": "/home/claude/immollimma/requests/namarie/out/report.png"
+ },
+ "parts_lufs": {
+  "Choir II": -28.5,
+  "Alto Flute": -30.9,
+  "Contrabassi": -31.3,
+  "Choir I": -32.0,
+  "Violoncelli": -35.5,
+  "Timpani": -40.7
+ },
+ "seconds_taken": 33.8
+}
