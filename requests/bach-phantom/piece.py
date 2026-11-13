@@ -102,13 +102,17 @@ class Org:
         for m in self.voicing(harm, k, lo, hi, staff + reg, size):
             self.n(m, beat, dur, staff, reg, vel)
 
-    def line(self, notes, beat0, staff, reg, k=0, vel=0.66, trill_at=None):
+    def line(self, notes, beat0, staff, reg, k=0, vel=0.66, trill_at=None, tonic=None):
+        """мелодия; трель (с верхней вспомогательной, шестнадцатыми с половиной) — верхний сосед по гамме
+        натурального минора от tonic (смещение от d-moll), а не «на тон выше» вслепую"""
         for b, d, m in notes:
             if trill_at is not None and abs(b - trill_at) < 1e-9:
+                t = k if tonic is None else tonic
+                scale = {(t + 2 + x) % 12 for x in (0, 2, 3, 5, 7, 8, 10)}
+                up = next(x for x in range(m + k + 1, m + k + 3) if x % 12 in scale)
                 steps = int(d * 8) - 1
                 for j in range(steps):
-                    self.n(m + k + (2 if j % 2 == 0 else 0) - (1 if (m + k) % 12 in (1, 4, 6, 9, 11) and j % 2 == 0 else 0),
-                           beat0 + b + j / 8, 1 / 8, staff, reg, vel - 0.05, legato=0.95)
+                    self.n(up if j % 2 == 0 else m + k, beat0 + b + j / 8, 1 / 8, staff, reg, vel - 0.05, legato=0.95)
                 self.n(m + k, beat0 + b + steps / 8, 1 / 8, staff, reg, vel)
             else:
                 self.n(m + k, beat0 + b, d, staff, reg, vel)
@@ -241,10 +245,10 @@ def episode(o, b0, k, voice="S"):
     melody = SONG + [(16 + b, d, m) for b, d, m in SEQ] + [(32 + b, d, m) for b, d, m in CAD]
     harms = SONG_H + SEQ_H + CAD_H
     if voice == "S":  # «Кристина»: сопрано на тихом регистре, левая рука — средние голоса, педаль ходит
-        o.line(melody, b0, "RH", "org_quiet", k=k, vel=0.68, trill_at=42)
+        o.line(melody, b0, "RH", "org_quiet", k=k, vel=0.68, trill_at=42, tonic=k + 5)
         o.accomp(b0, harms, k, melody)
     else:  # «Призрак»: тенор на язычковом регистре, над ним фигурация шестнадцатыми
-        o.line(melody, b0, "LH", "org_reed", k=k - 12, vel=0.7, trill_at=42)
+        o.line(melody, b0, "LH", "org_reed", k=k - 12, vel=0.7, trill_at=42, tonic=k + 5)
         for j, h in enumerate(harms):
             v = o.voicing(h, k, 74, 93, "fig", 4)
             for i, kk in enumerate((0, 1, 2, 3)):

@@ -22,21 +22,21 @@
     </scaling>
   </defaults>
   <part-list>
-    <score-part id="P8cc5fa6f7d65084e1888191dbf29c36d">
+    <score-part id="P6a6f189feabea56d1a250869beb921b0">
       <part-name>Organ RH</part-name>
       <part-abbreviation>Organ</part-abbreviation>
     </score-part>
-    <score-part id="Pc672356095dbe1d802c5e791a946069a">
+    <score-part id="Pd60a88d263a1fb7d7a84488ad41f1d53">
       <part-name>Organ LH</part-name>
       <part-abbreviation>Organ</part-abbreviation>
     </score-part>
-    <score-part id="P3f6762547b471f1793720978ca23beb5">
+    <score-part id="P0d9d319bc72e7c2407907b1f65ea6b3b">
       <part-name>Organ Pedal</part-name>
       <part-abbreviation>Organ</part-abbreviation>
     </score-part>
   </part-list>
   <!--=========================== Part 1 ===========================-->
-  <part id="P8cc5fa6f7d65084e1888191dbf29c36d">
+  <part id="P6a6f189feabea56d1a250869beb921b0">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -8069,7 +8069,7 @@
     </measure>
   </part>
   <!--=========================== Part 2 ===========================-->
-  <part id="Pc672356095dbe1d802c5e791a946069a">
+  <part id="Pd60a88d263a1fb7d7a84488ad41f1d53">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -10910,22 +10910,23 @@
         <chord />
         <pitch>
           <step>E</step>
-          <alter>0</alter>
+          <alter>-1</alter>
           <octave>4</octave>
         </pitch>
         <duration>2520</duration>
         <voice>0</voice>
         <type>16th</type>
-        <accidental>natural</accidental>
       </note>
       <note>
         <pitch>
           <step>E</step>
+          <alter>-1</alter>
           <octave>4</octave>
         </pitch>
         <duration>2520</duration>
         <voice>0</voice>
         <type>16th</type>
+        <accidental>flat</accidental>
         <stem>up</stem>
         <beam number="1">continue</beam>
         <beam number="2">end</beam>
@@ -10946,6 +10947,7 @@
         <chord />
         <pitch>
           <step>E</step>
+          <alter>-1</alter>
           <octave>4</octave>
         </pitch>
         <duration>2520</duration>
@@ -10955,11 +10957,13 @@
       <note>
         <pitch>
           <step>E</step>
+          <alter>-1</alter>
           <octave>4</octave>
         </pitch>
         <duration>2520</duration>
         <voice>0</voice>
         <type>16th</type>
+        <accidental>flat</accidental>
         <stem>up</stem>
         <beam number="1">end</beam>
         <beam number="2">end</beam>
@@ -10980,6 +10984,7 @@
         <chord />
         <pitch>
           <step>E</step>
+          <alter>-1</alter>
           <octave>4</octave>
         </pitch>
         <duration>2520</duration>
@@ -10989,11 +10994,13 @@
       <note>
         <pitch>
           <step>E</step>
+          <alter>-1</alter>
           <octave>4</octave>
         </pitch>
         <duration>2520</duration>
         <voice>0</voice>
         <type>16th</type>
+        <accidental>flat</accidental>
         <stem>up</stem>
         <beam number="1">continue</beam>
         <beam number="2">end</beam>
@@ -11014,6 +11021,7 @@
         <chord />
         <pitch>
           <step>E</step>
+          <alter>-1</alter>
           <octave>4</octave>
         </pitch>
         <duration>2520</duration>
@@ -11023,11 +11031,13 @@
       <note>
         <pitch>
           <step>E</step>
+          <alter>-1</alter>
           <octave>4</octave>
         </pitch>
         <duration>2520</duration>
         <voice>0</voice>
         <type>16th</type>
+        <accidental>flat</accidental>
         <stem>up</stem>
         <beam number="1">end</beam>
         <beam number="2">end</beam>
@@ -13563,7 +13573,7 @@
     </measure>
   </part>
   <!--=========================== Part 3 ===========================-->
-  <part id="P3f6762547b471f1793720978ca23beb5">
+  <part id="P0d9d319bc72e7c2407907b1f65ea6b3b">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>

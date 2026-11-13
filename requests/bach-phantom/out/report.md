@@ -4,7 +4,7 @@
 - gaps ≥ 1 s below −50 dBFS: none
 - clipped samples: 0; isolated clicks at: none
 - centroid median 828 Hz; share above 2 kHz median -14.6 dB
-- flat stretches (diversity < 60 % of the median, 20 s windows): [(165.0, 185.0)]
+- flat stretches (diversity < 60 % of the median, 20 s windows): none
 - strongest changes (novelty peaks), s: [30.2, 34.5, 42.5, 45.8, 68.8, 114.5, 126.2, 132.8, 145.8, 148.8, 160.2, 203.2]
 
 ## Score
