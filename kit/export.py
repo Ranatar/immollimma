@@ -48,7 +48,13 @@ TECH = {"pizz": "pizz.", "trem": "trem.", "mute": "con sord.", "colleg": "col le
 
 
 def _order(name):
-    return SCORE_ORDER.index(name) if name in SCORE_ORDER else len(SCORE_ORDER)
+    """score order; a keyboard split into 'X RH' / 'X LH' keeps the right hand on top"""
+    base, hand = name, 0
+    for suf, h in ((" RH", 0), (" LH", 1)):
+        if name.endswith(suf):
+            base, hand = name[:-len(suf)], h
+    i = SCORE_ORDER.index(base) if base in SCORE_ORDER else len(SCORE_ORDER)
+    return (i, hand)
 
 
 def parts_of(piece):
@@ -135,8 +141,9 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
     md.composer = piece.meta.get("composer", " ")
     md.movementName = piece.meta.get("subtitle", " ")  # otherwise the title is printed twice
     sc.metadata = md
-    marks = [(q(e["t"]), str(e["label"])) for e in piece.events if e["kind"] == "mark"]
+    marks = [(q(e.get("wt", e["t"])), str(e["label"])) for e in piece.events if e["kind"] == "mark"]
     first = True
+    ksig, spell = _key_spelling(piece.key)
     for name, notes in parts_of(piece).items():
         # simultaneous notes of one length → chords; what still overlaps goes to a second staff (divisi)
         grid = 12 if 3 in divisors else max(divisors)
@@ -145,9 +152,10 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
             m = int(round(e["midi"]))
             if not 21 <= m <= 108:
                 continue
-            on = round(q(e["t"]) * grid) / grid
+            # written time/length (wt, wdur) win over the performed ones: rubato and pedal stay out of the notation
+            on = round(q(e.get("wt", e["t"])) * grid) / grid
             # a note played shorter than written (legato 0.9…0.97, staccato) keeps its written length
-            ln = max(0.25, math.ceil((q(e["dur"]) - shift) * 4 - 0.15) / 4)
+            ln = max(0.25, math.ceil((q(e.get("wdur", e["dur"])) - shift) * 4 - 0.15) / 4)
             art = e.get("art") or ("staccato" if e["inst"].endswith(("_stac", "_spic")) else None)
             groups[(on, ln, _tech(e["inst"]), art)].append(m)
         staves = []  # [(end, [items])]
@@ -175,11 +183,17 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
             part.insert(0, meter.TimeSignature(f"{piece.meter[0]}/{piece.meter[1]}"))
             if name in CLEFS:
                 part.insert(0, CLEFS[name]())
+            else:  # a low staff (left hand, low voice) gets the bass clef
+                ms_ = sorted(m for _, ms in items for m in ms)
+                if ms_ and ms_[len(ms_) // 2] < 57:
+                    part.insert(0, clef.BassClef())
+            if ksig is not None:
+                part.insert(0, ksig.__class__(ksig.sharps))
             last_tech = None
             prev_end = 0.0
             for (on, ln, tech, art), ms in items:
                 ln = max(0.25, min(ln, ln))
-                obj = note.Note(ms[0]) if len(set(ms)) == 1 else chord.Chord(sorted(set(ms)))
+                obj = note.Note(spell(ms[0])) if len(set(ms)) == 1 else chord.Chord([spell(x) for x in sorted(set(ms))])
                 obj.quarterLength = ln
                 if on < prev_end:  # a cut-short note (more layers than staves)
                     continue
@@ -207,6 +221,44 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
     sc = sc.quantize(quarterLengthDivisors=divisors, processOffsets=True, processDurations=True, inPlace=False)
     sc.write("musicxml", fp=path)
     return path
+
+
+def _key_spelling(key_text):
+    """'D-flat major', 'B minor', 'Db', 'F#m' → (KeySignature | None, midi → Pitch spelled in that key)"""
+    from music21 import key as m21key, pitch
+    ks, scale_names, flats, sharps = None, {}, False, False
+    try:
+        txt = (key_text or "").strip()
+        tonic, _, mode = txt.partition(" ")
+        tonic = tonic.replace("-flat", "-").replace("-sharp", "#").replace("b", "-") if len(tonic) > 1 else tonic
+        mode = "minor" if ("minor" in mode or tonic.endswith("m")) else "major"
+        tonic = tonic.rstrip("m") or tonic
+        k = m21key.Key(tonic.upper()[0] + tonic[1:] if mode == "major" else tonic.lower()[0] + tonic[1:])
+        ks = m21key.KeySignature(k.sharps)
+        for p_ in k.getScale(mode).getPitches("C1", "B1"):
+            scale_names[p_.pitchClass] = p_.name
+        if mode == "minor":  # raised 6th and 7th (leading tone) belong to minor too
+            for iv in ("-m2", "-m3"):
+                p_ = k.tonic.transpose(iv)
+                scale_names.setdefault(p_.pitchClass, p_.name)
+        flats = k.sharps < 0
+        sharps = k.sharps > 0
+    except Exception:  # noqa: BLE001 — no key: default spelling
+        ks = None
+
+    def spell(m):
+        p_ = pitch.Pitch(midi=m)
+        name = scale_names.get(m % 12)
+        if name is None and ks is not None:  # chromatic note: flats in flat keys, sharps in sharp keys
+            name = p_.name
+            if (flats and "#" in name) or (sharps and "-" in name):
+                name = p_.getEnharmonic().name
+        if name:
+            q_ = pitch.Pitch(name + "4")
+            q_.octave += (m - q_.midi) // 12
+            return q_
+        return p_
+    return ks, spell
 
 
 def to_pdf(musicxml, pdf):

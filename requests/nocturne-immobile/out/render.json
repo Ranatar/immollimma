@@ -1,0 +1,58 @@
+{
+ "backend": "sso",
+ "libraries": [
+  "sso"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising"
+ ],
+ "by_instrument": {
+  "piano@sso": 338
+ },
+ "substitutions": {},
+ "missing": {},
+ "out_of_range_rescued": {},
+ "sfizz_notes": 290,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  183.11948442985525
+ ],
+ "seconds": 183.11948442985525,
+ "mp3": "/home/claude/immollimma/requests/nocturne-immobile/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/nocturne-immobile/out/score.mid",
+  "lost": {},
+  "musicxml": "/home/claude/immollimma/requests/nocturne-immobile/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/nocturne-immobile/out/score.pdf",
+  "grid": [
+   4
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   48.0,
+   56.2,
+   66.2,
+   72.2,
+   75.2,
+   81.2,
+   84.2,
+   87.2,
+   90.2,
+   105.8,
+   145.8,
+   173.2
+  ],
+  "png": "/home/claude/immollimma/requests/nocturne-immobile/out/report.png"
+ },
+ "parts_lufs": {
+  "Piano RH": -42.6,
+  "Piano LH": -48.9
+ },
+ "seconds_taken": 35.7
+}

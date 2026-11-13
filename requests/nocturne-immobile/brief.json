@@ -1,0 +1,60 @@
+{
+ "version": 1,
+ "title": "Неподвижный ноктюрн",
+ "purpose": "standalone",
+ "duration_s": 180.0,
+ "sync": {
+  "mode": "cues",
+  "cues_file": "cues.json"
+ },
+ "style": {
+  "cards": [
+   "belcanto_immobile"
+  ],
+  "mood": "Ночная сосредоточенность: пение, которое не просит ответа.",
+  "references": "Единый стиль, похожий и на Шопена (ноктюрны), и на Сати (гимнопедии, ноктюрны, сарабанды), но самостоятельный: «жест без следствия». Без цитат.",
+  "avoid": "коллажа (такт «под Шопена», такт «под Сати»); бурной середины; ff"
+ },
+ "language": "tonal",
+ "key": "D-flat major",
+ "tempo_bpm": 60,
+ "meter": "3/4",
+ "ensemble": {
+  "size": "solo",
+  "include": [
+   "piano"
+  ],
+  "exclude": [],
+  "noises": false,
+  "processing": false
+ },
+ "library": "sso",
+ "commercial_ad": false,
+ "dramaturgy": {
+  "arc": "маятник → пение (A) → далёкая тональность, тише, тенор под хоралом (B), набухание и такт тишины → реприза вычитанием, единственный пассаж → кода: маятник, аккорд с секстой и ноной",
+  "climax_s": 78.2,
+  "ending": "fade"
+ },
+ "themes": [],
+ "characters": [],
+ "silences": [
+  {
+   "t": 102.6,
+   "dur": 3.0,
+   "note": "такт тишины после середины"
+  }
+ ],
+ "deliver": [
+  "mp3",
+  "midi",
+  "musicxml",
+  "pdf",
+  "report"
+ ],
+ "iteration": {
+  "sketch_first": false,
+  "sketch_seconds": 60,
+  "ask_before_full": false
+ },
+ "notes": "Заказ 2026-11-13: фортепианная вещь по форме ноктюрна, единый стиль «Шопен × Сати». Описание стиля — карточка belcanto_immobile."
+}
