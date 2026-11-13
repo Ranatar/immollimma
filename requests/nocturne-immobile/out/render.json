@@ -50,9 +50,5 @@
   ],
   "png": "/home/claude/immollimma/requests/nocturne-immobile/out/report.png"
  },
- "parts_lufs": {
-  "Piano RH": -42.6,
-  "Piano LH": -48.9
- },
- "seconds_taken": 35.7
+ "seconds_taken": 25.0
 }

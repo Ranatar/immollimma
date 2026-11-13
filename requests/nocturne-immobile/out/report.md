@@ -12,11 +12,4 @@
 - outside the real range of the instrument (matters for live players): none
 - more than 5 semitones beyond the recorded range (resampled, may sound artificial): none
 
-## Balance (each part alone, LUFS while it plays; the tune and the bass usually within ±3 dB)
-
-| part | LUFS |
-|---|---|
-| Piano RH | -42.6 |
-| Piano LH | -48.9 |
-
 ![report](report.png)

@@ -174,44 +174,53 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
                     st = min(staves, key=lambda s_: s_[0])
                     st[0] = on + ln
                     st[1].append((key, groups[key]))
-        for si, (_, items) in enumerate(staves):
+        # a keyboard hand ('… RH' / '… LH') keeps its layers on one staff as voices (stems up/down), the way
+        # keyboard music is written; other parts put an extra layer on an extra staff (divisi)
+        voiced = name.endswith((" RH", " LH")) and len(staves) > 1
+        groups = [staves] if voiced else [[st] for st in staves]
+        for si, group in enumerate(groups):
             part = stream.Part()
             ins = instrument.Instrument()
-            ins.partName = name if len(staves) == 1 else f"{name} {si + 1}"
+            ins.partName = name if len(groups) == 1 else f"{name} {si + 1}"
             ins.partAbbreviation = ins.partName[:5]
             part.insert(0, ins)
             part.insert(0, meter.TimeSignature(f"{piece.meter[0]}/{piece.meter[1]}"))
+            all_items = [it for _, items in group for it in items]
             if name in CLEFS:
                 part.insert(0, CLEFS[name]())
             else:  # a low staff (left hand, low voice) gets the bass clef
-                ms_ = sorted(m for _, ms in items for m in ms)
+                ms_ = sorted(m for _, ms in all_items for m in ms)
                 if ms_ and ms_[len(ms_) // 2] < 57:
                     part.insert(0, clef.BassClef())
             if ksig is not None:
                 part.insert(0, ksig.__class__(ksig.sharps))
             last_tech = None
-            prev_end = 0.0
-            for (on, ln, tech, art), ms in items:
-                ln = max(0.25, min(ln, ln))
-                obj = note.Note(spell(ms[0])) if len(set(ms)) == 1 else chord.Chord([spell(x) for x in sorted(set(ms))])
-                obj.quarterLength = ln
-                if on < prev_end:  # a cut-short note (more layers than staves)
-                    continue
-                if tech != last_tech:
-                    txt = tech or ("arco" if last_tech in ("pizz.", "col legno", "spicc.") else
-                                   "senza sord." if last_tech in ("con sord.", "harmon mute") else
-                                   "ord." if last_tech else None)
-                    if txt:
-                        part.insert(on, expressions.TextExpression(txt))
-                    last_tech = tech
-                if tech in ("trem.", "roll"):
-                    obj.expressions.append(expressions.Tremolo(numberOfMarks=3))
-                if art == "staccato":
-                    obj.articulations.append(articulations.Staccato())
-                elif art == "accent":
-                    obj.articulations.append(articulations.Accent())
-                part.insert(on, obj)
-                prev_end = on + ln
+            for _, items in group:
+                target = part if len(group) == 1 else stream.Voice()
+                prev_end = 0.0
+                for (on, ln, tech, art), ms in items:
+                    ln = max(0.25, min(ln, ln))
+                    obj = note.Note(spell(ms[0])) if len(set(ms)) == 1 else chord.Chord([spell(x) for x in sorted(set(ms))])
+                    obj.quarterLength = ln
+                    if on < prev_end:  # a cut-short note (more layers than staves)
+                        continue
+                    if tech != last_tech:
+                        txt = tech or ("arco" if last_tech in ("pizz.", "col legno", "spicc.") else
+                                       "senza sord." if last_tech in ("con sord.", "harmon mute") else
+                                       "ord." if last_tech else None)
+                        if txt:
+                            part.insert(on, expressions.TextExpression(txt))
+                        last_tech = tech
+                    if tech in ("trem.", "roll"):
+                        obj.expressions.append(expressions.Tremolo(numberOfMarks=3))
+                    if art == "staccato":
+                        obj.articulations.append(articulations.Staccato())
+                    elif art == "accent":
+                        obj.articulations.append(articulations.Accent())
+                    target.insert(on, obj)
+                    prev_end = on + ln
+                if target is not part:
+                    part.insert(0, target)
             if first:
                 part.insert(0, tempo.MetronomeMark(number=round(piece.bpm)))
                 for on, lab in marks:
