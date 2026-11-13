@@ -22,21 +22,21 @@
     </scaling>
   </defaults>
   <part-list>
-    <score-part id="P6a6f189feabea56d1a250869beb921b0">
+    <score-part id="Pe58e1e3dcc14d7bec1c7b35a552ede46">
       <part-name>Organ RH</part-name>
       <part-abbreviation>Organ</part-abbreviation>
     </score-part>
-    <score-part id="Pd60a88d263a1fb7d7a84488ad41f1d53">
+    <score-part id="Pa81df6b11a3687e5c44cb90dd890e6e6">
       <part-name>Organ LH</part-name>
       <part-abbreviation>Organ</part-abbreviation>
     </score-part>
-    <score-part id="P0d9d319bc72e7c2407907b1f65ea6b3b">
+    <score-part id="Pb087fbe8664320b8a2319206bf775ec9">
       <part-name>Organ Pedal</part-name>
       <part-abbreviation>Organ</part-abbreviation>
     </score-part>
   </part-list>
   <!--=========================== Part 1 ===========================-->
-  <part id="P6a6f189feabea56d1a250869beb921b0">
+  <part id="Pe58e1e3dcc14d7bec1c7b35a552ede46">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -2337,14 +2337,12 @@
       </note>
       <note>
         <pitch>
-          <step>G</step>
-          <alter>-1</alter>
+          <step>F</step>
           <octave>5</octave>
         </pitch>
         <duration>2520</duration>
         <voice>0</voice>
         <type>16th</type>
-        <accidental>flat</accidental>
         <stem>down</stem>
         <beam number="1">begin</beam>
         <beam number="2">begin</beam>
@@ -2375,12 +2373,14 @@
       </note>
       <note>
         <pitch>
-          <step>D</step>
+          <step>E</step>
+          <alter>-1</alter>
           <octave>6</octave>
         </pitch>
         <duration>2520</duration>
         <voice>0</voice>
         <type>16th</type>
+        <accidental>flat</accidental>
         <stem>down</stem>
         <beam number="1">end</beam>
         <beam number="2">end</beam>
@@ -4572,14 +4572,12 @@
       </note>
       <note>
         <pitch>
-          <step>A</step>
-          <alter>-1</alter>
+          <step>G</step>
           <octave>5</octave>
         </pitch>
         <duration>10080</duration>
         <voice>1</voice>
         <type>quarter</type>
-        <accidental>flat</accidental>
       </note>
     </measure>
     <!--========================= Measure 45 =========================-->
@@ -8069,7 +8067,7 @@
     </measure>
   </part>
   <!--=========================== Part 2 ===========================-->
-  <part id="Pd60a88d263a1fb7d7a84488ad41f1d53">
+  <part id="Pa81df6b11a3687e5c44cb90dd890e6e6">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -9227,13 +9225,13 @@
       <note>
         <pitch>
           <step>C</step>
-          <alter>1</alter>
+          <alter>0</alter>
           <octave>4</octave>
         </pitch>
         <duration>10080</duration>
         <voice>0</voice>
         <type>quarter</type>
-        <accidental>sharp</accidental>
+        <accidental>natural</accidental>
       </note>
       <note>
         <chord />
@@ -9259,13 +9257,11 @@
       <note>
         <pitch>
           <step>C</step>
-          <alter>0</alter>
           <octave>4</octave>
         </pitch>
         <duration>10080</duration>
         <voice>0</voice>
         <type>quarter</type>
-        <accidental>natural</accidental>
       </note>
       <note>
         <chord />
@@ -12010,13 +12006,13 @@
       <note>
         <pitch>
           <step>C</step>
-          <alter>1</alter>
+          <alter>0</alter>
           <octave>4</octave>
         </pitch>
         <duration>5040</duration>
         <voice>0</voice>
         <type>eighth</type>
-        <accidental>sharp</accidental>
+        <accidental>natural</accidental>
         <stem>up</stem>
         <beam number="1">begin</beam>
       </note>
@@ -13573,7 +13569,7 @@
     </measure>
   </part>
   <!--=========================== Part 3 ===========================-->
-  <part id="P0d9d319bc72e7c2407907b1f65ea6b3b">
+  <part id="Pb087fbe8664320b8a2319206bf775ec9">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -13911,11 +13907,13 @@
       </note>
       <note>
         <pitch>
-          <step>A</step>
-          <octave>2</octave>
+          <step>C</step>
+          <alter>0</alter>
+          <octave>3</octave>
         </pitch>
         <duration>10080</duration>
         <type>quarter</type>
+        <accidental>natural</accidental>
       </note>
     </measure>
     <!--========================= Measure 13 =========================-->
@@ -13951,12 +13949,10 @@
       <note>
         <pitch>
           <step>C</step>
-          <alter>0</alter>
           <octave>3</octave>
         </pitch>
         <duration>10080</duration>
         <type>quarter</type>
-        <accidental>natural</accidental>
       </note>
       <note>
         <pitch>
@@ -14533,7 +14529,7 @@
       </note>
       <note>
         <pitch>
-          <step>D</step>
+          <step>F</step>
           <octave>3</octave>
         </pitch>
         <duration>10080</duration>
@@ -15146,7 +15142,7 @@
       </note>
       <note>
         <pitch>
-          <step>E</step>
+          <step>G</step>
           <octave>2</octave>
         </pitch>
         <duration>10080</duration>
@@ -15304,11 +15300,13 @@
       </note>
       <note>
         <pitch>
-          <step>A</step>
-          <octave>2</octave>
+          <step>C</step>
+          <alter>0</alter>
+          <octave>3</octave>
         </pitch>
         <duration>10080</duration>
         <type>quarter</type>
+        <accidental>natural</accidental>
       </note>
     </measure>
     <!--========================= Measure 49 =========================-->
