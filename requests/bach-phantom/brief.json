@@ -1,0 +1,74 @@
+{
+ "version": 1,
+ "title": "Praeludium d-moll für die Orgel («Призрак Оперы», как написал бы Бах)",
+ "purpose": "standalone",
+ "duration_s": 214,
+ "sync": {
+  "mode": "cues",
+  "cues_file": "cues.json"
+ },
+ "style": {
+  "cards": [
+   "baroque"
+  ],
+  "mood": "Мрачная одержимость и театр — средствами баховского органа.",
+  "references": "Схема — по MIDI заглавного дуэта (♩=125, 127 т.): органное вступление-рефрен, куплеты в новых тональностях, дуэт, вокализ всё выше. У Баха — ритурнельная форма для органа: ритурнель с барабанным басом и ламенто, эпизоды-«голоса» на разных регистрах, монте и токкатные пассажи, пикардийская терция. Мелодия «Призрака» не цитируется.",
+  "avoid": "цитат мелодии; рок-ударных; мажорного «прояснения» до самого последнего аккорда"
+ },
+ "language": "tonal",
+ "key": "D minor",
+ "tempo_bpm": 84,
+ "meter": "4/4",
+ "ensemble": {
+  "size": "solo",
+  "include": [
+   "org_loud",
+   "org_quiet",
+   "org_reed"
+  ],
+  "exclude": [],
+  "noises": false,
+  "processing": false
+ },
+ "library": "auto",
+ "commercial_ad": false,
+ "dramaturgy": {
+  "arc": "R, R → эпизод 1 → R (g) → эпизод 2 → R (a) → дуэт → монте, пункт, фермата → R (d), пикардийская терция",
+  "climax_s": 148.6,
+  "ending": "cadence"
+ },
+ "themes": [
+  {
+   "name": "песня",
+   "notation": "затакт a a | d'. cis' d' e' | f'(2) e' d' | c'. b a g | a — своя, в манере куплета",
+   "for": "эпизоды",
+   "transform": "в теноре, в октаву, всё выше"
+  }
+ ],
+ "characters": [
+  {
+   "name": "Кристина",
+   "description": "сопрано, тихий регистр",
+   "evolution": "в дуэте — вместе с Призраком в октаву"
+  },
+  {
+   "name": "Призрак",
+   "description": "тенор, язычковый регистр",
+   "evolution": "в дуэте ведёт первым"
+  }
+ ],
+ "silences": [],
+ "deliver": [
+  "mp3",
+  "midi",
+  "musicxml",
+  "pdf",
+  "report"
+ ],
+ "iteration": {
+  "sketch_first": false,
+  "sketch_seconds": 60,
+  "ask_before_full": false
+ },
+ "notes": "Заказ 2026-11-13: «Призрак Оперы» как написал бы Бах; схема — по MIDI, присланному ранее (в репозиторий не кладётся)."
+}

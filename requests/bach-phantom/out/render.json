@@ -1,0 +1,63 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "org_loud@plain": 631,
+  "org_quiet@plain": 611,
+  "org_reed@sso": 82
+ },
+ "substitutions": {},
+ "missing": {},
+ "out_of_range_rescued": {},
+ "sfizz_notes": 53,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  211.28285714285718
+ ],
+ "seconds": 211.28285714285718,
+ "mp3": "/home/claude/immollimma/requests/bach-phantom/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/bach-phantom/out/score.mid",
+  "lost": {},
+  "musicxml": "/home/claude/immollimma/requests/bach-phantom/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/bach-phantom/out/score.pdf",
+  "grid": [
+   4
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   23.0,
+   34.5,
+   45.8,
+   54.5,
+   68.8,
+   103.2,
+   106.5,
+   114.5,
+   145.8,
+   148.8,
+   157.5,
+   163.0
+  ],
+  "png": "/home/claude/immollimma/requests/bach-phantom/out/report.png"
+ },
+ "parts_lufs": {
+  "Organ LH": -30.4,
+  "Organ RH": -30.6,
+  "Organ Pedal": -32.2
+ },
+ "seconds_taken": 37.1
+}
