@@ -7,18 +7,18 @@
   "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising"
  ],
  "by_instrument": {
-  "piano@sso": 1118
+  "piano@sso": 1313
  },
  "substitutions": {},
  "missing": {},
  "out_of_range_rescued": {},
- "sfizz_notes": 864,
+ "sfizz_notes": 1036,
  "lengthened": 0,
  "window": [
   0.0,
-  275.36172413793105
+  278.8789655172414
  ],
- "seconds": 275.36172413793105,
+ "seconds": 278.8789655172414,
  "mp3": "/home/claude/immollimma/requests/nocturne-belle/out/audio.mp3",
  "notation": {
   "midi": "/home/claude/immollimma/requests/nocturne-belle/out/score.mid",
@@ -26,7 +26,8 @@
   "musicxml": "/home/claude/immollimma/requests/nocturne-belle/out/score.musicxml",
   "pdf": "/home/claude/immollimma/requests/nocturne-belle/out/score.pdf",
   "grid": [
-   4
+   8,
+   3
   ]
  },
  "qa": {
@@ -35,24 +36,24 @@
   "clicks": [],
   "flat": [],
   "bounds": [
-   109.5,
+   61.8,
    141.0,
    144.5,
    145.0,
-   155.5,
    160.0,
-   164.0,
+   163.0,
+   163.8,
    170.2,
-   179.0,
-   181.2,
-   192.2,
-   200.8
+   200.8,
+   234.0,
+   235.8,
+   237.8
   ],
   "png": "/home/claude/immollimma/requests/nocturne-belle/out/report.png"
  },
  "parts_lufs": {
-  "Piano RH": -37.3,
+  "Piano RH": -36.9,
   "Piano LH": -43.1
  },
- "seconds_taken": 72.5
+ "seconds_taken": 72.4
 }

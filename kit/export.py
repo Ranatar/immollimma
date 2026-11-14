@@ -154,7 +154,7 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
     names = _context_spelling(piece, q, spell_at)  # id(event) → pitch name of a chromatic note, chosen in context
     for name, notes in parts_of(piece).items():
         # simultaneous notes of one length → chords; what still overlaps goes to a second staff (divisi)
-        grid = 12 if 3 in divisors else max(divisors)
+        grid = math.lcm(*divisors)  # 12 for (4, 3); 24 for (8, 6): 32nds and sextuplets of a fioritura
         groups = collections.defaultdict(list)
         for e in notes:
             m = int(round(e["midi"]))
@@ -163,7 +163,8 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
             # written time/length (wt, wdur) win over the performed ones: rubato and pedal stay out of the notation
             on = round(q(e.get("wt", e["t"])) * grid) / grid
             # a note played shorter than written (legato 0.9…0.97, staccato) keeps its written length
-            ln = max(0.25, math.ceil((q(e.get("wdur", e["dur"])) - shift) * 4 - 0.15) / 4)
+            fine = max(divisors)  # the shortest written value: a semiquaver, or a demisemiquaver with (8, 6)
+            ln = max(1 / fine, math.ceil((q(e.get("wdur", e["dur"])) - shift) * fine - 0.15) / fine)
             art = e.get("art") or ("staccato" if e["inst"].endswith(("_stac", "_spic")) else None)
             groups[(on, ln, _tech(e["inst"]), art)].append((m, names.get(id(e))))
         staves = []  # [(end, [items])]
@@ -369,13 +370,33 @@ def _key_spelling(key_text):
     return ks, spell
 
 
+def _musicxml2ly():
+    """musicxml2ly (LilyPond 2.24) falls over a tuplet bracket that it opened but did not see closed
+    ('>' between int and None in group_tuplets) — music21 writes such brackets around triplets in chords.
+    Run a copy patched in memory (the bracket is skipped, the tuplet's notes keep their scaled durations)."""
+    exe = shutil.which("musicxml2ly")
+    try:
+        src = open(exe, encoding="utf-8").read()
+    except (OSError, TypeError, UnicodeDecodeError):
+        return ["musicxml2ly"]
+    bad = "        if i1 > i2:\n"
+    if bad not in src:
+        return [exe]
+    patched = os.path.join(os.path.expanduser("~"), ".cache", "immollimma_musicxml2ly.py")
+    os.makedirs(os.path.dirname(patched), exist_ok=True)
+    body = src.replace(bad, "        if i2 is None or i1 > i2:\n", 1)
+    if not os.path.exists(patched) or open(patched, encoding="utf-8").read() != body:
+        open(patched, "w", encoding="utf-8").write(body)
+    return ["python3", patched]
+
+
 def to_pdf(musicxml, pdf):
     """MusicXML → LilyPond → PDF; returns the PDF path, or None when LilyPond is not installed"""
     if not (shutil.which("musicxml2ly") and shutil.which("lilypond")):
         return None
     base = os.path.splitext(pdf)[0]
     ly = base + ".ly"
-    subprocess.run(["musicxml2ly", "--no-beaming", "-o", ly, musicxml], check=True, capture_output=True)
+    subprocess.run(_musicxml2ly() + ["--no-beaming", "-o", ly, musicxml], check=True, capture_output=True)
     # a readable score on A4 portrait, small staves
     src = open(ly, encoding="utf-8").read()
     src = src.replace('\\version', '#(set-global-staff-size 14)\n\\version', 1)
@@ -403,6 +424,8 @@ def export_all(piece, out_dir, pdf=True, max_pdf_seconds=420):
     res = {"midi": to_midi(piece, os.path.join(out_dir, slug + ".mid")), "lost": lost(piece)}
     xml = os.path.join(out_dir, slug + ".musicxml")
     tries = [(4,)] if fits_grid(piece) else [(4, 3), (4,)]
+    if piece.meta.get("notation_divisors"):  # a piece with fioriture asks for a finer grid first
+        tries = [tuple(d) for d in piece.meta["notation_divisors"]] + tries
     for div in tries:  # musicxml2ly chokes on some of music21's tuplets: fall back to a plain grid
         try:
             res["musicxml"] = to_musicxml(piece, xml, divisors=div)
