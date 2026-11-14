@@ -146,7 +146,12 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
     marks = [(q(e.get("wt", e["t"])), str(e["label"])) for e in piece.events if e["kind"] == "mark"]
     first = True
     ksig, spell = _key_spelling(piece.key)
-    names = _context_spelling(piece, q, spell)  # id(event) → pitch name of a chromatic note, chosen in context
+    # key changes: meta["keys"] = [[written seconds, "G-sharp minor"], …] — a new signature and spelling from there
+    keys = [(0.0, ksig, spell)] + sorted((q(t_), *_key_spelling(k_)) for t_, k_ in piece.meta.get("keys", []) if t_ > 0)
+
+    def spell_at(on):
+        return [sp_ for t_, _k, sp_ in keys if t_ <= on + 1e-6][-1]
+    names = _context_spelling(piece, q, spell_at)  # id(event) → pitch name of a chromatic note, chosen in context
     for name, notes in parts_of(piece).items():
         # simultaneous notes of one length → chords; what still overlaps goes to a second staff (divisi)
         grid = 12 if 3 in divisors else max(divisors)
@@ -211,8 +216,9 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
                         elif low and med > 64:
                             low = False
                             part.insert(bar * bar_q, clef.TrebleClef())
-            if ksig is not None:
-                part.insert(0, ksig.__class__(ksig.sharps))
+            for t_, ks_, _sp in keys:
+                if ks_ is not None:
+                    part.insert(t_, ks_.__class__(ks_.sharps))
             last_tech = None
             for _, items in group:
                 target = part if len(group) == 1 else stream.Voice()
@@ -226,7 +232,7 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
                             p_.octave += (m_ - p_.midi) // 12
                             sp[m_] = p_
                         else:
-                            sp[m_] = spell(m_)
+                            sp[m_] = spell_at(on)(m_)
                     obj = note.Note(sp[ms[0][0]]) if len(sp) == 1 else chord.Chord([sp[x] for x in sorted(sp)])
                     obj.quarterLength = ln
                     if on < prev_end:  # a cut-short note (more layers than staves)
@@ -267,7 +273,7 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
 _CHORDAL = {(0, 0), (3, 2), (4, 2), (5, 3), (7, 4), (8, 5), (9, 5), (6, 4), (10, 6), (11, 6)}
 
 
-def _context_spelling(piece, q, spell):
+def _context_spelling(piece, q, spell_at):
     """a chromatic note (no name in the key) is spelled by its surroundings, not by the key signature alone:
     1) as the name that makes thirds/fifths/sixths with the notes sounding with it (F♯ in D major, G♯ in E7, not
        G♭/A♭); 2) failing that, by where the line goes (G–F♯–G rises: sharp; A–A♭–G falls: flat); 3) the key default.
@@ -282,6 +288,7 @@ def _context_spelling(piece, q, spell):
     for k, i in enumerate(order):
         e = ev[i]
         m = int(round(e["midi"]))
+        spell = spell_at(on[i][0])
         default = spell(m)
         alt = pitch.Pitch(midi=m)
         alt = alt.getEnharmonic() if alt.name == default.name else alt

@@ -1,0 +1,232 @@
+{
+ "title": "Nocturne à trois — «Belle», как написал бы Шопен",
+ "styles": [
+  "romantic"
+ ],
+ "seconds": 270,
+ "tempo_bpm": 58,
+ "meter": "4/4",
+ "key": "D minor",
+ "language": "tonal",
+ "library": "sso",
+ "library_notes": [],
+ "defaults": [
+  "sync.video_file",
+  "ensemble.exclude",
+  "silences"
+ ],
+ "sections": [
+  {
+   "t0": 0.0,
+   "t1": 8.3,
+   "label": "Вступление",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "левая рука одна: ломаная d-moll",
+   "leader": "vln_leg",
+   "texture": "соло валторны",
+   "register": "mid",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 8.3,
+   "t1": 41.4,
+   "label": "I. Квазимодо: d-moll",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "мелодия в середине, простая, речевые триоли",
+   "leader": "hn_leg",
+   "texture": "волна нарастания tutti",
+   "register": "wide",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 41.4,
+   "t1": 66.2,
+   "label": "припев: h → D",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "малая терция вниз, выход в D-dur",
+   "leader": "piano",
+   "texture": "кантилена струнных в октаву",
+   "register": "mid",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 66.2,
+   "t1": 74.5,
+   "label": "Связка",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "D – C7",
+   "leader": "vln_leg",
+   "texture": "волна нарастания tutti",
+   "register": "mid",
+   "pulse": "slow",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 74.5,
+   "t1": 107.6,
+   "label": "II. Фролло: f-moll",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "мелодия в левой руке под бьющимися аккордами; гармония темнее",
+   "leader": "hn_leg",
+   "texture": "соло валторны",
+   "register": "mid",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 107.6,
+   "t1": 132.4,
+   "label": "припев: d → F",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "мелодия октавами наверху",
+   "leader": "ob_leg",
+   "texture": "хорал меди",
+   "register": "wide",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 132.4,
+   "t1": 140.7,
+   "label": "Связка",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "F – Es7",
+   "leader": "piano",
+   "texture": "волна нарастания tutti",
+   "register": "mid",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 140.7,
+   "t1": 173.8,
+   "label": "III. Фебюс: gis-moll",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "высоко, группетто и фиоритуры, лёгкий аккомпанемент",
+   "leader": "hn_leg",
+   "texture": "соло валторны",
+   "register": "mid",
+   "pulse": "slow",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 173.8,
+   "t1": 198.6,
+   "label": "припев: f → As",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "украшенный",
+   "leader": "cl_leg",
+   "texture": "хорал меди",
+   "register": "wide",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 198.6,
+   "t1": 223.4,
+   "label": "Трио: f-moll",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "октавы наверху, линия Квазимодо в середине, агитато триолями",
+   "leader": "vc_leg",
+   "texture": "волна нарастания tutti",
+   "register": "wide",
+   "pulse": "slow",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 223.4,
+   "t1": 231.7,
+   "label": "Каденция",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "Des – C7, пассаж, фермата",
+   "leader": "ob_leg",
+   "texture": "соло валторны",
+   "register": "mid",
+   "pulse": "slow",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 231.7,
+   "t1": 270,
+   "label": "Кода: d-moll",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "тема Квазимодо внизу, D-dur pp",
+   "leader": "piano",
+   "texture": "волна нарастания tutti",
+   "register": "wide",
+   "pulse": "slow",
+   "dynamic": "mf"
+  }
+ ],
+ "hits": [],
+ "silences": [],
+ "themes": [
+  {
+   "name": "признание",
+   "notation": "вздох с квинты, триольный взлёт, спуск к тонике (8 тт.)",
+   "for": "фортепиано",
+   "transform": "в середине; в басу под аккордами; наверху в фиоритурах; линия в трио"
+  },
+  {
+   "name": "припев",
+   "notation": "подъём по трезвучию к вершине, секвенция, выход в мажор (6 тт.)",
+   "for": "фортепиано",
+   "transform": "октавами; украшенный; ff агитато"
+  }
+ ],
+ "characters": [
+  {
+   "name": "Квазимодо",
+   "material": "тема в середине, простая"
+  },
+  {
+   "name": "Фролло",
+   "material": "тема в басу под бьющимися аккордами"
+  },
+  {
+   "name": "Фебюс",
+   "material": "тема наверху в фиоритурах"
+  }
+ ],
+ "avoid": [
+  "квадратная механика",
+  "сухие стаккато",
+  "шумы",
+  "цитат Кочанте; эстрадной ритм-секции; ровного темпа без рубато"
+ ],
+ "devices": [
+  "pad",
+  "melody",
+  "arpeggio(harp)",
+  "chorale",
+  "timp roll"
+ ],
+ "ending": "cadence",
+ "deliver": [
+  "mp3",
+  "midi",
+  "musicxml",
+  "pdf",
+  "report"
+ ],
+ "sketch": {
+  "sketch_first": false,
+  "sketch_seconds": 60,
+  "ask_before_full": false
+ }
+}
