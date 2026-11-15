@@ -35,10 +35,90 @@ def _stem(b, n, s, g, ir):
     return y
 
 
+def _interp_points(points, t):
+    """points: [[t, value], ...] sorted; linear between them, held outside; t: array of seconds"""
+    pt = np.array([p[0] for p in points], float)
+    pv = np.array([p[1] for p in points], float)
+    return np.interp(t, pt, pv)
+
+
+def archive(y, points, t0=0.0, seed=5):
+    """The sound of an archive that changes over time — a process on the whole mix.
+    points: [{"t": s, "lp": Hz, "hp": Hz, "width": 0..1, "crackle": 0..1, "hiss": dB}, ...] (sorted by t).
+    Between points everything glides; a point with "step": true switches at once. lp/hp: a band like a
+    gramophone (lp ≥ 18000 and hp ≤ 25 mean no filter); width: stereo width (0 = mono); crackle: clicks
+    per second / 30; hiss: noise floor in dBFS (None = none)."""
+    n = len(y)
+    t = t0 + np.arange(n) / SR
+    out = np.zeros_like(y)
+    # band: piecewise, every segment between two points filtered with both ends' settings and crossfaded
+    for k in range(len(points)):
+        a = points[k]
+        b = points[k + 1] if k + 1 < len(points) else a
+        ta = a["t"] if k > 0 else -1e9
+        tb = b["t"] if k + 1 < len(points) else 1e18
+        i0, i1 = np.searchsorted(t, ta), np.searchsorted(t, tb)
+        if i1 <= i0:
+            continue
+        pad = int(0.25 * SR)
+        j0, j1 = max(0, i0 - pad), min(n, i1 + pad)
+        seg = y[j0:j1]
+
+        def band(p):
+            z = seg
+            if p.get("lp", 20000) < 18000:
+                z = sosfilt(butter(4, p["lp"], "low", fs=SR, output="sos"), z, axis=0)
+            if p.get("hp", 20) > 25:
+                z = sosfilt(butter(2, p["hp"], "high", fs=SR, output="sos"), z, axis=0)
+            return z
+        za = band(a)
+        zb = za if (b is a or b.get("step")) else band(b)
+        if b is a or b.get("step") or tb - ta <= 0:
+            w = np.zeros(j1 - j0, np.float32)
+        else:
+            w = np.clip((t[j0:j1] - ta) / (tb - ta), 0, 1).astype(np.float32)
+        z = za * (1 - w)[:, None] + zb * w[:, None]
+        out[i0:i1] = z[i0 - j0:i1 - j0]
+    # width: mid/side
+    def series(key, default):
+        pts = []
+        for k, p in enumerate(points):
+            v = p.get(key, default)
+            if p.get("step") and k > 0:
+                pts.append([p["t"] - 1e-3, points[k - 1].get(key, default)])
+            pts.append([p["t"], v])
+        return _interp_points(pts, t)
+    wdt = series("width", 1.0).astype(np.float32)
+    mid = (out[:, 0] + out[:, 1]) * 0.5
+    side = (out[:, 0] - out[:, 1]) * 0.5 * wdt
+    out[:, 0], out[:, 1] = mid + side, mid - side
+    # crackle and hiss, scaled to the music's own level so normalisation does not change them
+    rng = np.random.default_rng(seed)
+    ref = float(np.sqrt((out ** 2).mean()) + 1e-9)
+    cr = series("crackle", 0.0)
+    if cr.max() > 0:
+        rate = cr * 30.0 / SR
+        clicks = (rng.random(n) < rate).astype(np.float32) * rng.uniform(-1, 1, n).astype(np.float32)
+        # a click is a short burst (≈ 1 ms), not a one-sample spike: a record's crackle, not a digital fault
+        clicks = np.convolve(clicks, np.hanning(int(0.0012 * SR)).astype(np.float32), mode="same")
+        clicks = sosfilt(butter(2, [700, 4500], "band", fs=SR, output="sos"), clicks) * ref * 1.2
+        out += np.stack([clicks, clicks * 0.8], 1).astype(np.float32)
+    hiss_db = [p.get("hiss") for p in points]
+    if any(h is not None for h in hiss_db):
+        hl = series("hiss", -120.0)
+        noise = rng.standard_normal((n, 2)).astype(np.float32)
+        noise = sosfilt(butter(2, [300, 5000], "band", fs=SR, output="sos"), noise, axis=0)
+        noise /= np.sqrt((noise ** 2).mean()) + 1e-9
+        out += noise * (10 ** (hl / 20) * ref / 10 ** (-30 / 20))[:, None].astype(np.float32)
+    return out.astype(np.float32)
+
+
 def mix(buses, seconds, out_path, sends=None, gains=None, master_db=-1.0, fade_in=0.0, fade_out=3.0,
-        stems_dir=None, reverb_seconds=3.2):
+        stems_dir=None, reverb_seconds=3.2, post=None, t0=0.0):
     """buses: {name: (frames, 2) float32}; writes a 24-bit WAV peak-normalised to master_db.
-    Stems (one WAV per bus, same scaling, so they sum to the mix) when stems_dir is given."""
+    Stems (one WAV per bus, same scaling, so they sum to the mix) when stems_dir is given.
+    post: processes on the whole mix, e.g. [{"kind": "archive", "points": [...]}] (see archive());
+    t0: the time of the first frame in the piece (for windows)."""
     sends = {**SENDS, **(sends or {})}
     gains = {**GAINS, **(gains or {})}
     ir = make_ir(reverb_seconds)
@@ -46,6 +126,9 @@ def mix(buses, seconds, out_path, sends=None, gains=None, master_db=-1.0, fade_i
     y = np.zeros((n, 2), np.float32)
     for name, b in buses.items():
         y += _stem(b, n, sends.get(name, 0.3), 10 ** (gains.get(name, 0.0) / 20), ir)
+    for pr in post or []:
+        if pr.get("kind") == "archive":
+            y = archive(y, pr["points"], t0=t0)
     k = 10 ** (master_db / 20) / (np.abs(y).max() + 1e-9)
     y *= k
     if fade_in:
