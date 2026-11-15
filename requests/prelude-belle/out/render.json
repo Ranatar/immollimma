@@ -1,0 +1,64 @@
+{
+ "backend": "sso",
+ "libraries": [
+  "sso"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising"
+ ],
+ "by_instrument": {
+  "piano@sso": 1555
+ },
+ "substitutions": {},
+ "missing": {},
+ "out_of_range_rescued": {},
+ "sfizz_notes": 1124,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  280.37803448275866
+ ],
+ "seconds": 280.37803448275866,
+ "mp3": "/home/claude/immollimma/requests/prelude-belle/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/prelude-belle/out/score.mid",
+  "lost": {},
+  "musicxml": "/home/claude/immollimma/requests/prelude-belle/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/prelude-belle/out/score.pdf",
+  "grid": [
+   8,
+   3
+  ]
+ },
+ "qa": {
+  "gaps": [
+   [
+    265.8,
+    267.1
+   ]
+  ],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   119.0,
+   121.5,
+   135.0,
+   137.8,
+   141.0,
+   144.5,
+   155.5,
+   228.0,
+   236.0,
+   244.5,
+   247.5,
+   253.5
+  ],
+  "png": "/home/claude/immollimma/requests/prelude-belle/out/report.png"
+ },
+ "parts_lufs": {
+  "Piano RH": -34.3,
+  "Piano LH": -37.6
+ },
+ "seconds_taken": 98.0
+}

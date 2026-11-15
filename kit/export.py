@@ -163,7 +163,7 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
             # written time/length (wt, wdur) win over the performed ones: rubato and pedal stay out of the notation
             on = round(q(e.get("wt", e["t"])) * grid) / grid
             # a note played shorter than written (legato 0.9…0.97, staccato) keeps its written length
-            fine = max(divisors)  # the shortest written value: a semiquaver, or a demisemiquaver with (8, 6)
+            fine = grid  # lengths on the same grid as onsets (a triplet quaver is 8/24, a demisemiquaver 3/24)
             ln = max(1 / fine, math.ceil((q(e.get("wdur", e["dur"])) - shift) * fine - 0.15) / fine)
             art = e.get("art") or ("staccato" if e["inst"].endswith(("_stac", "_spic")) else None)
             groups[(on, ln, _tech(e["inst"]), art)].append((m, names.get(id(e))))

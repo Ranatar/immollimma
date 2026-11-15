@@ -1,0 +1,223 @@
+{
+ "title": "Prélude «Belle» — «Belle», как написал бы Рахманинов",
+ "styles": [
+  "romantic"
+ ],
+ "seconds": 280,
+ "tempo_bpm": 58,
+ "meter": "4/4",
+ "key": "D minor",
+ "language": "tonal",
+ "library": "sso",
+ "library_notes": [],
+ "defaults": [
+  "sync.video_file",
+  "ensemble.exclude",
+  "silences"
+ ],
+ "sections": [
+  {
+   "t0": 0.0,
+   "t1": 8.3,
+   "label": "Вступление",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "триоли левой руки, d-moll",
+   "leader": "левая рука",
+   "texture": "триоли d-moll",
+   "register": "mid",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 8.3,
+   "t1": 41.4,
+   "label": "I. Квазимодо: d-moll (op. 23 № 4)",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "мелодия над триолями, внутренний голос сползает; во второй фразе мелодия в альте, 3 : 2",
+   "leader": "мелодия над триолями → в альте",
+   "texture": "op. 23 № 4: триоли, сползающий внутренний голос, 3 : 2",
+   "register": "wide",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 41.4,
+   "t1": 66.2,
+   "label": "припев: h → D",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "мелодия октавами над триолями",
+   "leader": "мелодия октавами",
+   "texture": "над триолями",
+   "register": "mid",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 66.2,
+   "t1": 74.5,
+   "label": "Связка",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "D – C7",
+   "leader": "мелодия",
+   "texture": "D – C7",
+   "register": "mid",
+   "pulse": "slow",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 74.5,
+   "t1": 107.6,
+   "label": "II. Фролло: f-moll (op. 32 № 10)",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "колокола, тема в теноре, lento",
+   "leader": "тема в теноре",
+   "texture": "op. 32 № 10: колокола, удар на третью долю, lento",
+   "register": "mid",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 107.6,
+   "t1": 132.4,
+   "label": "припев: d → F",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "колокола громче, тема наверху октавами",
+   "leader": "тема наверху октавами",
+   "texture": "колокола громче",
+   "register": "wide",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 132.4,
+   "t1": 140.7,
+   "label": "Связка",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "колокола: F – Es7",
+   "leader": "мелодия",
+   "texture": "колокола F – Es7",
+   "register": "mid",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 140.7,
+   "t1": 173.8,
+   "label": "III. Фебюс: gis-moll (op. 32 № 12)",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "мерцание шестнадцатыми, мелодия в левой, allegro",
+   "leader": "мелодия в левой",
+   "texture": "op. 32 № 12: мерцание шестнадцатыми, allegro",
+   "register": "mid",
+   "pulse": "slow",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 173.8,
+   "t1": 198.6,
+   "label": "припев: f → As",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "мерцание выше, мелодия октавами в левой",
+   "leader": "мелодия октавами в левой",
+   "texture": "мерцание выше",
+   "register": "wide",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 198.6,
+   "t1": 223.4,
+   "label": "«Точка»: f-moll",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "колокола обеими руками, тема наверху, бас каждую долю",
+   "leader": "тема наверху октавами",
+   "texture": "«точка»: аккорды обеих рук, бас каждую долю",
+   "register": "wide",
+   "pulse": "slow",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 223.4,
+   "t1": 231.7,
+   "label": "Обвал",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "аккорды C7 вниз через три октавы",
+   "leader": "—",
+   "texture": "обвал C7 вниз",
+   "register": "mid",
+   "pulse": "slow",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 231.7,
+   "t1": 280,
+   "label": "Кода: d-moll",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "колокола pp, тема Квазимодо, iv⁶ – i",
+   "leader": "тема Квазимодо",
+   "texture": "колокола pp, iv⁶ – i",
+   "register": "wide",
+   "pulse": "slow",
+   "dynamic": "mf"
+  }
+ ],
+ "hits": [],
+ "silences": [],
+ "themes": [
+  {
+   "name": "признание",
+   "notation": "та же, что в Nocturne à trois",
+   "for": "фортепиано",
+   "transform": "над триолями / в альте; в теноре под колоколами; в левой под мерцанием"
+  }
+ ],
+ "characters": [
+  {
+   "name": "Квазимодо",
+   "material": "op. 23 № 4"
+  },
+  {
+   "name": "Фролло",
+   "material": "op. 32 № 10"
+  },
+  {
+   "name": "Фебюс",
+   "material": "op. 32 № 12"
+  }
+ ],
+ "avoid": [
+  "квадратная механика",
+  "сухие стаккато",
+  "шумы",
+  "цитат Кочанте и самих прелюдий (берутся фактуры, не ноты); эстрадной ритм-секции"
+ ],
+ "devices": [
+  "сквозной процесс: каждый персонаж — фактура своей прелюдии; три фактуры сходятся в одной «точке» колоколов",
+  "внутренний голос сползает хроматически под стоящей мелодией; девятые, iv с секстой; обвал после кульминации"
+ ],
+ "ending": "cadence",
+ "deliver": [
+  "mp3",
+  "midi",
+  "musicxml",
+  "pdf",
+  "report"
+ ],
+ "sketch": {
+  "sketch_first": false,
+  "sketch_seconds": 60,
+  "ask_before_full": false
+ }
+}
