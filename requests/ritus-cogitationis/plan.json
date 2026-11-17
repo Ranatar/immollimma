@@ -1,0 +1,742 @@
+{
+ "title": "Ritus Cogitationis",
+ "styles": [
+  "sacred_choral",
+  "minimalism",
+  "expressionist_horror"
+ ],
+ "seconds": 102,
+ "tempo_bpm": 150,
+ "meter": "4/4",
+ "key": "D phrygian",
+ "language": "modal",
+ "library": "plain",
+ "library_notes": [
+  "cbsn_sus, choir, hpsd, org_reed, vc_colleg, vibes, vln_harm есть только в Sonatina — для них Sonatina (не для рекламы)."
+ ],
+ "defaults": [
+  "sync.video_file",
+  "ensemble.exclude",
+  "themes"
+ ],
+ "sections": [
+  {
+   "t0": 0,
+   "t1": 4,
+   "label": "I TENEBRAE",
+   "mood": "тьма, холодный кинескоп, гул",
+   "intensity": 0.05,
+   "note": "экран включается: точка → строка → кадр",
+   "leader": "deep (дыхание, педаль органа), писк кинескопа — флажолет",
+   "texture": "гул",
+   "register": "low",
+   "pulse": "none",
+   "dynamic": "pp"
+  },
+  {
+   "t0": 4,
+   "t1": 22,
+   "label": "II INVOCATIO",
+   "mood": "литургия, призыв; механизм собирается из колец, ещё неподвижен",
+   "intensity": 0.35,
+   "note": "четыре воззвания; от центра наружу встают кольца, 12 шестерён по одной, обод, спутники",
+   "leader": "choir (органум) + накопление аккорда",
+   "texture": "напев + аккорд, собираемый звук за звуком",
+   "register": "wide",
+   "pulse": "none",
+   "dynamic": "p→f"
+  },
+  {
+   "t0": 22,
+   "t1": 27,
+   "label": "III UNCTIO",
+   "mood": "помазание, золотые волны масла по кольцам; благоговение",
+   "intensity": 0.4,
+   "note": "волны идут по кольцам изнутри наружу",
+   "leader": "harp + vln_harm",
+   "texture": "текучие арпеджио, мерцание",
+   "register": "high",
+   "pulse": "flowing",
+   "dynamic": "mp"
+  },
+  {
+   "t0": 27,
+   "t1": 38,
+   "label": "IV EXCITATIO",
+   "mood": "пуск: первая попытка захлёбывается, вторая — разгон с перехлёстом",
+   "intensity": 0.6,
+   "note": "27 — сила подаётся; 28.6–30 — глохнет; 30.6 «Iterum: surge!»; 33–38 — разгон",
+   "leader": "tba/cbsn + машинный ход по кривой скорости",
+   "texture": "раскрутка, глохнет, удар tutti, разгон",
+   "register": "low",
+   "pulse": "irregular",
+   "dynamic": "mf→f"
+  },
+  {
+   "t0": 38,
+   "t1": 58,
+   "label": "V COGITATIO",
+   "mood": "вычисление: мерный механический ход, служба",
+   "intensity": 0.6,
+   "note": "счётчик молитв 0→8; удары механизма каждые 1,6 с",
+   "leader": "hpsd (двоичный кант) + choir cantus firmus",
+   "texture": "моторика, аддитивные слои",
+   "register": "mid",
+   "pulse": "driving",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 58,
+   "t1": 67,
+   "label": "VI HAERESIS",
+   "mood": "скверна вползает: порча, сбой такта, пурпурный скрап-код",
+   "intensity": 0.85,
+   "note": "сектор пожирается 9 с, кольца сбиваются",
+   "leader": "buzz (кольцевая модуляция) + alien/spores",
+   "texture": "распад: порча канта и хорала",
+   "register": "extremes",
+   "pulse": "broken",
+   "dynamic": "f→ff"
+  },
+  {
+   "t0": 67,
+   "t1": 71.5,
+   "label": "VII EXORCISMUS",
+   "mood": "изгнание: волна от центра, литания, раскаление металла",
+   "intensity": 1.0,
+   "note": "4,5 с; к 71.5 сектор раскалён добела",
+   "leader": "org_loud + медь + хор декламацией",
+   "texture": "хорал tutti",
+   "register": "low-mid",
+   "pulse": "slow heavy",
+   "dynamic": "ff"
+  },
+  {
+   "t0": 71.5,
+   "t1": 80,
+   "label": "VIII COGITATIO RESUMPTA",
+   "mood": "служба продолжается; металл остывает; нарастание к ответу",
+   "intensity": 0.7,
+   "note": "молитвы 8→12",
+   "leader": "tbn (cantus) + плотный кант (hpsd, xylo, spic)",
+   "texture": "моторика гуще, нарастание",
+   "register": "wide",
+   "pulse": "driving",
+   "dynamic": "f<"
+  },
+  {
+   "t0": 80,
+   "t1": 88,
+   "label": "IX RESPONSUM",
+   "mood": "ответ машины: свет, торжество, но знание восстановлено лишь отчасти",
+   "intensity": 0.9,
+   "note": "вспышка из сердца; «Responsum datum est»; RESTITUTUM 61% · LACUNAE III",
+   "leader": "org_loud + choir + tubular, D мажор",
+   "texture": "гимн с тремя «лакунами»",
+   "register": "high",
+   "pulse": "none",
+   "dynamic": "ff→mf"
+  },
+  {
+   "t0": 88,
+   "t1": 102,
+   "label": "X QUIES",
+   "mood": "угасание: сила отводится, шестерни замедляются до остановки, кинескоп гаснет",
+   "intensity": 0.2,
+   "note": "88–95 замедление; детали гаснут снаружи внутрь; 97.3–99.6 выключение кинескопа",
+   "leader": "choir + затихающий кант",
+   "texture": "замедление до остановки, редкие удары",
+   "register": "wide→low",
+   "pulse": "decelerating",
+   "dynamic": "p→pp"
+  }
+ ],
+ "hits": [
+  {
+   "t": 0.0,
+   "label": "кинескоп включается",
+   "kind": "accent",
+   "intensity": 0.3,
+   "note": "точка → строка (0–0.35) → кадр (до 1.2)",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 1.6,
+   "label": "COGITATOR · SOMNUS ALTUS",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 4,
+   "label": "Spiritus machinae, audi nos.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 4.5,
+   "label": "сердце: линза загорается",
+   "kind": "hit",
+   "intensity": 0.5,
+   "note": "вспышка, деталь встаёт",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 5.5,
+   "label": "кольцо I",
+   "kind": "accent",
+   "intensity": 0.5,
+   "note": "вспышка, деталь встаёт",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 6.5,
+   "label": "кольцо II",
+   "kind": "accent",
+   "intensity": 0.5,
+   "note": "вспышка, деталь встаёт",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 8.5,
+   "label": "Per numerum te vocamus.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 9,
+   "label": "кольцо III",
+   "kind": "accent",
+   "intensity": 0.5,
+   "note": "вспышка, деталь встаёт",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 9.8,
+   "label": "кольцо IV",
+   "kind": "accent",
+   "intensity": 0.5,
+   "note": "вспышка, деталь встаёт",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 10.8,
+   "label": "шестерня венца",
+   "kind": "accent",
+   "intensity": 0.25,
+   "note": "12 шестерён по одной, через 0,3 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 11.1,
+   "label": "шестерня венца",
+   "kind": "accent",
+   "intensity": 0.25,
+   "note": "12 шестерён по одной, через 0,3 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 11.4,
+   "label": "шестерня венца",
+   "kind": "accent",
+   "intensity": 0.25,
+   "note": "12 шестерён по одной, через 0,3 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 11.7,
+   "label": "шестерня венца",
+   "kind": "accent",
+   "intensity": 0.25,
+   "note": "12 шестерён по одной, через 0,3 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 12,
+   "label": "шестерня венца",
+   "kind": "accent",
+   "intensity": 0.25,
+   "note": "12 шестерён по одной, через 0,3 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 12.3,
+   "label": "шестерня венца",
+   "kind": "accent",
+   "intensity": 0.25,
+   "note": "12 шестерён по одной, через 0,3 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 12.6,
+   "label": "шестерня венца",
+   "kind": "accent",
+   "intensity": 0.25,
+   "note": "12 шестерён по одной, через 0,3 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 12.9,
+   "label": "шестерня венца",
+   "kind": "accent",
+   "intensity": 0.25,
+   "note": "12 шестерён по одной, через 0,3 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 13.2,
+   "label": "Per oleum et ferrum te excitamus.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 13.2,
+   "label": "шестерня венца",
+   "kind": "accent",
+   "intensity": 0.25,
+   "note": "12 шестерён по одной, через 0,3 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 13.5,
+   "label": "шестерня венца",
+   "kind": "accent",
+   "intensity": 0.25,
+   "note": "12 шестерён по одной, через 0,3 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 13.8,
+   "label": "шестерня венца",
+   "kind": "accent",
+   "intensity": 0.25,
+   "note": "12 шестерён по одной, через 0,3 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 14,
+   "label": "кольцо V",
+   "kind": "accent",
+   "intensity": 0.5,
+   "note": "вспышка, деталь встаёт",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 14.1,
+   "label": "шестерня венца",
+   "kind": "accent",
+   "intensity": 0.25,
+   "note": "12 шестерён по одной, через 0,3 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 15,
+   "label": "кольцо VI",
+   "kind": "accent",
+   "intensity": 0.5,
+   "note": "вспышка, деталь встаёт",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 16,
+   "label": "кольцо VII",
+   "kind": "accent",
+   "intensity": 0.5,
+   "note": "вспышка, деталь встаёт",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 17.8,
+   "label": "Surge, et cogita.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 18.2,
+   "label": "обод",
+   "kind": "hit",
+   "intensity": 0.7,
+   "note": "вспышка, деталь встаёт",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 19,
+   "label": "спутник",
+   "kind": "accent",
+   "intensity": 0.35,
+   "note": "6 спутников, через 0,4 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 19.4,
+   "label": "спутник",
+   "kind": "accent",
+   "intensity": 0.35,
+   "note": "6 спутников, через 0,4 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 19.8,
+   "label": "спутник",
+   "kind": "accent",
+   "intensity": 0.35,
+   "note": "6 спутников, через 0,4 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 20.2,
+   "label": "спутник",
+   "kind": "accent",
+   "intensity": 0.35,
+   "note": "6 спутников, через 0,4 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 20.6,
+   "label": "спутник",
+   "kind": "accent",
+   "intensity": 0.35,
+   "note": "6 спутников, через 0,4 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 21,
+   "label": "спутник",
+   "kind": "accent",
+   "intensity": 0.35,
+   "note": "6 спутников, через 0,4 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 22.2,
+   "label": "UNCTIO · OLEUM SANCTUM",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 27,
+   "label": "VIS MOTIVA · ADHIBETUR",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 27.0,
+   "label": "пуск: сила подана",
+   "kind": "accent",
+   "intensity": 0.5,
+   "note": "механизм трогается (до 0.35 скорости)",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 29,
+   "label": "SPIRITUS RENITITUR",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 30.0,
+   "label": "механизм заглох",
+   "kind": "silence",
+   "intensity": 0.1,
+   "note": "стоит до 33.0",
+   "end": 30.6,
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 30.6,
+   "label": "Iterum: surge!",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 30.6,
+   "label": "Iterum: surge!",
+   "kind": "hit",
+   "intensity": 0.8,
+   "note": "вспышка от центра, повторное воззвание",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 33.2,
+   "label": "Vis motiva adest.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 33.2,
+   "label": "Vis motiva adest",
+   "kind": "swell",
+   "intensity": 0.8,
+   "note": "разгон 33–38 до хода 1.0",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 38.5,
+   "label": "COGITATIO INCIPIT",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 58,
+   "label": "!! INFECTIO !!",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 58.0,
+   "label": "ересь вторгается",
+   "kind": "hit",
+   "intensity": 0.8,
+   "note": "скверна 58–67, нарастает",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 67.0,
+   "label": "изгнание",
+   "kind": "hit",
+   "intensity": 1.0,
+   "note": "волна изгнания 67–71.5; накал растёт",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 67.2,
+   "label": "Exorcizamus te, codex immunde!",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 70.2,
+   "label": "Redi in ordinem.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 71.5,
+   "label": "очищено: белый накал",
+   "kind": "accent",
+   "intensity": 0.7,
+   "note": "накладка на ободе, остывание 14 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 72.5,
+   "label": "COGITATIO RESUMITUR",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 80,
+   "label": "COGITATIO PERFECTA",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 80.0,
+   "label": "ответ: вспышка",
+   "kind": "hit",
+   "intensity": 1.0,
+   "note": "COGITATIO PERFECTA; удар механизма ровно здесь",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 82.4,
+   "label": "Responsum datum est.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 86,
+   "label": "FRAGMENTUM STC-D74 · RESTITUTUM 61% · LACUNAE III",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 89,
+   "label": "Gloria motui perpetuo.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 94,
+   "label": "SPIRITUS QUIESCIT",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "подпись внизу экрана",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 97.3,
+   "label": "кинескоп гаснет",
+   "kind": "accent",
+   "intensity": 0.2,
+   "note": "кадр → строка → точка (до 99.6)",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 99.6,
+   "label": "тишина до повтора",
+   "kind": "silence",
+   "intensity": 0.0,
+   "note": "цикл повторяется с 0",
+   "end": 102,
+   "mood": "",
+   "characters": []
+  }
+ ],
+ "silences": [
+  {
+   "t": 30.0,
+   "dur": 0.6,
+   "note": "механизм заглох перед «Iterum: surge!»"
+  },
+  {
+   "t": 99.6,
+   "dur": 2.4,
+   "note": "тишина до повтора цикла"
+  }
+ ],
+ "themes": [],
+ "characters": [
+  {
+   "name": "Дух Машины",
+   "description": "напев-воззвание (хор, орган)",
+   "evolution": "призыв шёпотом → гимн службы → грозный хорал изгнания → просветлённый ответ с пробелами → затихает"
+  },
+  {
+   "name": "Двоичный кант",
+   "description": "ритм из битов литаний на клавесине/ксилофоне/col legno — сам ход вычисления",
+   "evolution": "рождается при пуске, идёт по механическому времени, ломается в ереси, возвращается плотнее, замедляется до остановки"
+  },
+  {
+   "name": "Скверна",
+   "description": "расстроенные дубли, кольцевая модуляция, гранулярные облака, чужие звуки",
+   "evolution": "вползает в 58 с, разрастается, выжигается в 67–71.5"
+  }
+ ],
+ "avoid": [
+  "трейлерная эпика, «детские» тембры, андалузская каденция, i–VI–III–VII, хоррор только тремоло+кластером"
+ ],
+ "devices": [
+  "chorale",
+  "pad (орган)",
+  "line (канон)",
+  "melody"
+ ],
+ "ending": "fade",
+ "deliver": [
+  "mp3",
+  "midi",
+  "pdf",
+  "report"
+ ],
+ "sketch": {
+  "sketch_first": true,
+  "sketch_seconds": 60,
+  "ask_before_full": false
+ },
+ "processes": [
+  "Машинный ход: все фигуры канта стоят на сетке механического времени анимации (mt_curve, шестнадцатая = 0,1 единицы) — пульс трогается, глохнет, разгоняется и останавливается вместе с шестернями",
+  "Сборка: в II каждое появившееся кольцо добавляет звук в держащийся аккорд (D2 A2 D3 A3 B♭3 E♭4 A4 D5) — к ободу аккорд полный",
+  "Аддитивная служба: в V каждые 4 такта (6,4 с) добавляется слой",
+  "Остывание металла: после очищения (71.5) высокий флажолет медленно сползает вниз и гаснет 14 с, как остывающий накал"
+ ],
+ "leitmotifs": {
+  "Дух Машины": "напев D-фригийский: D F G A | A B♭ A G A — и ответ A A B♭ C B♭ G F‑E♭ D; хор с органумом в II, cantus firmus в V, декламация меди в VII, в D мажоре с тремя пропусками в IX",
+  "Двоичный кант": "ритм = биты ASCII литаний (1 — удар, 0 — пауза) шестнадцатыми механического времени; высоты по циклу из 5 звуков против 8‑битных групп (фазовый сдвиг)",
+  "Скверна": "переворот битов с ростом вероятности, четвертитоновые сдвиги, расстроенные тонущие дубли, кольцевая модуляция, гранулярные облака"
+ }
+}

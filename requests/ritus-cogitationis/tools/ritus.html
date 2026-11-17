@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ritus Cogitationis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=VT323&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;height:100%;background:#050201;overflow:hidden;cursor:default}
+  canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+  #scan{position:fixed;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0,rgba(0,0,0,0) 2px,rgba(0,0,0,.30) 2px,rgba(0,0,0,.30) 3px)}
+  #vig{position:fixed;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at center,rgba(0,0,0,0) 52%,rgba(0,0,0,.55) 82%,rgba(0,0,0,.9) 100%)}
+  #ui{position:fixed;left:0;right:0;bottom:0;display:flex;flex-direction:column;
+    opacity:0;transition:opacity .6s;font:18px VT323,ui-monospace,monospace;z-index:5}
+  #btns{display:flex;gap:8px;justify-content:flex-end;align-items:center;padding:8px 14px 10px}
+  #tl{position:relative;height:4px;background:rgba(201,149,67,.18)}
+  #tlFill{height:100%;width:0;background:#d9a04c}
+  #tl i{position:absolute;top:-3px;width:1px;height:10px;background:rgba(255,210,138,.7)}
+  #ui.show{opacity:1}
+  #ui button{background:rgba(10,4,2,.75);color:#d9a04c;border:1px solid rgba(201,149,67,.55);
+    font:inherit;padding:3px 10px;cursor:pointer;letter-spacing:.04em}
+  #ui button:hover{background:rgba(60,24,8,.85);color:#ffd28a}
+  #ui span{color:rgba(217,160,76,.6);margin-left:4px}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="scan"></div>
+<div id="vig"></div>
+<div id="ui">
+  <div id="btns">
+    <button data-a="restart" title="R">Сначала</button>
+    <button data-a="loop" id="bLoop" title="L">Повтор: вкл</button>
+    <button data-a="pal" title="G">Люминофор</button>
+    <button data-a="pause" title="P, пробел">Пауза</button>
+    <button data-a="fs" title="F">Во весь экран</button>
+    <span>R · L · G · P · F</span>
+  </div>
+  <div id="tl"><div id="tlFill"></div></div>
+</div>
+<script>
+'use strict';
+/* ---------- утилиты ---------- */
+const TAU = Math.PI * 2;
+const rnd = (a = 1, b) => b === undefined ? Math.random() * a : a + Math.random() * (b - a);
+const pick = a => a[(Math.random() * a.length) | 0];
+const clamp = (x, a = 0, b = 1) => x < a ? a : x > b ? b : x;
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeIO = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+const backOut = x => { const c1 = 1.25, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const hex = d => Math.floor(Math.random() * 16 ** d).toString(16).toUpperCase().padStart(d, '0');
+const bin8 = () => ((Math.random() * 256) | 0).toString(2).padStart(8, '0');
+const toBin = s => [...s.replace(/[·,]/g, ' ')].map(c => (c.charCodeAt(0) & 255).toString(2).padStart(8, '0')).join(' ');
+const randBin = n => Array.from({ length: n }, bin8).join(' ');
+const randHex = n => Array.from({ length: n }, () => hex(4)).join(' ');
+const pol = (a, r) => [Math.sin(a) * r, -Math.cos(a) * r];         // угол 0 — вверх, по часовой
+const dirAng = (dx, dy) => Math.atan2(dx, -dy);
+function mk(w, h) { const c = document.createElement('canvas'); c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(h)); return c; }
+
+/* ---------- слова ---------- */
+const LIT = [
+  'In machina spiritus · in numero veritas',
+  'Motus animat metallum',
+  'Nihil sine ratione · nihil sine ritu',
+  'Oleum sanctum · ferrum fidele',
+  'Caro infirma · machina permanet',
+  'Ordo ex numero · lux ex ordine',
+  'Spiritus machinae, audi nos',
+  'Fragmenta antiqua servamus',
+  'Per ritum ad perfectionem'
+];
+const LITU = LIT.map(s => s.toUpperCase());
+const PURGE = 'Exorcizamus te, codex immunde · redi in ordinem';
+const PURGEU = ['EXORCIZAMUS TE', 'CODEX IMMUNDE', 'REDI IN ORDINEM', 'NUMERUS PURUS', 'SPIRITUS, AUDI'];
+const CORR = [...'ЖЯЪЭѢѲѴҖҘΞΨΩλξζϞϠ∂∇∰∯≋⊗⊘⊛⋇ЮЩФ¥§‡'];
+const garble = n => Array.from({ length: n }, () => Math.random() < .55 ? pick(CORR) : hex(1)).join('');
+
+/* ---------- палитра ---------- */
+const PH = {
+  amber: { ph: '#ffab38', dim: '#b0601a', data: '#ffd08a', hot: '#fff3d6' },
+  green: { ph: '#74ff84', dim: '#2c9446', data: '#c0ffb6', hot: '#f0fff0' }
+};
+let palKey = 'amber', pal = PH.amber;
+const C = { brass: '#c48f40', brassHi: '#f2c977', brassDk: '#563611', bone: '#e6d4ac', her: '#c440ff', acid: '#b4ff2e',
+  wax: '#9a1712', waxDk: '#420604', waxHi: '#d4382a', parch: '#d8c597' };
+
+/* ---------- холсты ---------- */
+const disp = document.getElementById('c'), dctx = disp.getContext('2d');
+const scene = mk(1, 1), sctx = scene.getContext('2d');
+const bloomC = mk(1, 1), bctx = bloomC.getContext('2d');
+const pl = mk(1, 1), plx = pl.getContext('2d');
+let W, H, DPR, R, CX, CY, k, amb, panels = null;
+const imgs = {};
+
+const mono = s => `${Math.round(s)}px VT323, "DejaVu Sans Mono", ui-monospace, monospace`;
+const goth = s => `700 ${Math.round(s)}px UnifrakturCook, UnifrakturMaguntia, "Old English Text MT", serif`;
+
+/* ---------- атлас знаков ---------- */
+const gcache = new Map();
+function G(ch, col, size) {
+  size = Math.max(5, Math.round(size));
+  const key = ch + col + size; let c = gcache.get(key);
+  if (!c) {
+    if (gcache.size > 5000) gcache.clear();
+    const S = Math.ceil(size * 1.35); c = mk(S, S); const x = c.getContext('2d');
+    x.font = mono(size); x.fillStyle = col; x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText(ch, S / 2, S / 2); gcache.set(key, c);
+  }
+  return c;
+}
+function drawG(x, ch, col, size, px, py, alpha = 1, rot = 0, mir = false) {
+  if (alpha <= 0.01) return;
+  const g = G(ch, col, size); x.globalAlpha = alpha;
+  if (!rot && !mir) x.drawImage(g, px - g.width / 2, py - g.height / 2);
+  else { x.save(); x.translate(px, py); x.rotate(rot); if (mir) x.scale(-1, 1); x.drawImage(g, -g.width / 2, -g.height / 2); x.restore(); }
+  x.globalAlpha = 1;
+}
+
+/* ---------- текст по окружности ---------- */
+function drawCircText(x, r, str, font, color) {
+  x.font = font; x.fillStyle = color; x.textAlign = 'center'; x.textBaseline = 'middle';
+  const circ = TAU * r, unit = x.measureText(str).width || 1;
+  const reps = Math.max(1, Math.round(circ / unit));
+  const seq = [...str.repeat(reps)];
+  const ws = seq.map(c => x.measureText(c).width), tot = ws.reduce((a, b) => a + b, 0);
+  const sc = circ / tot; let a = 0;
+  for (let i = 0; i < seq.length; i++) {
+    const w = ws[i] * sc, ang = a + w / 2 / r;
+    if (seq[i] !== ' ') { x.save(); x.rotate(ang); x.translate(0, -r); x.fillText(seq[i], 0, 0); x.restore(); }
+    a += w / r;
+  }
+}
+function textRing(r, str, size, fontFn, color) {
+  const S = 2 * (r + size) + 8, c = mk(S, S), x = c.getContext('2d');
+  x.translate(S / 2, S / 2); drawCircText(x, r, str, fontFn(size), color); return c;
+}
+
+/* ---------- шестерни ---------- */
+function gearPath(x, rp, n, th) {
+  const p = TAU / n, r0 = rp - th / 2, r1 = rp + th / 2;
+  x.beginPath();
+  for (let i = 0; i < n; i++) {
+    const a = i * p;
+    const pts = [[r0, a - p * .5], [r0, a - p * .28], [r1, a - p * .15], [r1, a + p * .15], [r0, a + p * .28]];
+    for (let j = 0; j < 5; j++) { const [X, Y] = pol(pts[j][1], pts[j][0]); (i === 0 && j === 0) ? x.moveTo(X, Y) : x.lineTo(X, Y); }
+  }
+  x.closePath();
+}
+function brassGrad(x, rIn, rOut) {
+  const g = x.createRadialGradient(0, 0, Math.max(0, rIn), 0, 0, rOut);
+  g.addColorStop(0, C.brassDk); g.addColorStop(.5, C.brass); g.addColorStop(.82, C.brassHi); g.addColorStop(1, C.brass);
+  return g;
+}
+function gearRing(rp, n, th, band, o = {}) {
+  const S = 2 * (rp + th) + 8, c = mk(S, S), x = c.getContext('2d'); x.translate(S / 2, S / 2);
+  const rin = rp - th / 2 - band;
+  gearPath(x, rp, n, th); x.moveTo(rin, 0); x.arc(0, 0, rin, 0, TAU);
+  x.fillStyle = brassGrad(x, rin, rp + th / 2); x.fill('evenodd');
+  x.lineWidth = Math.max(1, 1.1 * k); x.strokeStyle = C.brassDk; x.stroke();
+  x.beginPath(); x.arc(0, 0, rin + 1.6 * k, 0, TAU); x.strokeStyle = 'rgba(255,225,160,.35)'; x.lineWidth = Math.max(1, k); x.stroke();
+  if (o.text) drawCircText(x, rin + band * .5, o.text, o.font, o.textColor || C.brassDk);
+  if (o.spokes) {
+    const hub = o.hub || rin * .3; x.lineCap = 'round';
+    for (let i = 0; i < o.spokes; i++) {
+      const a = i * TAU / o.spokes, [x0, y0] = pol(a, hub * .9), [x1, y1] = pol(a, rin + 1);
+      x.beginPath(); x.moveTo(x0, y0); x.lineTo(x1, y1); x.lineWidth = o.spokeW; x.strokeStyle = C.brass; x.stroke();
+      x.lineWidth = Math.max(1, k * .8); x.strokeStyle = 'rgba(40,20,5,.7)'; x.stroke();
+    }
+    x.beginPath(); x.arc(0, 0, hub, 0, TAU); x.fillStyle = brassGrad(x, 0, hub); x.fill();
+    x.lineWidth = Math.max(1, k); x.strokeStyle = C.brassDk; x.stroke();
+    x.beginPath(); x.arc(0, 0, hub * .42, 0, TAU); x.fillStyle = '#000'; x.fill();
+  }
+  if (o.trefoil) {
+    x.lineWidth = Math.max(1, 1.4 * k); x.strokeStyle = C.brass;
+    for (let j = 0; j < 3; j++) { const [cx, cy] = pol(j * TAU / 3 + o.trefoilRot, rin * .4); x.beginPath(); x.arc(cx, cy, rin * .42, 0, TAU); x.stroke(); }
+    x.beginPath(); x.arc(0, 0, rin * .16, 0, TAU); x.fillStyle = C.brass; x.fill();
+    x.beginPath(); x.arc(0, 0, rin * .07, 0, TAU); x.fillStyle = '#000'; x.fill();
+    drawCircText(x, rin * .88, o.inner, mono(o.innerSize), pal.dim);
+  }
+  return c;
+}
+function escWheel(r, n) {
+  const S = 2 * r + 8, c = mk(S, S), x = c.getContext('2d'); x.translate(S / 2, S / 2);
+  const p = TAU / n, r0 = r * .74; x.beginPath();
+  for (let i = 0; i < n; i++) {
+    const a = i * p, pts = [[r0, a], [r, a + p * .55], [r * .93, a + p * .66], [r0, a + p * .72]];
+    pts.forEach(([rr, g], j) => { const [X, Y] = pol(g, rr); (i === 0 && j === 0) ? x.moveTo(X, Y) : x.lineTo(X, Y); });
+  }
+  x.closePath(); x.moveTo(r * .56, 0); x.arc(0, 0, r * .56, 0, TAU);
+  x.fillStyle = brassGrad(x, r * .5, r); x.fill('evenodd'); x.lineWidth = Math.max(1, k); x.strokeStyle = C.brassDk; x.stroke();
+  x.lineCap = 'butt';
+  for (let i = 0; i < 4; i++) { const a = i * TAU / 4 + TAU / 8, [X, Y] = pol(a, r * .58); x.beginPath(); x.moveTo(0, 0); x.lineTo(X, Y); x.lineWidth = r * .08; x.strokeStyle = C.brass; x.stroke(); }
+  return c;
+}
+
+/* ---------- геометрия розы ---------- */
+const BEAT = 1.6;
+let mt = 0, speedMul = 0;
+const RIM_N = 120, FOIL_N = 14, FOILS = 12;
+let rimRp, rimTh, foilRc, foilR, foilTh, sats = [], foils = [], spokeAng = [];
+const rings = [
+  { key: 'A', r: .155, ang: () => ratchet(mt, BEAT, 0, .38, true) * TAU / 48 },
+  { key: 'B', r: .21, ang: () => -mt * .035 },
+  { key: 'C', r: .27, ang: () => flow(mt, .06, .4) },
+  { key: 'C2', r: .315, ang: () => mt * .05 },
+  { key: 'D', r: .615, ang: () => -ratchet(mt, BEAT * 2, .5, .3, true) * TAU / 64 },
+  { key: 'E', r: .67, ang: () => mt * .018 },
+  { key: 'F', r: .725, ang: () => -mt * .03 }
+];
+const ringByKey = Object.fromEntries(rings.map(r => [r.key, r]));
+
+function ratchet(t, period, phase, d = .2, soft = false) {
+  const u = t / period + phase, n = Math.floor(u), f = u - n;
+  if (f < 1 - d) return n;
+  const q = (f - (1 - d)) / d;
+  return n + (soft ? softOut(q) : backOut(q));
+}
+const softOut = x => { const c1 = .45, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+// непрерывный ход, дышащий в такт: скорость ω·(1 + a·cos 2πt/T), не останавливается при a < 1
+const flow = (t, w, a = .55) => w * (t + a * BEAT / TAU * Math.sin(TAU * t / BEAT));
+const rimAng = () => -flow(mt, .045);
+
+function makeImgs() {
+  imgs.A = textRing(.155 * R, toBin(LIT[4]) + '   ', 14 * k, mono, pal.ph);
+  imgs.B = textRing(.21 * R, LIT[1] + ' · ' + LIT[6] + ' · ', 19 * k, goth, C.bone);
+  imgs.C = textRing(.27 * R, randBin(70), 13 * k, mono, pal.dim);
+  imgs.C2 = textRing(.315 * R, randHex(40), 11 * k, mono, pal.data);
+  imgs.D = textRing(.615 * R, toBin(LIT[5]) + '   ', 14 * k, mono, pal.ph);
+  imgs.E = textRing(.67 * R, LIT[0] + ' · ' + LIT[2] + ' · ', 21 * k, goth, C.bone);
+  imgs.Epurge = textRing(.67 * R, PURGE + ' · ', 21 * k, goth, pal.hot);
+  imgs.F = textRing(.725 * R, randBin(130), 11 * k, mono, pal.dim);
+  imgs.rim = gearRing(rimRp, RIM_N, rimTh, .035 * R, { text: randHex(90), font: mono(11 * k), textColor: 'rgba(50,28,6,.9)' });
+  imgs.foil = [0, 1].map(v => gearRing(foilR, FOIL_N, foilTh, .018 * R,
+    { trefoil: true, trefoilRot: v * Math.PI / 3, inner: randBin(9), innerSize: 8.5 * k }));
+  imgs.esc = escWheel(.105 * R, 15);
+  sats.forEach(s => {
+    s.img = gearRing(s.rp, s.n, rimTh, .028 * R, { spokes: s.n > 20 ? 5 : 4, spokeW: .02 * R, hub: s.rp * .26,
+      text: randBin(s.n > 20 ? 12 : 5), font: mono(9 * k), textColor: 'rgba(50,28,6,.9)' });
+  });
+}
+
+function build() {
+  DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+  W = Math.floor(innerWidth * DPR); H = Math.floor(innerHeight * DPR);
+  disp.width = scene.width = pl.width = W; disp.height = scene.height = pl.height = H;
+  bloomC.width = Math.ceil(W / 4); bloomC.height = Math.ceil(H / 4);
+  R = Math.min(W * .42, H * .39); CX = W / 2; CY = H * .46; k = R / 400;
+  rimRp = .85 * R; rimTh = .035 * R;
+  foilRc = .46 * R; foilR = foilRc * Math.sin(Math.PI / FOILS); foilTh = .028 * R;
+  // спутники, сцеплённые с ободом
+  sats = [[TAU / 4, 28], [-TAU / 4, 28], [TAU / 4 - .7, 12], [TAU / 4 + .7, 12], [-TAU / 4 - .7, 12], [-TAU / 4 + .7, 12]]
+    .map(([phi, n]) => { const rp = rimRp * n / RIM_N, d = rimRp + rp; return { phi, n, rp, x: Math.sin(phi) * d, y: -Math.cos(phi) * d }; });
+  // венец лепестков-шестерён: фазы для зацепления
+  foils = []; let psi = 0;
+  for (let i = 0; i < FOILS; i++) {
+    const a = i * TAU / FOILS, [x, y] = pol(a, foilRc);
+    foils.push({ x, y, psi, s: i % 2 ? -1 : 1, v: i % 2 });
+    const [nx, ny] = pol((i + 1) * TAU / FOILS, foilRc), beta = dirAng(nx - x, ny - y);
+    psi = -psi + 2 * beta + Math.PI + Math.PI / FOIL_N;
+  }
+  spokeAng = Array.from({ length: FOILS }, (_, i) => i * TAU / FOILS + TAU / FOILS / 2);
+  // боковые панели
+  const pw = CX - 1.3 * R - .055 * W;
+  panels = pw > 150 * DPR ? { L: { x: .035 * W, y: .07 * H, w: pw, h: .78 * H }, R: { x: CX + 1.3 * R + .02 * W, y: .07 * H, w: pw, h: .78 * H } } : null;
+  gcache.clear(); makeImgs(); makeAmbient(); initParticles(); schem = null;
+  sctx.globalCompositeOperation = 'source-over'; sctx.fillStyle = '#000'; sctx.fillRect(0, 0, W, H);
+  patches.forEach(q => q.img = makePatch(q.code));
+}
+
+function makeAmbient() {
+  amb = mk(W, H); const x = amb.getContext('2d');
+  x.fillStyle = '#060201'; x.fillRect(0, 0, W, H);
+  let g = x.createRadialGradient(CX, CY, 0, CX, CY, 1.55 * R);
+  g.addColorStop(0, 'rgba(125,42,14,.30)'); g.addColorStop(.55, 'rgba(85,24,8,.15)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  g = x.createLinearGradient(0, H, 0, H * .55); g.addColorStop(0, 'rgba(120,44,10,.20)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  for (let i = 0; i < 1600; i++) {
+    x.fillStyle = `rgba(${200 + rnd(50) | 0},${130 + rnd(50) | 0},80,${rnd(.015, .06)})`;
+    const s = rnd(.8, 2.2) * DPR; x.fillRect(rnd(W), rnd(H), s, s);
+  }
+  x.lineWidth = DPR;
+  for (let i = 0; i < 16; i++) {
+    x.strokeStyle = `rgba(210,180,130,${rnd(.015, .04)})`;
+    const x0 = rnd(W), y0 = rnd(H), a = rnd(TAU), L = rnd(.05, .3) * H;
+    x.beginPath(); x.moveTo(x0, y0); x.quadraticCurveTo(x0 + Math.cos(a + .3) * L / 2, y0 + Math.sin(a + .3) * L / 2, x0 + Math.cos(a) * L, y0 + Math.sin(a) * L); x.stroke();
+  }
+}
+
+/* ---------- кадильный дым данных ---------- */
+let parts = [], srcs = [];
+function initParticles() {
+  srcs = [.07, .2, .33, .5, .67, .8, .93].map(f => f * W);
+  const N = Math.min(650, Math.round(W / DPR / 3.2));
+  parts = []; for (let i = 0; i < N; i++) parts.push(spawn(true));
+}
+function spawn(init) {
+  return { x0: pick(srcs) + rnd(-25, 25) * k, y: init ? rnd(H) : H + rnd(10, 60) * k, v: rnd(16, 40) * k, ph: rnd(TAU), f: rnd(.6, 1.4),
+    ch: Math.random() < .5 ? '0' : '1', s: rnd(.7, 1.15), sw: rnd(10, 36) * k, drift: rnd(-1, 1), x: 0 };
+}
+function updParticles(dt) {
+  for (let i = 0; i < parts.length; i++) {
+    const p = parts[i]; p.y -= p.v * dt * (1 + beatPulse * .25);
+    const h = (H - p.y) / H;
+    p.x = p.x0 + Math.sin(p.y * .004 / k * p.f + t * .55 + p.ph) * p.sw * (.3 + h * 1.7) + h * h * 90 * k * p.drift;
+    if (Math.random() < dt * .4) p.ch = p.ch === '0' ? '1' : '0';
+    if (p.y < -30 * k) parts[i] = spawn(false);
+  }
+}
+function drawParticles(x) {
+  for (const p of parts) {
+    const h = clamp((H - p.y) / H);
+    const a = Math.sin(Math.PI * clamp(h * 1.12)) * .5 * vis.incense;
+    drawG(x, p.ch, h > .55 ? pal.dim : pal.data, 13 * k * p.s, p.x, p.y, a);
+  }
+}
+
+/* ---------- импульсы по спицам и вспышки ---------- */
+let pulses = [], flashes = [];
+function launch(i, col, fast) {
+  pulses.push({ sp: i, r: .12 * R, v: (fast ? rnd(.9, 1.1) : rnd(.45, .7)) * R, col: col || pal.data, chars: bin8(), crossed: false });
+}
+function updPulses(dt) {
+  const meshR = foilRc * Math.cos(Math.PI / FOILS);
+  for (const p of pulses) {
+    const r0 = p.r; p.r += p.v * dt;
+    if (r0 < meshR && p.r >= meshR) { const [X, Y] = pol(spokeAng[p.sp], meshR); flashes.push({ x: X, y: Y, life: .45, max: .45, size: 22 * k, col: p.col }); }
+    if (r0 < .79 * R && p.r >= .79 * R) { const [X, Y] = pol(spokeAng[p.sp], .79 * R); flashes.push({ x: X, y: Y, life: .35, max: .35, size: 16 * k, col: p.col }); }
+  }
+  pulses = pulses.filter(p => p.r < .82 * R);
+  for (const f of flashes) f.life -= dt;
+  flashes = flashes.filter(f => f.life > 0);
+}
+function drawPulses(x) {
+  x.save(); x.translate(CX, CY);
+  for (const p of pulses) {
+    const a = spokeAng[p.sp];
+    for (let j = 0; j < 8; j++) {
+      const rr = p.r - j * 13 * k; if (rr < .12 * R || rr > .8 * R) continue;
+      const [X, Y] = pol(a, rr); drawG(x, p.chars[j], p.col, 13 * k, X, Y, 1 - j / 8, a);
+    }
+  }
+  x.globalCompositeOperation = 'lighter';
+  for (const f of flashes) {
+    const q = f.life / f.max, g = x.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.size);
+    g.addColorStop(0, f.col); g.addColorStop(1, 'rgba(0,0,0,0)');
+    x.globalAlpha = q * .9; x.fillStyle = g; x.beginPath(); x.arc(f.x, f.y, f.size, 0, TAU); x.fill();
+  }
+  x.globalAlpha = 1; x.globalCompositeOperation = 'source-over'; x.restore();
+}
+
+/* ---------- ересь ---------- */
+const hz = { phase: 'idle', next: Infinity, t0: 0, phi: 0, w: 0, rMin: 1, p: 0, amp: 0, int: 0, paths: [], purgeGlow: 0, wave: 0 };
+let integrity = 99.97, exoN = 0, scars = [], patches = [];
+function startHeresy() {
+  if (hz.phase !== 'idle') return;
+  hz.phase = 'in'; hz.t0 = t; hz.phi = rnd(TAU);
+  hz.paths = Array.from({ length: 6 }, () => {
+    let a = hz.phi + rnd(-.5, .5), r = rnd(.95, 1.02) * R; const pts = [];
+    for (let j = 0; j < 46; j++) { pts.push({ a, r, ch: pick(CORR) }); r -= rnd(.012, .022) * R; a += rnd(-.05, .05) + Math.sin(j * .4) * .015; }
+    return pts;
+  });
+  addLog('!! INFECTIO DETECTA · SECTOR 0x' + hex(4) + ' !!', C.her);
+}
+function updHeresy(dt) {
+  if (hz.phase === 'idle') { hz.w = 0; hz.amp = 0; hz.int = 0; hz.purgeGlow = 0; if (t >= hz.next) startHeresy(); return; }
+  if (hz.phase === 'in') {
+    const p = hz.p = clamp((t - hz.t0) / 9), e = easeIO(p);
+    hz.w = lerp(.05, 1.5, e); hz.rMin = lerp(.97, .2, e) * R; hz.int = p; hz.amp = .09 * p; hz.purgeGlow = 0;
+    if (p >= 1) {
+      hz.phase = 'purge'; hz.t0 += 9; exoN = 0; ev('purge', { t: rt - (t - hz.t0) });
+      for (let i = 0; i < FOILS; i++) launch(i, pal.hot, true);
+      addLog('RITUS EXORCISMI INCIPIT', pal.hot);
+    }
+  } else if (hz.phase === 'purge') {
+    const p = hz.p = clamp((t - hz.t0) / 4.5), e = easeIO(p);
+    hz.w = 1.5 * (1 - e); hz.rMin = lerp(.2, .97, e) * R; hz.int = 1 - e;
+    hz.amp = .09 * (1 - p) * Math.abs(Math.cos(p * 18)); hz.purgeGlow = Math.sin(Math.PI * p); hz.wave = e * 1.02 * R;
+    if (p >= 1) afterHeresy();
+  }
+}
+function afterHeresy() {
+  ev('purified', { t: rt - (t - hz.t0 - 4.5) });
+  hz.phase = 'idle'; hz.next = Infinity;
+  const lost = rnd(.05, .3); integrity = Math.max(80, integrity - lost);
+  const keys = ['C', 'D', 'E', 'F', 'D'];
+  for (let i = 0, n = 3 + (Math.random() * 3 | 0); i < n; i++) {
+    const key = pick(keys), ring = ringByKey[key], aAbs = hz.phi + rnd(-.55, .55);
+    scars.push({ key, aRel: aAbs - ring.ang(), len: rnd(.06, .2), born: t });
+  }
+  const code = hex(3);
+  patches.push({ aRel: hz.phi - rimAng(), born: t, code, img: makePatch(code) });
+  if (patches.length > 7) patches.shift();
+  addLog('LAMINA SANCTA AFFIXA · 0x' + code, pal.ph);
+  addLog('SECTOR 0x' + hex(4) + ' · AMISSUS IN AETERNUM', pal.dim);
+  addLog('INTEGRITAS · ' + integrity.toFixed(2) + '% · DAMNUM ' + lost.toFixed(2) + '%', pal.ph);
+}
+function drawHeresy(x) {
+  if (hz.w < .01 || hz.int < .005) return;
+  const w = hz.w, r0 = hz.rMin, r1 = .99 * R, a0 = hz.phi - w / 2, a1 = hz.phi + w / 2, P = Math.PI / 2;
+  x.save(); x.translate(CX, CY);
+  x.beginPath(); x.arc(0, 0, r1, a0 - P, a1 - P); x.arc(0, 0, r0, a1 - P, a0 - P, true); x.closePath();
+  x.fillStyle = `rgba(0,0,0,${.45 + .4 * hz.int})`; x.fill();
+  x.strokeStyle = C.her; x.globalAlpha = (.3 + .5 * Math.random()) * hz.int; x.lineWidth = 1.5 * k; x.stroke(); x.globalAlpha = 1;
+  const n = Math.round(150 * hz.int);
+  for (let i = 0; i < n; i++) {
+    const a = rnd(a0, a1), r = rnd(r0, r1), [X, Y] = pol(a, r);
+    drawG(x, pick(CORR), Math.random() < .7 ? C.her : C.acid, rnd(9, 22) * k, X, Y, rnd(.3, 1) * hz.int, a + rnd(-.6, .6), Math.random() < .4);
+  }
+  const reveal = hz.phase === 'in' ? clamp(hz.p * 1.3) : 1 - hz.p;
+  for (const path of hz.paths) {
+    const cnt = Math.floor(path.length * reveal);
+    for (let j = 0; j < cnt; j++) {
+      const q = path[j]; if (Math.random() < .08) q.ch = pick(CORR);
+      const [X, Y] = pol(q.a + rnd(-.01, .01), q.r + rnd(-3, 3) * k);
+      drawG(x, q.ch, j % 5 === 0 ? C.acid : C.her, 15 * k, X, Y, (.35 + .65 * j / Math.max(1, cnt)) * Math.max(hz.int, .3), q.a);
+    }
+  }
+  x.restore();
+}
+function drawPurge(x) {
+  if (hz.phase !== 'purge') return;
+  const p = hz.p; x.save(); x.translate(CX, CY); x.globalCompositeOperation = 'lighter';
+  x.globalAlpha = (1 - p) * .9; x.strokeStyle = pal.hot; x.lineWidth = 7 * k;
+  x.beginPath(); x.arc(0, 0, Math.max(1, hz.wave), 0, TAU); x.stroke();
+  x.globalAlpha = (1 - p) * .35; x.lineWidth = 22 * k; x.stroke();
+  x.restore(); x.globalAlpha = 1; x.globalCompositeOperation = 'source-over';
+}
+
+/* ---------- накал металла: тёмно-красный → оранжевый → белый ---------- */
+const HEAT = [[0, [200, 40, 10]], [.45, [255, 120, 30]], [.75, [255, 190, 90]], [1, [255, 246, 225]]];
+function heatColor(h) {
+  for (let i = 1; i < HEAT.length; i++) if (h <= HEAT[i][0]) {
+    const [a0, c0] = HEAT[i - 1], [a1, c1] = HEAT[i], f = (h - a0) / (a1 - a0);
+    return `rgb(${c0.map((v, j) => Math.round(lerp(v, c1[j], f))).join(',')})`;
+  }
+  return 'rgb(255,246,225)';
+}
+function drawHeat(x, a, rOut, h) {
+  if (h <= .005 || rOut < .24 * R) return;
+  const P = Math.PI / 2, g = x.createRadialGradient(0, 0, .2 * R, 0, 0, rOut), col = heatColor(h);
+  g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(.72, col); g.addColorStop(1, 'rgba(0,0,0,0)');
+  x.save(); x.globalCompositeOperation = 'lighter'; x.globalAlpha = .34 * h;
+  x.beginPath(); x.moveTo(0, 0); x.arc(0, 0, rOut, a - .62 - P, a + .62 - P); x.closePath(); x.fillStyle = g; x.fill(); x.restore();
+}
+
+/* ---------- накладка на ободе: след очищения ---------- */
+function arcText(x, r, a0, a1, str, font, col) {
+  x.font = font; x.fillStyle = col; x.textAlign = 'center'; x.textBaseline = 'middle';
+  const chars = [...str], step = (a1 - a0) / chars.length;
+  chars.forEach((ch, i) => { x.save(); x.rotate(a0 + step * (i + .5)); x.translate(0, -r); x.fillText(ch, 0, 0); x.restore(); });
+}
+function makePatch(code) {
+  const rM = .815 * R, span = .26, r0 = rM - .034 * R, r1 = rM + .034 * R, P = Math.PI / 2;
+  const w = 2 * r1 * Math.sin(span / 2) + 8, h = r1 - r0 * Math.cos(span / 2) + 8;
+  const c = mk(w, h), x = c.getContext('2d'); x.translate(w / 2, 4 + r1);
+  x.beginPath(); x.arc(0, 0, r1, -span / 2 - P, span / 2 - P); x.arc(0, 0, r0, span / 2 - P, -span / 2 - P, true); x.closePath();
+  const g = x.createRadialGradient(0, 0, r0, 0, 0, r1);
+  g.addColorStop(0, '#7a5320'); g.addColorStop(.45, '#d9a552'); g.addColorStop(.75, '#f6d48a'); g.addColorStop(1, '#a6772f');
+  x.fillStyle = g; x.shadowColor = 'rgba(0,0,0,.9)'; x.shadowBlur = 5 * k; x.fill(); x.shadowBlur = 0;
+  x.lineWidth = 1.4 * k; x.strokeStyle = C.brassDk; x.stroke();
+  x.beginPath(); x.arc(0, 0, r1 - 2.2 * k, -span / 2 + .01 - P, span / 2 - .01 - P); x.strokeStyle = 'rgba(255,235,180,.5)'; x.lineWidth = k; x.stroke();
+  for (const a of [-span / 2 + .028, span / 2 - .028]) for (const rr of [r0 + .013 * R, r1 - .013 * R]) {
+    const [X, Y] = pol(a, rr), rv = .0068 * R, gg = x.createRadialGradient(X - rv * .3, Y - rv * .3, 0, X, Y, rv);
+    gg.addColorStop(0, '#fff0c0'); gg.addColorStop(.5, C.brass); gg.addColorStop(1, C.brassDk);
+    x.beginPath(); x.arc(X, Y, rv, 0, TAU); x.fillStyle = gg; x.fill(); x.lineWidth = .8 * k; x.strokeStyle = 'rgba(40,20,0,.8)'; x.stroke();
+  }
+  // гравировка: малый знак спуска и надписи
+  x.save(); x.translate(...pol(0, rM));
+  const n = 10, p = TAU / n, rr = .019 * R, q0 = rr * .7; x.beginPath();
+  for (let i = 0; i < n; i++) { const b = i * p; [[q0, b], [rr, b + p * .55], [rr * .92, b + p * .66], [q0, b + p * .72]].forEach(([r_, a_], j) => { const [X, Y] = pol(a_, r_); (i || j) ? x.lineTo(X, Y) : x.moveTo(X, Y); }); }
+  x.closePath(); x.lineWidth = 1.1 * k; x.strokeStyle = 'rgba(55,30,5,.9)'; x.stroke();
+  x.beginPath(); x.arc(0, 0, rr * .3, 0, TAU); x.stroke(); x.restore();
+  const f = mono(9.5 * k), col = 'rgba(55,30,5,.92)';
+  arcText(x, rM, -span / 2 + .05, -.032, 'PVRGATVM', f, col);
+  arcText(x, rM, .032, span / 2 - .05, '0x' + code, f, col);
+  return { c, w, h, r1 };
+}
+
+/* ---------- летопись ---------- */
+let logs = [], logTimer = 0, orationes = 0;
+function addLog(s, col) { if (cueLogCapture) cueLogCapture.push(s); logs.push({ s, col, born: t }); if (logs.length > 80) logs.shift(); }
+function genLog() {
+  if (hz.phase === 'in') {
+    const r = Math.random();
+    if (r < .3) return addLog(garble(rnd(14, 28) | 0), C.her);
+    if (r < .55) return addLog('SECTOR 0x' + hex(4) + ' · RESPONSIO NULLA', C.acid);
+    if (r < .8) return addLog('SPIRITUS MACHINAE TURBATUR · ' + garble(4), C.her);
+    return addLog('CODEX IMMUNDUS · ' + hex(4) + garble(3) + hex(2), C.her);
+  }
+  if (hz.phase === 'purge') return addLog('EXORCISMUS ' + Math.min(7, ++exoN) + '/7 · ' + pick(PURGEU), pal.hot);
+  const r = Math.random();
+  if (r < .2) return addLog('RITUS 0x' + hex(4) + ' · ' + pick(LITU), pal.ph);
+  if (r < .32) { const n = 12, i = 1 + (Math.random() * n | 0); return addLog('ORATIO ' + String(i).padStart(2, '0') + '/' + n + ' [' + '■'.repeat(i >> 1) + '□'.repeat((n - i) >> 1) + ']', pal.dim); }
+  if (r < .48) return addLog(hex(6) + ': ' + hex(4) + ' ' + hex(4) + ' ' + hex(4) + ' ' + hex(4), pal.dim);
+  if (r < .58) return addLog('DATUM 0x' + hex(2) + ' ≡ ' + bin8(), pal.data);
+  if (r < .68) return addLog('SPIRITUS MACHINAE · ' + pick(['QUIESCIT', 'AUDIT', 'PLACATUR', 'RESPONDET', 'DORMIT']), pal.ph);
+  if (r < .8) return addLog('FRAGMENTUM STC-' + hex(3) + ' · ' + pick(['INTEGRUM', 'LACUNA', 'LACUNA', 'CORRUPTUM?', 'IGNOTUM', 'NON INTELLEGITUR']), pal.data);
+  if (r < .9) return addLog('UNGUENTUM SACRUM · ' + (rnd(60, 99) | 0) + '%', pal.dim);
+  return addLog('TURIBULUM ' + (1 + rnd(8) | 0) + ' · FUMUS ' + pick(['SURGIT', 'DENSUS', 'TENUIS']), pal.dim);
+}
+function panelHead(x, P, y, title) {
+  x.font = mono(fsP() * 1.05); x.fillStyle = pal.ph; x.globalAlpha = .9; x.textAlign = 'left'; x.textBaseline = 'alphabetic';
+  x.fillText(title, P.x, y); x.globalAlpha = .45; x.fillRect(P.x, y + fsP() * .35, P.w, Math.max(1, DPR)); x.globalAlpha = 1;
+}
+const fsP = () => clamp(Math.min(H * .019, panels ? panels.L.w / 18 : 99), 10 * DPR, 22 * DPR);
+function drawLog(x) {
+  const P = panels.L, fs = fsP(), lh = fs * 1.12;
+  panelHead(x, P, P.y, 'COGITATIO · LIBER RITUUM');
+  x.save(); x.beginPath(); x.rect(P.x, P.y + fs, P.w, P.h - fs); x.clip();
+  x.font = mono(fs); x.textBaseline = 'alphabetic';
+  const maxL = Math.floor((P.h - fs * 1.6) / lh), list = logs.slice(-maxL);
+  list.forEach((l, i) => {
+    const age = list.length - 1 - i, shown = Math.min(l.s.length, Math.floor((t - l.born) * 70));
+    let s = l.s.slice(0, shown); if (shown < l.s.length && Math.floor(t * 6) % 2) s += '█';
+    x.globalAlpha = clamp(1 - age / maxL * .85) * (l.col === C.her ? .6 + .4 * Math.random() : 1);
+    x.fillStyle = l.col; x.fillText(s, P.x, P.y + fs * 1.9 + i * lh);
+  });
+  x.restore(); x.globalAlpha = 1;
+}
+let motiva = .873, calor = 61.4, ung = 78;
+function drawStatus(x, y0) {
+  const P = panels.R, fs = fsP(), lh = fs * 1.25;
+  panelHead(x, P, y0, 'STATUS MACHINAE');
+  const integ = hz.phase === 'idle' ? integrity : integrity - 38 * hz.int + rnd(-2, 2) * hz.int;
+  const spir = hz.phase === 'in' ? (Math.random() < .5 ? 'IRATUS' : garble(6)) : hz.phase === 'purge' ? 'PLACATUR' : (speedMul < .05 ? 'DORMIT' : beatPulse > .5 ? 'AUDIT' : 'QUIESCIT');
+  const noos = Math.round(10 * (.55 + .35 * Math.sin(t * .3) + .1 * beatPulse - .4 * hz.int));
+  const rows = [
+    ['SPIRITUS', spir, hz.phase === 'in' ? C.her : pal.ph],
+    ['MOTIVA VIS', motiva.toFixed(3) + ' U', pal.data],
+    ['CALOR', calor.toFixed(1) + '°', pal.data],
+    ['UNGUENTUM', Math.round(ung) + '%', pal.data],
+    ['ORATIONES', String(orationes), pal.data],
+    ['INTEGRITAS', integ.toFixed(2) + '%', hz.int > .05 ? C.her : pal.ph],
+    ['NOOSPHAERA', '▮'.repeat(clamp(noos, 0, 10)) + '▯'.repeat(10 - clamp(noos, 0, 10)), pal.dim]
+  ];
+  x.font = mono(fs); x.textBaseline = 'alphabetic';
+  rows.forEach(([a, b, col], i) => {
+    const y = y0 + fs * 1.9 + i * lh;
+    x.globalAlpha = .75; x.fillStyle = pal.dim; x.textAlign = 'left'; x.fillText(a, P.x, y);
+    x.globalAlpha = 1; x.fillStyle = col; x.textAlign = 'right'; x.fillText(b, P.x + P.w, y);
+  });
+  x.textAlign = 'left'; x.globalAlpha = 1;
+}
+
+/* ---------- фрагменты чертежей (СШК) ---------- */
+let schem = null;
+function genSchem(P) {
+  const S = Math.min(P.w, H * .38), ox = P.x + (P.w - S) / 2, oy = P.y + fsP() * 1.6;
+  const cx = ox + S / 2, cy = oy + S * .46, s = S * .3, lines = [], labels = [], lac = [];
+  const L = (pts, dash) => lines.push({ pts, dash });
+  const circle = (r, n = 48) => Array.from({ length: n + 1 }, (_, i) => [cx + Math.cos(i / n * TAU) * r, cy + Math.sin(i / n * TAU) * r]);
+  const kind = pick(['gear', 'shaft', 'gear']);
+  if (kind === 'gear') {
+    const n = 9 + (Math.random() * 7 | 0), th = s * .14, p = TAU / n, pts = [];
+    for (let i = 0; i <= n; i++) { const a = i * p; [[s - th, a - p * .5], [s - th, a - p * .25], [s, a - p * .13], [s, a + p * .13], [s - th, a + p * .25]].forEach(([r, g]) => pts.push([cx + Math.cos(g) * r, cy + Math.sin(g) * r])); }
+    L(pts); L(circle(s * .55)); L(circle(s * .2, 24));
+    L([[cx - s * .06, cy - s * .2], [cx - s * .06, cy - s * .28], [cx + s * .06, cy - s * .28], [cx + s * .06, cy - s * .2]]);
+    L([[cx - s * 1.25, cy], [cx + s * 1.25, cy]], true); L([[cx, cy - s * 1.25], [cx, cy + s * 1.25]], true);
+    const dy = cy + s * 1.18; L([[cx - s, dy - s * .06], [cx - s, dy + s * .06]]); L([[cx + s, dy - s * .06], [cx + s, dy + s * .06]]); L([[cx - s, dy], [cx + s, dy]]);
+    labels.push({ x: cx, y: dy - s * .08, s: 'Ø ' + (rnd(40, 300)).toFixed(1), at: .6 });
+    for (let i = 0; i < 3; i++) { const g = rnd(TAU); L([[cx + Math.cos(g) * s * .9, cy + Math.sin(g) * s * .9], [cx + Math.cos(g) * s * 1.3, cy + Math.sin(g) * s * 1.3]]);
+      labels.push({ x: cx + Math.cos(g) * s * 1.33, y: cy + Math.sin(g) * s * 1.33, s: pick(['Ⅳ-' + hex(2), '?', 'NON INTELLEGITUR', 'z=' + n, 'Ⅶ']), at: .75 }); }
+  } else {
+    const xs = [-1.3, -.8, -.2, .5, 1.3].map(v => cx + v * s), hs = [.22, .36, .5, .3].map(v => v * s);
+    for (let i = 0; i < 4; i++) L([[xs[i], cy - hs[i]], [xs[i + 1], cy - hs[i]], [xs[i + 1], cy + hs[i]], [xs[i], cy + hs[i]], [xs[i], cy - hs[i]]]);
+    L([[cx - s * 1.45, cy], [cx + s * 1.45, cy]], true);
+    const hi = 2, x0 = xs[hi], x1 = xs[hi + 1], h = hs[hi];
+    for (let v = x0 - 2 * h; v < x1; v += s * .09) { const a = Math.max(x0, v), b = Math.min(x1, v + 2 * h); if (b > a) L([[a, cy + h - (a - v)], [b, cy + h - (b - v)]]); }
+    const dy = cy + s * .75; L([[xs[0], dy], [xs[4], dy]]); L([[xs[0], dy - s * .05], [xs[0], dy + s * .05]]); L([[xs[4], dy - s * .05], [xs[4], dy + s * .05]]);
+    labels.push({ x: cx, y: dy - s * .07, s: 'L ' + (rnd(100, 900)).toFixed(0), at: .6 });
+    labels.push({ x: xs[1], y: cy - s * .62, s: pick(['Ⅱ-' + hex(2), 'FILUM ?', 'M' + (8 + rnd(16) | 0)]), at: .7 });
+  }
+  for (let i = 0, n = 1 + (Math.random() * 2 | 0); i < n; i++) {
+    const w = rnd(.35, .6) * s, h = rnd(.25, .4) * s, lx = cx + rnd(-.8, .4) * s, ly = cy + rnd(-.9, .5) * s;
+    lac.push({ x: lx, y: ly, w, h, at: rnd(.4, .9) });
+  }
+  return { lines, labels, lac, t0: t, title: 'FRAGMENTUM STC-' + hex(4) + ' · ' + pick(['INTEGRITAS ' + (rnd(5, 40) | 0) + '%', 'INCERTUM', 'PARS III', 'TEXTUS AMISSUS']), ox, oy, S };
+}
+function plen(pts) { let L = 0; for (let i = 1; i < pts.length; i++) L += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); return L; }
+function drawSchem(x) {
+  const P = panels.R;
+  panelHead(x, P, P.y, 'FRAGMENTA ARCHIVI');
+  if (!schem || t - schem.t0 > 17) schem = genSchem(P);
+  const age = t - schem.t0, prog = clamp(age / 7), fade = age < 14 ? 1 : clamp(1 - (age - 14) / 2);
+  if (fade <= 0) return;
+  const flick = age > 14 ? (Math.random() < .3 ? .3 : 1) : 1;
+  x.save(); x.globalAlpha = .85 * fade * flick; x.strokeStyle = pal.ph; x.lineWidth = Math.max(1, 1.1 * DPR);
+  const tot = schem.lines.reduce((a, l) => a + (l.len ??= plen(l.pts)), 0); let budget = prog * tot;
+  for (const l of schem.lines) {
+    if (budget <= 0) break; x.setLineDash(l.dash ? [6 * DPR, 4 * DPR] : []);
+    x.beginPath(); x.moveTo(...l.pts[0]);
+    for (let i = 1; i < l.pts.length && budget > 0; i++) {
+      const [ax, ay] = l.pts[i - 1], [bx, by] = l.pts[i], d = Math.hypot(bx - ax, by - ay);
+      if (d <= budget) { x.lineTo(bx, by); budget -= d; } else { const f = budget / d; x.lineTo(ax + (bx - ax) * f, ay + (by - ay) * f); budget = 0; }
+    }
+    x.stroke();
+  }
+  x.setLineDash([]);
+  x.font = mono(fsP() * .85); x.fillStyle = pal.data; x.textAlign = 'center'; x.textBaseline = 'bottom';
+  for (const lb of schem.labels) if (prog >= lb.at) x.fillText(lb.s, lb.x, lb.y);
+  for (const q of schem.lac) if (prog >= q.at) {
+    x.fillStyle = 'rgba(0,0,0,.92)'; x.fillRect(q.x, q.y, q.w, q.h);
+    x.strokeStyle = pal.dim; x.strokeRect(q.x, q.y, q.w, q.h);
+    x.beginPath(); x.moveTo(q.x, q.y); x.lineTo(q.x + q.w, q.y + q.h); x.moveTo(q.x + q.w, q.y); x.lineTo(q.x, q.y + q.h); x.stroke();
+    x.fillStyle = pal.ph; x.textBaseline = 'middle'; x.fillText('LACUNA', q.x + q.w / 2, q.y + q.h / 2);
+  }
+  if (prog >= .95) { x.textBaseline = 'alphabetic'; x.fillStyle = pal.dim; x.fillText(schem.title, schem.ox + schem.S / 2, schem.oy + schem.S * .98); }
+  x.restore();
+}
+
+/* ---------- роза ---------- */
+let beatPulse = 0;
+function jit(i, rr) {
+  if (hz.amp < 1e-4) return 0;
+  return rr > hz.rMin - .06 * R ? hz.amp * (Math.sin(t * 17 + i * 3.1) * .6 + Math.sin(t * 41 + i * 1.7) * .4) : 0;
+}
+function drawRot(x, img, ang, ox = 0, oy = 0, alpha = 1) {
+  x.save(); x.globalAlpha = alpha; x.translate(ox, oy); x.rotate(ang); x.drawImage(img, -img.width / 2, -img.height / 2); x.restore();
+}
+function drawScars(x, key, ang, r) {
+  for (const s of scars) {
+    if (s.key !== key) continue;
+    const life = clamp(1 - (t - s.born) / 150); if (life <= 0) continue;
+    const a = s.aRel + ang - Math.PI / 2;
+    x.globalAlpha = .85 * life; x.strokeStyle = '#000'; x.lineWidth = 24 * k;
+    x.beginPath(); x.arc(0, 0, r, a, a + s.len); x.stroke();
+    x.globalAlpha = .5 * life; x.strokeStyle = '#7a1d10'; x.lineWidth = Math.max(1, k);
+    x.beginPath(); x.arc(0, 0, r - 12 * k, a, a + s.len); x.stroke(); x.beginPath(); x.arc(0, 0, r + 12 * k, a, a + s.len); x.stroke();
+    x.globalAlpha = 1;
+  }
+}
+function drawRose(x) {
+  x.save(); x.translate(CX, CY);
+  // тёмный диск за розой
+  let g = x.createRadialGradient(0, 0, 0, 0, 0, 1.02 * R);
+  g.addColorStop(0, 'rgba(0,0,0,.9)'); g.addColorStop(.8, 'rgba(0,0,0,.75)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = g; x.beginPath(); x.arc(0, 0, 1.02 * R, 0, TAU); x.fill();
+  // ореол ноосферы
+  x.setLineDash([2 * k, 9 * k]); x.lineDashOffset = -mt * 20 * k; x.strokeStyle = pal.dim; x.globalAlpha = .5 * vis.rev.rim; x.lineWidth = 1.5 * k;
+  x.beginPath(); x.arc(0, 0, .93 * R, 0, TAU); x.stroke(); x.setLineDash([]); x.globalAlpha = 1;
+  // спицы и опорные круги
+  x.strokeStyle = C.brassDk; x.lineWidth = 1.6 * k; x.globalAlpha = .8 * vis.rev.spokes;
+  for (const a of spokeAng) { const [x0, y0] = pol(a, .12 * R), [x1, y1] = pol(a, .795 * R); x.beginPath(); x.moveTo(x0, y0); x.lineTo(x1, y1); x.stroke(); }
+  x.strokeStyle = C.brass; x.globalAlpha = .55; x.lineWidth = 1.2 * k;
+  for (const [rr, key] of [[.125, 'A'], [.24, 'B'], [.295, 'C'], [.335, 'C2'], [.585, 'D'], [.7, 'E'], [.78, 'F']]) { x.globalAlpha = .55 * vis.rev[key]; x.beginPath(); x.arc(0, 0, rr * R, 0, TAU); x.stroke(); }
+  x.globalAlpha = 1;
+  // кольца
+  rings.forEach((rg, i) => {
+    const ang = rg.ang() + jit(i, rg.r * R);
+    const rv = vis.rev[rg.key]; if (rv <= .003) return;
+    if (rg.key === 'E' && hz.purgeGlow > 0) { drawRot(x, imgs.E, ang, 0, 0, (1 - hz.purgeGlow) * rv); drawRot(x, imgs.Epurge, ang, 0, 0, hz.purgeGlow * rv); }
+    else drawRot(x, imgs[rg.key], ang, 0, 0, rv);
+    drawScars(x, rg.key, rg.ang(), rg.r * R);
+  });
+  // венец шестерён-лепестков
+  const tf = flow(mt, .32);
+  foils.forEach((f, i) => drawRot(x, imgs.foil[f.v], f.s * tf + f.psi + jit(i + 20, foilRc), f.x, f.y, vis.rev.foil[i]));
+  // обод и спутники
+  const trim = rimAng();
+  drawRot(x, imgs.rim, trim + jit(40, rimRp), 0, 0, vis.rev.rim);
+  if (hz.phase === 'purge') {   // накал растёт за отступающей скверной
+    const s3 = hz.p * hz.p * (3 - 2 * hz.p);
+    drawHeat(x, hz.phi, Math.min(.86 * R, hz.rMin), s3);
+  }
+  for (const q of patches) {
+    const aAbs = trim + q.aRel + jit(40, rimRp), age = t - q.born;
+    if (age < 14) drawHeat(x, aAbs, .86 * R, Math.pow(1 - age / 14, 1.4));   // остывание
+    x.save(); x.rotate(aAbs); x.globalAlpha = clamp(age / 1.2) * vis.rev.rim; x.drawImage(q.img.c, -q.img.w / 2, -q.img.r1 - 4);
+    if (age < 18) { x.globalCompositeOperation = 'lighter'; x.globalAlpha = Math.pow(1 - age / 18, 2) * .9; x.drawImage(q.img.c, -q.img.w / 2, -q.img.r1 - 4); }
+    x.restore();
+  }
+  sats.forEach((s, i) => drawRot(x, s.img, -(RIM_N / s.n) * (trim - s.phi) + s.phi + Math.PI + Math.PI / s.n + jit(50 + i, rimRp) * 2.5, s.x, s.y, vis.rev.sat[i]));
+  // сердце: спуск и линза
+  const te = flow(mt, .22, .7);
+  drawRot(x, imgs.esc, te + jit(60, .1 * R), 0, 0, vis.rev.core);
+  x.beginPath(); x.arc(0, 0, .058 * R, 0, TAU); x.fillStyle = '#000'; x.fill();
+  x.lineWidth = 1.2 * k; x.strokeStyle = C.brass; x.globalAlpha = vis.rev.core; x.stroke(); x.globalAlpha = 1;
+  const her = hz.int > .2 && Math.random() < hz.int * .6;
+  const lensCol = her ? C.her : pal.ph, lr = .046 * R * (1 + .08 * beatPulse) * (1 + .6 * vis.lensBoost);
+  g = x.createRadialGradient(0, 0, 0, 0, 0, lr);
+  g.addColorStop(0, hz.purgeGlow > .1 ? '#ffffff' : pal.hot); g.addColorStop(.35, lensCol); g.addColorStop(1, 'rgba(0,0,0,0)');
+  x.globalAlpha = Math.min(1, .55 + .45 * beatPulse + .4 * hz.purgeGlow + vis.lensBoost) * vis.lens; x.fillStyle = g; x.beginPath(); x.arc(0, 0, lr, 0, TAU); x.fill();
+  x.globalAlpha = .6 * vis.lens; x.strokeStyle = pal.dim; x.lineWidth = k;
+  for (const rr of [.02, .032]) { x.beginPath(); x.arc(0, 0, rr * R, 0, TAU); x.stroke(); }
+  x.globalAlpha = 1;
+  x.restore();
+}
+
+/* ---------- такт ---------- */
+function onBeat(n) {
+  beatPulse = 1; orationes++;
+  const cnt = hz.phase === 'in' ? (Math.random() < .5 ? 1 : 0) : 1 + (Math.random() * 2.2 | 0);
+  if (vis.pulses) for (let i = 0; i < cnt; i++) launch(Math.random() * FOILS | 0);
+  if (n % 4 === 0) imgs.C = textRing(.27 * R, randBin(70), 13 * k, mono, pal.dim);
+  if (n % 6 === 3) imgs.F = textRing(.725 * R, randBin(130), 11 * k, mono, pal.dim);
+  if (hz.phase !== 'in') sats.forEach(s => { const [X, Y] = pol(s.phi, rimRp); flashes.push({ x: X, y: Y, life: .3, max: .3, size: 14 * k, col: pal.ph }); });
+}
+
+/* ---------- обряд: режиссура ---------- */
+const RITE_LEN = 102;
+let rt = 0, loopOn = true, cueIdx = 0, caps = [], ringFl = [];
+const vis = { rev: { core: 0, A: 0, B: 0, C: 0, C2: 0, spokes: 0, D: 0, E: 0, F: 0, rim: 0, foil: Array(12).fill(0), sat: Array(6).fill(0) },
+  lens: 0, lensBoost: 0, incense: 0, panels: 0, pulses: false, logAuto: false };
+const lin = (a, b, x) => clamp((x - a) / (b - a));
+const sm = (a, b, x) => { const u = lin(a, b, x); return u * u * (3 - 2 * u); };
+const REVEAL = { core: 4.5, A: 5.5, B: 6.5, C: 9, C2: 9.8, spokes: 10.4, D: 14, E: 15, F: 16, rim: 18.2 };
+const OUT_ORDER = ['sat', 'rim', 'F', 'E', 'D', 'foil', 'C2', 'C', 'B', 'A', 'spokes', 'core'];
+const outAt = key => { const j = OUT_ORDER.indexOf(key); return 1 - sm(88 + j * .7, 89.5 + j * .7, rt); };
+const STAGES = [[0, 'I', 'TENEBRAE'], [4, 'II', 'INVOCATIO'], [22, 'III', 'UNCTIO'], [27, 'IV', 'EXCITATIO'], [38, 'V', 'COGITATIO'],
+  [58, 'VI', 'HAERESIS'], [67, 'VII', 'EXORCISMUS'], [71.5, 'VIII', 'COGITATIO RESUMPTA'], [80, 'IX', 'RESPONSUM'], [88, 'X', 'QUIES']];
+const stageAt = x => { let r = STAGES[0]; for (const st of STAGES) if (x >= st[0]) r = st; return r; };
+function speedAt(x) {
+  if (x < 27) return 0;
+  if (x < 28.6) return .35 * Math.sin(lin(27, 28.6, x) * Math.PI / 2);
+  if (x < 30) return .35 * (1 - sm(28.6, 30, x)) * (1 + .3 * Math.sin(x * 40));
+  if (x < 33) return 0;
+  if (x < 38) return backOut(lin(33, 38, x));
+  if (x < 88) return 1;
+  return 1 - sm(88, 95, x);
+}
+const cap = (s, kind, dur, col) => caps.push({ s, kind, born: rt, dur, col: col || (kind === 'goth' ? C.bone : pal.dim) });
+const rfl = (r, col, dur = .9, grow = 0, w = 7) => ringFl.push({ r, col: col || pal.hot, dur, grow, w, age: 0 });
+const revealRing = (r, name) => { rfl(r * R); addLog('ANULUS ' + name + ' · EXCITATUS', pal.ph); };
+const CUES = [
+  [1.6, () => cap('COGITATOR · SOMNUS ALTUS', 'mono', 2.4)],
+  [2.2, () => addLog('COGITATOR · SOMNUS ALTUS', pal.dim)],
+  [3.2, () => addLog('INVOCATIO REQUIRITUR', pal.ph)],
+  [4.0, () => { cap('Spiritus machinae, audi nos.', 'goth', 4); addLog('INVOCATIO I · SPIRITUS MACHINAE, AUDI NOS', pal.ph); }],
+  [4.5, () => { rfl(.05 * R, null, 1.3, .12); vis.lensBoost = .9; addLog('COR · LUMEN ACCENSUM', pal.ph); }],
+  [5.5, () => revealRing(.155, 'PRIMUS')],
+  [6.5, () => revealRing(.21, 'SECUNDUS')],
+  [8.5, () => { cap('Per numerum te vocamus.', 'goth', 4); addLog('INVOCATIO II · PER NUMERUM TE VOCAMUS', pal.ph); }],
+  [9.0, () => revealRing(.27, 'TERTIUS')],
+  [9.8, () => revealRing(.315, 'QUARTUS')],
+  [10.8, () => addLog('ROTAE XII · CONIUNGUNTUR', pal.data)],
+  ...Array.from({ length: 12 }, (_, i) => [10.8 + i * .3, () => { const f = foils[i]; flashes.push({ x: f.x, y: f.y, life: .6, max: .6, size: 45 * k, col: pal.hot }); }]),
+  [13.2, () => { cap('Per oleum et ferrum te excitamus.', 'goth', 4.3); addLog('INVOCATIO III · PER OLEUM ET FERRUM', pal.ph); }],
+  [14.0, () => revealRing(.615, 'QUINTUS')],
+  [15.0, () => revealRing(.67, 'SEXTUS')],
+  [16.0, () => revealRing(.725, 'SEPTIMUS')],
+  [17.8, () => { cap('Surge, et cogita.', 'goth', 4); addLog('INVOCATIO IV · SURGE, ET COGITA', pal.ph); }],
+  [18.2, () => { rfl(rimRp, null, 1.1); addLog('CIRCULUS MAGNUS · PRAESENS', pal.ph); }],
+  ...Array.from({ length: 6 }, (_, i) => [19 + i * .4, () => { const q = sats[i]; flashes.push({ x: q.x, y: q.y, life: .6, max: .6, size: 70 * k, col: pal.hot }); }]),
+  [21.0, () => addLog('MACHINA COMPOSITA · IMMOTA', pal.dim)],
+  [22.2, () => { cap('UNCTIO · OLEUM SANCTUM', 'mono', 4.5, pal.ph); addLog('UNGUENTUM SACRUM APPLICATUR', pal.ph); }],
+  [26.6, () => addLog('UNCTIO PERFECTA', pal.ph)],
+  [27.0, () => { cap('VIS MOTIVA · ADHIBETUR', 'mono', 2, pal.ph); vis.lensBoost = .5; addLog('VIS MOTIVA · 0.35 U', pal.data); }],
+  [29.0, () => { cap('SPIRITUS RENITITUR', 'mono', 1.5, '#ff6a3a'); addLog('SPIRITUS RENITITUR · VIS DEFICIT', '#ff6a3a'); }],
+  [30.6, () => { cap('Iterum: surge!', 'goth', 2.6); rfl(.05 * R, null, 1.3, .95, 9); vis.lensBoost = 1.1; addLog('INVOCATIO V · ITERUM: SURGE', pal.ph); }],
+  [33.2, () => { cap('Vis motiva adest.', 'goth', 3.5); addLog('VIS MOTIVA · 1.00 U · ADEST', pal.ph); addLog('TURIBULA ACCENSA', pal.dim); for (let i = 0; i < FOILS; i++) launch(i, pal.hot, true); }],
+  [38.5, () => { cap('COGITATIO INCIPIT', 'mono', 2.5, pal.ph); addLog('COGITATIO INCIPIT · ORATIONES XII', pal.ph); }],
+  [58.0, () => { startHeresy(); hz.t0 = t - (rt - 58); cap('!! INFECTIO !!', 'mono', 3, C.her); }],
+  [67.2, () => cap('Exorcizamus te, codex immunde!', 'goth', 3)],
+  [70.2, () => cap('Redi in ordinem.', 'goth', 2.5)],
+  [72.5, () => { cap('COGITATIO RESUMITUR', 'mono', 2.5, pal.ph); addLog('COGITATIO RESUMITUR · ORATIO IX', pal.ph); }],
+  [80.0, () => { cap('COGITATIO PERFECTA', 'mono', 2.4, pal.ph); rfl(.05 * R, null, 1.7, 1.15, 12); vis.lensBoost = 1.6;
+    for (let i = 0; i < FOILS; i++) launch(i, pal.hot, true); addLog('COGITATIO PERFECTA · XII/XII', pal.hot);
+    stcCode = hex(3); if (panels) { schem = genSchem(panels.R); schem.title = 'FRAGMENTUM STC-' + stcCode + ' · RESTITUTUM 61%'; } }],
+  [82.4, () => cap('Responsum datum est.', 'goth', 3.4)],
+  [86.0, () => { cap('FRAGMENTUM STC-' + stcCode + ' · RESTITUTUM 61% · LACUNAE III', 'mono', 2.9, pal.data); addLog('FRAGMENTUM STC-' + stcCode + ' · RESTITUTUM 61%', pal.data); }],
+  [88.0, () => addLog('VIS MOTIVA · RETRAHITUR', pal.dim)],
+  [89.0, () => cap('Gloria motui perpetuo.', 'goth', 4.5)],
+  [94.0, () => cap('SPIRITUS QUIESCIT', 'mono', 3, pal.dim)]
+].sort((a, b) => a[0] - b[0]);
+let stcCode = '000';
+// механическое время — точный интеграл скорости по таблице: удары механизма от прогона к прогону одни и те же
+const MT_H = .001, MT = (() => { const n = Math.ceil((RITE_LEN + 1) / MT_H) + 2, a = new Float64Array(n); let prev = speedAt(0);
+  for (let i = 1; i < n; i++) { const s = speedAt(i * MT_H); a[i] = a[i - 1] + (prev + s) * MT_H / 2; prev = s; } return a; })();
+const mtAt = x => { const f = clamp(x, 0, RITE_LEN + 1) / MT_H, i = Math.floor(f); return i + 1 < MT.length ? MT[i] + (MT[i + 1] - MT[i]) * (f - i) : MT[MT.length - 1]; };
+// сдвиг фазы: в установившемся ходе удары механизма — ровно на кратных 1,6 с (сетка 150 уд/мин, такт = удар)
+const MT_PHASE = ((mtAt(40) - 40) % BEAT + BEAT) % BEAT;
+function beatTime(n) { const v = n * BEAT + MT_PHASE; let lo = 0, hi = MT.length - 1; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (MT[m] < v) lo = m; else hi = m; }
+  return +((lo + (v - MT[lo]) / ((MT[hi] - MT[lo]) || 1)) * MT_H).toFixed(4); }
+// журнал событий (для музыки): время — точное, по расписанию, а не по кадру
+const EVLOG = []; let cueT = null, cueLogCapture = null, lastStage = null;
+const ev = (type, data = {}) => EVLOG.push({ type, ...data, t: +(data.t ?? cueT ?? rt).toFixed(4) });
+
+function riteRestart() {
+  rt = 0; mt = -MT_PHASE; lastBeat = -1; cueIdx = 0; lastStage = null; caps = []; ringFl = []; logs = []; scars = []; patches = []; pulses = []; flashes = [];
+  Object.assign(hz, { phase: 'idle', next: Infinity, w: 0, amp: 0, int: 0, purgeGlow: 0, p: 0 });
+  integrity = 99.97; orationes = 0; schem = null; vis.lensBoost = 0;
+  initParticles();
+  sctx.globalCompositeOperation = 'source-over'; sctx.fillStyle = '#000'; sctx.fillRect(0, 0, W, H);
+}
+const tlFill = document.getElementById('tlFill');
+(() => { const tl = document.getElementById('tl');
+  for (const [at, num, name] of STAGES) { const i = document.createElement('i'); i.style.left = (at / RITE_LEN * 100) + '%'; i.title = num + ' · ' + name; tl.appendChild(i); } })();
+
+function riteUpdate(dt) {
+  rt += dt;
+  if (rt >= RITE_LEN) { if (loopOn) { const over = rt - RITE_LEN; riteRestart(); rt = over; ev('restart', { t: 0 }); } else rt = RITE_LEN; }
+  while (cueIdx < CUES.length && CUES[cueIdx][0] <= rt) {
+    cueT = CUES[cueIdx][0]; cueLogCapture = []; const nC = caps.length, nF = flashes.length, nR = ringFl.length, ph = hz.phase;
+    CUES[cueIdx++][1]();
+    ev('cue', { captions: caps.slice(nC).map(c => c.s), log: cueLogCapture, flashes: flashes.length - nF, rings: ringFl.length - nR,
+      ...(hz.phase !== ph ? { heresy: hz.phase } : {}) });
+    cueT = null; cueLogCapture = null;
+  }
+  const stNow = stageAt(rt); if (stNow !== lastStage) { lastStage = stNow; ev('stage', { t: stNow[0], num: stNow[1], name: stNow[2] }); }
+  const rv = vis.rev;
+  for (const key in REVEAL) rv[key] = sm(REVEAL[key], REVEAL[key] + .8, rt) * outAt(key);
+  for (let i = 0; i < 12; i++) rv.foil[i] = sm(10.8 + i * .3, 11.4 + i * .3, rt) * outAt('foil');
+  for (let i = 0; i < 6; i++) rv.sat[i] = sm(19 + i * .4, 19.6 + i * .4, rt) * outAt('sat');
+  vis.lens = rv.core; vis.lensBoost *= Math.exp(-dt * 1.4);
+  vis.incense = sm(33, 40, rt) * (1 - sm(87, 94, rt));
+  vis.panels = sm(34, 38, rt) * (1 - sm(87, 92, rt));
+  vis.pulses = rt > 33 && rt < 87;
+  vis.logAuto = (rt > 38 && rt < 57) || (rt > 72.5 && rt < 86) || hz.phase !== 'idle';
+  speedMul = speedAt(rt); hz.next = Infinity;
+  for (const f of ringFl) f.age += dt; ringFl = ringFl.filter(f => f.age < f.dur);
+  tlFill.style.width = (rt / RITE_LEN * 100).toFixed(2) + '%';
+}
+
+function drawRiteScene(x) {
+  // помазание: золотые волны по кольцам
+  if (rt > 22.3 && rt < 27.6) {
+    x.save(); x.translate(CX, CY); x.globalCompositeOperation = 'lighter'; x.lineCap = 'round';
+    [.155, .21, .27, .315, .46, .615, .67, .725, .815].forEach((rr, i) => {
+      const u = (rt - 22.3 - i * .18) / 2.6; if (u <= 0 || u >= 1) return;
+      const head = -Math.PI / 2 + u * TAU * 1.15, env = Math.sin(Math.PI * u), wide = i === 4;
+      for (let j = 0; j < 14; j++) {
+        const a1 = head - j * .1;
+        x.globalAlpha = env * (1 - j / 14) * (wide ? .3 : .85); x.strokeStyle = j < 2 ? pal.hot : '#ffc35a'; x.lineWidth = (wide ? 32 : 7) * k;
+        x.beginPath(); x.arc(0, 0, rr * R, a1 - .11, a1); x.stroke();
+      }
+    });
+    x.restore();
+  }
+  if (ringFl.length) {
+    x.save(); x.translate(CX, CY); x.globalCompositeOperation = 'lighter';
+    for (const f of ringFl) {
+      const q = f.age / f.dur; x.globalAlpha = (1 - q) * .9; x.strokeStyle = f.col; x.lineWidth = f.w * k * (1 - q * .5);
+      x.beginPath(); x.arc(0, 0, Math.max(1, f.r + f.grow * R * easeIO(q)), 0, TAU); x.stroke();
+    }
+    x.restore();
+  }
+  // подложка под подписи
+  const g = x.createLinearGradient(0, H * .83, 0, H);
+  g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(.45, 'rgba(0,0,0,.7)'); g.addColorStop(1, 'rgba(0,0,0,.85)');
+  x.fillStyle = g; x.fillRect(0, H * .83, W, H * .17);
+  // подписи
+  caps = caps.filter(c => rt - c.born < c.dur);
+  x.textBaseline = 'middle';
+  for (const c of caps) {
+    const age = rt - c.born, isG = c.kind === 'goth', a = clamp(age / .3) * clamp((c.dur - age) / .7);
+    x.font = isG ? goth(H * .046) : mono(H * .03);
+    let str = c.s.slice(0, Math.min(c.s.length, Math.floor(age * (isG ? 24 : 38)) + 1));
+    const corrupt = c.col === C.her;
+    if (corrupt) str = [...str].map(ch => Math.random() < .25 ? pick(CORR) : ch).join('');
+    x.globalAlpha = a * (corrupt ? .6 + .4 * Math.random() : 1); x.fillStyle = c.col; x.textAlign = 'left';
+    x.fillText(str, CX - x.measureText(c.s).width / 2, H * .905);
+  }
+  x.globalAlpha = 1;
+  // ход вычисления
+  const pa = sm(38.5, 39.5, rt) * (1 - sm(86, 87.5, rt));
+  if (pa > 0) {
+    const n = rt < 58 ? Math.floor(8 * lin(38.5, 57.5, rt)) : rt < 71.5 ? 8 : Math.min(12, 8 + Math.floor(4 * lin(71.5, 79.6, rt)));
+    let str = 'ORATIO ' + String(n).padStart(2, '0') + '/12  ' + '■'.repeat(n) + '□'.repeat(12 - n), col = pal.dim;
+    if (hz.phase === 'in') { str = [...str].map(ch => Math.random() < .3 * hz.int ? pick(CORR) : ch).join(''); col = C.her; }
+    if (rt >= 80) { str = 'COGITATIO PERFECTA  ' + '■'.repeat(12); col = pal.ph; }
+    x.font = mono(H * .024); x.textAlign = 'center'; x.globalAlpha = pa * .9; x.fillStyle = col; x.fillText(str, CX, H * .958);
+  }
+  // название стадии
+  const st = stageAt(rt), sa = sm(1.2, 2.5, rt) * (1 - sm(96, 97, rt));
+  if (sa > 0) {
+    x.font = mono(H * .022); x.textAlign = 'center'; x.globalAlpha = .75 * sa; x.fillStyle = pal.dim;
+    x.fillText('RITUS COGITATIONIS · ' + st[1] + ' · ' + st[2], CX, H * .035);
+  }
+  x.globalAlpha = 1; x.textAlign = 'left';
+}
+
+// включение и выключение кинескопа: точка → строка → кадр и обратно
+function drawCRT(x) {
+  let hb, lw, lineA = 0, dotA = 0;
+  if (rt < 1.2) {
+    lw = sm(0, .35, rt); hb = rt < .35 ? 2 * DPR : lerp(2 * DPR, H, 1 - Math.pow(1 - lin(.35, 1.2, rt), 3));
+    lineA = 1 - lin(.35, 1, rt); dotA = rt < .35 ? 1 : 0;
+  } else if (rt > 97.3) {
+    hb = rt < 97.9 ? lerp(H, 2 * DPR, Math.pow(lin(97.3, 97.9, rt), 2)) : 2 * DPR;
+    lw = rt < 97.9 ? 1 : Math.max(.002, 1 - sm(97.9, 98.5, rt));
+    lineA = rt < 98.5 ? sm(97.4, 97.9, rt) : 0; dotA = rt >= 98.5 ? 1 - lin(98.5, 99.6, rt) : 0;
+  } else return;
+  const cy = H / 2, cx = W / 2, bw = lw * W;
+  x.fillStyle = '#000';
+  x.fillRect(0, 0, W, cy - hb / 2); x.fillRect(0, cy + hb / 2, W, H - cy - hb / 2);
+  if (lw < 1) { x.fillRect(0, cy - hb / 2, cx - bw / 2, hb); x.fillRect(cx + bw / 2, cy - hb / 2, cx - bw / 2 + 1, hb); }
+  if (lineA > 0 && bw > 1) {
+    const g = x.createLinearGradient(cx - bw / 2, 0, cx + bw / 2, 0);
+    g.addColorStop(0, 'rgba(255,240,210,0)'); g.addColorStop(.5, 'rgba(255,248,230,1)'); g.addColorStop(1, 'rgba(255,240,210,0)');
+    x.globalAlpha = lineA; x.fillStyle = g; x.shadowColor = pal.ph; x.shadowBlur = 18 * DPR;
+    x.fillRect(cx - bw / 2, cy - 1.5 * DPR, bw, 3 * DPR); x.shadowBlur = 0; x.globalAlpha = 1;
+  }
+  if (dotA > 0) {
+    const r = 18 * DPR, g = x.createRadialGradient(cx, cy, 0, cx, cy, r);
+    g.addColorStop(0, 'rgba(255,250,235,1)'); g.addColorStop(.25, pal.ph); g.addColorStop(1, 'rgba(0,0,0,0)');
+    x.globalAlpha = dotA; x.fillStyle = g; x.beginPath(); x.arc(cx, cy, r, 0, TAU); x.fill(); x.globalAlpha = 1;
+  }
+}
+
+/* ---------- кадр ---------- */
+let t = 0, last = performance.now(), lastBeat = -1, paused = false;
+function update(dt, rdt) {
+  riteUpdate(rdt); mt = mtAt(rt) - MT_PHASE;
+  const b = Math.floor(mt / BEAT); if (b !== lastBeat) { lastBeat = b; ev('beat', { n: b, t: beatTime(b) }); onBeat(b); }
+  beatPulse *= Math.exp(-dt * 4);
+  updHeresy(dt); updParticles(dt); updPulses(dt);
+  logTimer -= dt; if (vis.logAuto && logTimer <= 0) { genLog(); logTimer = hz.phase === 'idle' ? rnd(.25, .8) : hz.phase === 'purge' ? rnd(.55, .7) : rnd(.12, .3); }
+  motiva = clamp(.873 * speedMul + rnd(-.004, .004) * speedMul, 0, 1.2);
+  calor = clamp(calor + rnd(-.05, .05) + hz.int * .2 * dt * 10 - (calor - 61) * .002, 40, 140);
+  ung = clamp(ung - dt * .02 + (Math.random() < .002 ? 20 : 0), 30, 99);
+}
+function render() {
+  // послесвечение люминофора
+  sctx.globalCompositeOperation = 'source-over';
+  sctx.fillStyle = 'rgba(0,0,0,.32)'; sctx.fillRect(0, 0, W, H);
+  drawParticles(sctx);
+  if (panels) { sctx.fillStyle = 'rgba(0,0,0,.6)'; for (const P of [panels.L, panels.R]) sctx.fillRect(P.x - 4 * DPR, P.y - 30 * DPR, P.w + 8 * DPR, P.h + 34 * DPR);
+    if (vis.panels > .01) { plx.clearRect(0, 0, W, H); drawLog(plx); drawSchem(plx); drawStatus(plx, panels.R.y + Math.min(panels.R.w, H * .38) + fsP() * 3.4);
+      sctx.globalAlpha = vis.panels; sctx.drawImage(pl, 0, 0); sctx.globalAlpha = 1; } }
+  drawRose(sctx); drawPulses(sctx); drawHeresy(sctx); drawPurge(sctx); drawRiteScene(sctx);
+  // сведение
+  dctx.globalCompositeOperation = 'source-over'; dctx.globalAlpha = 1; dctx.drawImage(amb, 0, 0);
+  dctx.globalCompositeOperation = 'lighter'; dctx.drawImage(scene, 0, 0);
+  bctx.clearRect(0, 0, bloomC.width, bloomC.height); bctx.filter = `blur(${Math.max(2, 3 * DPR)}px)`;
+  bctx.drawImage(scene, 0, 0, bloomC.width, bloomC.height); bctx.filter = 'none';
+  dctx.globalAlpha = .6 + .25 * hz.purgeGlow; dctx.drawImage(bloomC, 0, 0, W, H); dctx.globalAlpha = 1;
+  // бегущая полоса развёртки
+  const by = ((t * .07) % 1.3 - .15) * H, bg = dctx.createLinearGradient(0, by - .07 * H, 0, by + .07 * H);
+  bg.addColorStop(0, 'rgba(255,200,140,0)'); bg.addColorStop(.5, 'rgba(255,200,140,.035)'); bg.addColorStop(1, 'rgba(255,200,140,0)');
+  dctx.fillStyle = bg; dctx.fillRect(0, by - .07 * H, W, .14 * H);
+  if (hz.int > .02) { dctx.fillStyle = `rgba(150,30,220,${.07 * hz.int})`; dctx.fillRect(0, 0, W, H); }
+  dctx.globalCompositeOperation = 'source-over';
+  // сбой развёртки при ереси
+  if (hz.phase === 'in' && Math.random() < .25 * hz.int) {
+    for (let i = 0, n = 2 + (Math.random() * 4 | 0); i < n; i++) {
+      const y = rnd(H), h = rnd(4, 34) * DPR, dx = rnd(-50, 50) * DPR * hz.int;
+      dctx.drawImage(disp, 0, y, W, h, dx, y, W, h);
+    }
+  }
+  dctx.fillStyle = `rgba(0,0,0,${rnd(0, .045)})`; dctx.fillRect(0, 0, W, H);
+  drawCRT(dctx);
+}
+function frame(now) {
+  requestAnimationFrame(frame);
+  const rdt = (now - last) / 1000; last = now;
+  if (paused) return;
+  step(rdt); render();
+}
+// часы обряда (rt, t) идут по настоящему времени без ограничения шага — события не отстают при просадке кадров;
+// ограниченный шаг dt — только для частиц и импульсов
+function step(rdt) { t += rdt; update(Math.min(rdt, .05), rdt); }
+window.__ritus = { step, render, EVLOG: () => EVLOG, mtAt: x => mtAt(x) - MT_PHASE, state: () => ({ rt, mt, speedMul, incense: vis.incense, panels: vis.panels, lens: vis.lens,
+  heresy: hz.phase, heresyInt: hz.int, purgeGlow: hz.purgeGlow }), RITE_LEN, BEAT, STAGES, beatTime };
+
+/* ---------- управление ---------- */
+const ui = document.getElementById('ui'); let uiTimer = 0;
+function showUI() { ui.classList.add('show'); clearTimeout(uiTimer); uiTimer = setTimeout(() => ui.classList.remove('show'), 2800); }
+addEventListener('mousemove', showUI); addEventListener('touchstart', showUI, { passive: true });
+function act(a) {
+  if (a === 'restart') { riteRestart(); paused = false; }
+  else if (a === 'loop') { loopOn = !loopOn; document.getElementById('bLoop').textContent = 'Повтор: ' + (loopOn ? 'вкл' : 'выкл'); }
+  else if (a === 'pal') { palKey = palKey === 'amber' ? 'green' : 'amber'; pal = PH[palKey]; gcache.clear(); makeImgs(); }
+  else if (a === 'pause') { paused = !paused; }
+  else if (a === 'fs') { const d = document; (d.fullscreenElement ? d.exitFullscreen() : d.documentElement.requestFullscreen?.())?.catch?.(() => {}); }
+}
+ui.addEventListener('click', e => { const b = e.target.closest('button'); if (b) act(b.dataset.a); });
+addEventListener('keydown', e => {
+  const m = { ' ': 'pause', p: 'pause', 'з': 'pause', r: 'restart', 'к': 'restart', l: 'loop', 'д': 'loop', g: 'pal', 'п': 'pal', f: 'fs', 'а': 'fs' }[e.key.toLowerCase()];
+  if (m) { e.preventDefault(); act(m); }
+});
+let rzT = 0; addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(build, 150); });
+
+/* ---------- запуск ---------- */
+const fontsReady = Promise.race([
+  Promise.all([document.fonts.load('700 20px UnifrakturCook'), document.fonts.load('20px VT323')]).catch(() => {}),
+  new Promise(r => setTimeout(r, 2500))
+]);
+fontsReady.then(() => {
+  build(); riteRestart();
+  requestAnimationFrame(t0 => { last = t0; requestAnimationFrame(frame); });
+});
+</script>
+</body>
+</html>

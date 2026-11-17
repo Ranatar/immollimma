@@ -1,0 +1,122 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso",
+  "vsco"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "bcl_sus@sso": 1,
+  "bsn_stac@vsco": 56,
+  "cb_pizz@plain": 80,
+  "cb_sus@plain": 10,
+  "cb_trem@plain": 2,
+  "cbsn_sus@sso": 2,
+  "choir@sso": 271,
+  "crotales@sso": 7,
+  "eh_sus@sso": 1,
+  "grains@plain": 1,
+  "harp@plain": 70,
+  "hn_mute@plain": 6,
+  "hn_sus@plain": 51,
+  "hpsd@sso": 245,
+  "org_loud@plain": 43,
+  "org_quiet@plain": 59,
+  "sample@plain": 55,
+  "sample@sso": 6,
+  "tba_stac@vsco": 23,
+  "tba_sus@plain": 25,
+  "tbn_stac@vsco": 6,
+  "tbn_sus@plain": 39,
+  "timp@plain": 35,
+  "timp_roll@plain": 2,
+  "tpt_sus@plain": 19,
+  "tubular@vsco": 14,
+  "vc_colleg@sso": 15,
+  "vc_sus@plain": 7,
+  "vc_trem@plain": 3,
+  "vla_sus@plain": 1,
+  "vla_trem@plain": 1,
+  "vln_colleg@sso": 12,
+  "vln_harm@sso": 7,
+  "vln_spic@vsco": 39,
+  "vln_sus@plain": 1,
+  "vln_trem@plain": 8,
+  "xylo@vsco": 81
+ },
+ "substitutions": {},
+ "missing": {},
+ "out_of_range_rescued": {},
+ "sfizz_notes": 320,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  102.0
+ ],
+ "seconds": 102.0,
+ "mp3": "/home/claude/immollimma/requests/ritus-cogitationis/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/ritus-cogitationis/out/score.mid",
+  "lost": {
+   "raw samples (noises, unpitched percussion)": 61,
+   "notes with a glissando inside": 30,
+   "notes with detune (out-of-tune doubles)": 103,
+   "ring-modulated notes": 5,
+   "grain clouds": 1,
+   "reversed notes": 1
+  },
+  "musicxml": "/home/claude/immollimma/requests/ritus-cogitationis/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/ritus-cogitationis/out/score.pdf",
+  "grid": [
+   4,
+   3
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   5.5,
+   18.2,
+   23.2,
+   25.2,
+   27.5,
+   29.2,
+   30.8,
+   65.2,
+   84.0,
+   95.2,
+   100.0
+  ],
+  "png": "/home/claude/immollimma/requests/ritus-cogitationis/out/report.png"
+ },
+ "parts_lufs": {
+  "Choir": -18.1,
+  "Horn": -24.6,
+  "Trumpet": -25.2,
+  "Tubular bells": -25.5,
+  "Tuba": -25.6,
+  "Timpani": -26.1,
+  "Harpsichord": -26.3,
+  "Organ": -27.3,
+  "Contrabassoon": -27.9,
+  "Crotales": -28.1,
+  "Harp": -28.2,
+  "Basses": -29.4,
+  "Trombone": -29.4,
+  "Cellos": -32.4,
+  "Violins": -32.8,
+  "Xylophone": -32.8,
+  "Violas": -33.2,
+  "Bassoon": -33.7,
+  "Bass clarinet": -35.0,
+  "English horn": -35.2
+ },
+ "seconds_taken": 70.0
+}
