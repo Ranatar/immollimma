@@ -14,7 +14,7 @@
   "cb_sus@plain": 67,
   "celesta@sso": 10,
   "choir@sso": 76,
-  "cl_sus@plain": 27,
+  "cl_sus@plain": 28,
   "harp@plain": 8,
   "hn_sus@plain": 72,
   "hns_sus@sso": 56,
@@ -22,20 +22,20 @@
   "sample@plain": 74,
   "sample@sso": 1,
   "tba_sus@plain": 31,
-  "tbn_sus@plain": 120,
+  "tbn_sus@plain": 118,
   "tbn_sus@sso": 1,
-  "timp@plain": 18,
+  "timp@plain": 16,
   "tpt_sus@plain": 56,
-  "tubular@vsco": 19,
+  "tubular@vsco": 18,
   "vc_leg@sso": 45,
   "vc_pizz@plain": 32,
   "vc_sus@plain": 48,
   "vla_harm@sso": 2,
-  "vla_leg@sso": 25,
-  "vla_sus@plain": 31,
-  "vla_trem@plain": 88,
+  "vla_leg@sso": 14,
+  "vla_sus@plain": 32,
+  "vla_trem@plain": 86,
   "vln_harm@sso": 3,
-  "vln_leg@sso": 50
+  "vln_leg@sso": 39
  },
  "substitutions": {
   "tbn_sus": "plain unavailable → sso"
@@ -44,7 +44,7 @@
  "out_of_range_rescued": {
   "tbn_sus": 1
  },
- "sfizz_notes": 246,
+ "sfizz_notes": 222,
  "lengthened": 0,
  "window": [
   0.0,
@@ -68,7 +68,7 @@
  "qa": {
   "gaps": [
    [
-    120.4,
+    120.1,
     122.5
    ]
   ],
@@ -76,39 +76,39 @@
   "clicks": [],
   "flat": [],
   "bounds": [
-   60.5,
-   85.0,
+   4.0,
+   76.0,
+   84.8,
    97.2,
    100.2,
    103.5,
    109.8,
-   111.8,
+   111.5,
    115.0,
    116.2,
    118.8,
-   122.8,
-   150.5
+   122.8
   ],
   "png": "/home/claude/immollimma/requests/ussr-theme/out/report.png"
  },
  "parts_lufs": {
   "Coro": -23.0,
   "Trombe": -23.9,
-  "Coro (uomini)": -24.5,
+  "Coro (uomini)": -24.8,
   "Violoncello solo": -26.2,
-  "Violoncelli": -27.3,
-  "Contrabassi": -27.8,
+  "Violoncelli": -26.7,
   "Corni": -28.1,
   "Oboe": -29.5,
-  "Tromboni": -31.6,
-  "Tuba": -32.1,
-  "Violini": -32.2,
-  "Viole": -34.5,
+  "Contrabassi": -29.6,
+  "Tromboni": -31.4,
+  "Violini": -32.4,
+  "Tuba": -33.6,
+  "Viole": -34.0,
   "Clarinetti": -36.0,
-  "Timpani": -38.8,
+  "Campane": -38.4,
+  "Timpani": -38.6,
   "Celesta": -38.9,
-  "Campane": -39.2,
   "Arpa": -39.3
  },
- "seconds_taken": 46.9
+ "seconds_taken": 74.7
 }

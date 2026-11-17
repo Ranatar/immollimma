@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""«Холодный мир» — тема СССР, вторая редакция (≈ 3:00). Мелодия — заказчика (MIDI, 8 тактов, e-moll, натуральный
+"""«Холодный мир» — тема СССР, четвёртая редакция (≈ 3:00). Мелодия — заказчика (MIDI, 8 тактов, e-moll, натуральный
 минор), в проведениях без изменений; оркестровка и драматургия — по образу СССР из опенинга
 (requests/cold-peace-op/storyboard.md): старик у окна, снег, ветеран химической войны 1944 года, держава, которая
 устала быть великой.
@@ -40,14 +40,20 @@ THEME = [(0, 1, 71), (1, 1, 71), (2, 1, 72), (3, .5, 71), (3.5, .5, 69),
          (24, 1, 66), (25, .5, 67), (25.5, .5, 69), (26, .5, 67), (26.5, .5, 66), (27, 1, 64),
          (28, 1, 71), (29, 1, 69), (30, 2, 64)]
 # гармония по долям (ступень натурального минора, качество): звук темы на доле — в аккорде
-HARM_DEG = [(0, "m"), (0, "m"), (3, "m"), (0, "m"),        # Em Em | Am Em      (си си | до си-ля)
-            (5, "M"), (3, "m7"), (0, "m"), (5, "M"),       # C Am7 | Em C       (соль ля | соль ми)
-            (0, "m"), (2, "M"), (5, "M"), (5, "M"),        # Em G | C C         (си си | ми ми)
-            (2, "M"), (2, "M"), (4, "m"), (4, "m"),        # G G | Bm Bm        (ре ми ре до | си до ре)
-            (5, "M"), (5, "M"), (3, "m"), (0, "m"),        # C C | Am Em        (ми ми | до си-ля)
-            (0, "m"), (6, "M"), (5, "M"), (3, "m"),        # Em D | C Am        (си ля | соль ми)
-            (6, "M"), (0, "m"), (0, "m"), (5, "M"),        # D Em | Em C        (фа# соль-ля | соль фа# ми)
-            (4, "m"), (4, "m7"), (0, "m"), (0, "m")]       # Bm Bm7 | Em Em     (си ля | ми)
+HARM_DEG = (
+    [(0, "m")] * 4 +                   # 1  Em        си си до си-ля   (до — вспомогательная, ля — проходящая)
+    [(5, "M")] * 4 +                   # 2  C         соль ля соль ми
+    [(0, "m")] * 2 + [(5, "M")] * 2 +  # 3  Em  C     си си | ми ми
+    [(2, "M")] * 4 +                   # 4  G         ре ми ре до си до ре  (полукаданс в параллельный мажор)
+    [(5, "M")] * 2 + [(3, "m")] * 2 +  # 5  C   Am    ми ми | до си-ля
+    [(0, "m")] * 4 +                   # 6  Em        си ля соль ми
+    [(6, "M")] * 2 + [(5, "M")] * 2 +  # 7  D   C     фа# соль-ля | соль-фа# ми   (VII – VI – V – i: русский каданс)
+    [(4, "7")] * 2 + [(0, "m")] * 2)   # 8  H7  Em    си ля | ми   (ре-диез только здесь — в теме в этот миг ре нет)
+# Прежде аккорд менялся на каждую долю — лишь бы звук темы на доле входил в аккорд (Em Em Am Em | C Am7 Em C …).
+# Каждый звук формально «в аккорде», но гармония дёргалась без функции и логики: вспомогательные и проходящие
+# звуки темы получали свои аккорды, фон метался — «отдельные моменты созвучны, а в целом не дополняет тему».
+# Теперь — гармонический ритм песни: аккорд на такт или полтакта, со смыслом (t – s – t – D(параллельн.) …
+# VII – VI – V – i).
 
 
 class NatKey(cp.Key):
@@ -105,6 +111,114 @@ def line(slots_spec, harm, fixed, lo, hi, role, **kw):
     """подбор голоса движком: slots_spec — [(t, d)]"""
     out, _cost = cp.generate(slots_spec, harm, fixed, lo, hi, role=role, strict=False, **kw)
     return out
+
+
+def bass_line(harm, t0, t1, lo, hi, step=2.0, start=None, mel=()):
+    """бас по гармонии: на смене аккорда — основной тон (ближайший к прежнему), внутри аккорда — квинта или
+    основной тон через октаву; последний звук — основной тон"""
+    out, prev, t = [], start, t0
+    last_chord = None
+    while t < t1 - 1e-9:
+        c = harm.at(t)[1]
+        d = min(step, t1 - t)
+        final = t + d >= t1 - 1e-9
+        if repr(c) != last_chord or final:
+            pcs = {c.root}
+        else:
+            pcs = {(c.root + 7) % 12, c.root}
+        ms = _over(mel, t, d)
+        clean = {pc for pc in pcs if all(abs(pc - q) % 12 not in (1, 2, 10, 11) for q in ms)}
+        pcs = clean or {c.root}
+        cands = [x for x in range(lo, hi + 1) if x % 12 in pcs and x != (out[-1][2] if out and pcs != {c.root} else -1)]
+        ref = prev if prev is not None else (lo + hi) // 2
+        m = min(cands, key=lambda x: (abs(x - ref), x))
+        out.append((t, d, m))
+        prev, last_chord, t = m, repr(c), t + d
+    return out
+
+
+CONS = {0, 3, 4, 7, 8, 9}  # созвучия с темой, допустимые для подголоска и баса (кварта — только сверху)
+
+
+def _over(notes, t, d):
+    return [m for b, dd, m in notes if b < t + d - 1e-9 and b + dd > t + 1e-9]
+
+
+def counter_line(harm, slots, mel, lo, hi, side, bass=()):
+    """подголосок: только звуки аккорда, консонирующие со ВСЕМИ звуками темы, звучащими одновременно с ним
+    (включая проходящие и вспомогательные), по одну сторону от темы. Линия ищется целиком (динамическое
+    программирование): плавные шаги, без топтания на месте, без параллельных квинт и октав с темой, с поощрением
+    противодвижения. (Движок фуги с strict=False пропускал секунды с темой на долях — «задняя партия не
+    дополняет тему».)"""
+    allowed = CONS | ({5} if side == "above" else set())
+    cand, ms_of = [], []
+    for t, d in slots:
+        pcs, x = None, t
+        while x < t + d - 1e-9:  # аккорд должен держаться всё время звучания
+            c = set(harm.at(x)[1].pcs)
+            pcs = c if pcs is None else pcs & c
+            x += 0.5
+        ms, bs = _over(mel, t, d), _over(bass, t, d)
+        ok = [m for m in range(lo, hi + 1) if m % 12 in pcs
+              and not (side == "below" and ms and m > min(ms) - 3)
+              and not (side == "above" and ms and m < max(ms) + 3)
+              and all(abs(m - q) % 12 in allowed for q in ms)
+              and all(abs(m - q) % 12 not in (1, 2, 10, 11) for q in bs)]
+        cand.append(ok)
+        ms_of.append(ms[0] if ms else None)
+    INF = 1e9
+    best = [{m: (0.0 if True else INF, None) for m in cand[0]}] if cand and cand[0] else [{}]
+    for k in range(1, len(slots)):
+        cur = {}
+        for m in cand[k]:
+            bc, bp = INF, None
+            prev_layer = best[k - 1]
+            if not prev_layer:
+                cur[m] = (0.0, None)
+                continue
+            for q, (cq, _) in prev_layer.items():
+                step = abs(m - q)
+                c = cq + {0: 2.5, 1: 0.0, 2: 0.0, 3: 0.6, 4: 0.8, 5: 1.2}.get(step, 1.5 + 0.4 * step)
+                a, b = ms_of[k - 1], ms_of[k]
+                if a is not None and b is not None:
+                    i1, i2 = abs(q - a) % 12, abs(m - b) % 12
+                    if i1 == i2 and i1 in (0, 7) and m != q:
+                        c += 20
+                    if (m - q) * (b - a) < 0:
+                        c -= 0.4
+                    if m == q and b == a:
+                        c += 1.0
+                if c < bc:
+                    bc, bp = c, q
+            cur[m] = (bc, bp)
+        best.append(cur)
+    out = [None] * len(slots)
+    k = len(slots) - 1
+    while k >= 0 and not best[k]:
+        k -= 1
+    if k < 0:
+        return []
+    m = min(best[k], key=lambda q: best[k][q][0])
+    while k >= 0:
+        out[k] = m
+        prev = best[k][m][1] if m in best[k] else None
+        k -= 1
+        if prev is None:
+            while k >= 0 and not best[k]:
+                k -= 1
+            if k >= 0:
+                m = min(best[k], key=lambda q: best[k][q][0])
+        else:
+            m = prev
+    res = []
+    for (t, d), m in zip(slots, out):
+        if m is None:
+            continue
+        if res and res[-1][2] == m and abs(res[-1][0] + res[-1][1] - t) < 1e-9:
+            res[-1] = (res[-1][0], res[-1][1] + d, m)  # повтор — связываем лигой
+        else:
+            res.append((t, d, m))
+    return res
 
 
 def calm_slots(t0, t1, mel):
@@ -204,11 +318,11 @@ class U:
 def intro(o):
     """снег; голова темы обрывками — перекличка кларнета, гобоя, валторны — и вырастание в первое проведение;
     в басу — педаль E, колокол"""
-    for i in range(6):
-        o.n("tubular", 64 if i % 2 == 0 else 71, 4 * i, 4, "Campane", vel=0.42, gain=0.32, release=3.0)
+    for i in range(0, 6, 2):
+        o.n("tubular", 64, 4 * i, 2, "Campane", vel=0.42, gain=0.32, release=1.5)
     o.n("cb_sus", 28, 0, 24, "Contrabassi", vel=0.4, gain=0.4, attack=2.0)
     o.n("vln_harm", 76, 0, 22, "Violini", vel=0.33, gain=0.16, attack=3.0, release=2.0)
-    o.n("vla_harm", 71, 2, 20, "Viole", vel=0.33, gain=0.14, attack=3.0, release=2.0)
+    o.n("vla_harm", 64, 2, 20, "Viole", vel=0.33, gain=0.14, attack=3.0, release=2.0)
     for j, m in enumerate([88, 83, 79, 76, 83, 79, 74, 71]):
         o.n("harp", m, 1 + j * 2.5, 2, "Arpa", vel=0.3, gain=0.24, release=2.5, pan=0.35)
     head = [(b, d, m) for b, d, m in THEME if b < 4]          # си си до си-ля
@@ -226,8 +340,8 @@ def statement_solo(o, t0):
     mel = theme_in(-12, t0)                                   # виолончель: си3…ми4
     harm = harmony(key, t0)
     E = {28, 40}
-    bass = line(half_slots(t0, 8), harm, [mel], 28, 45, "lower", above=[mel], start=E, end=E)
-    counter = line(calm_slots(t0, t0 + 32, mel), harm, [mel, bass], 45, 59, "upper", above=[mel], below=[bass])
+    bass = bass_line(harm, t0, t0 + 32, 28, 45, start=40, mel=mel)
+    counter = counter_line(harm, calm_slots(t0, t0 + 32, mel), mel, 43, 57, "below", bass=bass)
     o.phrase("vc_leg", mel, "Violoncello solo", vel=0.52, gain=0.62, attack=0.05)
     o.phrase("cb_sus", bass, "Contrabassi", vel=0.45, gain=0.5, attack=0.2, swell=0.06)
     o.phrase("vla_leg", counter, "Viole", vel=0.42, gain=0.3, attack=0.08, swell=0.08)
@@ -252,8 +366,8 @@ def statement_choir(o, t0):
     mel = theme_in(5 - 12, t0)                                # ми4…ля4
     harm = harmony(key, t0)
     A = {33, 45}
-    bass = line(half_slots(t0, 8), harm, [mel], 33, 48, "lower", above=[mel], start=A, end=A)
-    counter = line(calm_slots(t0, t0 + 32, mel), harm, [mel, bass], 69, 81, "upper", below=[mel])
+    bass = bass_line(harm, t0, t0 + 32, 33, 48, start=45, mel=mel)
+    counter = counter_line(harm, calm_slots(t0, t0 + 32, mel), mel, 69, 81, "above", bass=bass)
     o.phrase("choir", mel, "Coro (uomini)", vel=0.55, gain=0.55, attack=0.12)
     o.phrase("hn_sus", mel, "Corni", vel=0.52, gain=0.36, attack=0.05)
     o.phrase("cb_sus", bass, "Contrabassi", vel=0.5, gain=0.52, attack=0.15)
@@ -275,7 +389,7 @@ def development(o, t0):
         key = NatKey(tonic)
         mel = theme_in(sh - 12, b0, notes=head)
         harm = harmony(key, b0, HARM_DEG[:8])
-        bass = line([(b0 + j, 1) for j in range(8)], harm, [mel], 31, 47, "lower", above=[mel])
+        bass = bass_line(harm, b0, b0 + 8, 31, 47, step=1.0, mel=mel)
         insts = (("tbn_sus", 0, "Tromboni"), ("hn_sus", 0, "Corni")) if i < 2 else \
             (("tbn_sus", 0, "Tromboni"), ("tpt_sus", 12, "Trombe"), ("hns_sus", 0, "Corni"))
         for inst, sh2, part in insts:
@@ -315,9 +429,8 @@ def apotheosis(o, t0):
     mel = theme_in(0, t0)
     harm = harmony(key, t0)
     E = {28, 40}
-    bass = line([(t0 + j, 1) for j in range(30)] + [(t0 + 30, 2)], harm, [mel], 28, 43, "lower", above=[mel],
-                start=E, end=E)
-    counter = line(calm_slots(t0, t0 + 32, mel), harm, [mel, bass], 79, 91, "upper", below=[mel])
+    bass = bass_line(harm, t0, t0 + 30, 28, 43, step=1.0, start=40, mel=mel) + [(t0 + 30, 2, 28)]
+    counter = counter_line(harm, calm_slots(t0, t0 + 32, mel), mel, 79, 91, "above", bass=bass)
     o.phrase("tpt_sus", mel, "Trombe", vel=0.66, gain=0.42, attack=0.03)
     o.phrase("hns_sus", [(b, d, m - 12) for b, d, m in mel], "Corni", vel=0.66, gain=0.44, attack=0.03)
     o.phrase("choir", [(b, d, m - 12) for b, d, m in mel], "Coro", vel=0.62, gain=0.5, attack=0.08)
@@ -344,9 +457,9 @@ def coda(o, t0):
     o.phrase("vc_leg", theme_in(-24, t0 + 8, notes=tail), "Violoncello solo", vel=0.42, gain=0.5, attack=0.08)
     o.n("cb_sus", 28, t0, 16, "Contrabassi", vel=0.38, gain=0.4, attack=1.0, release=2.0)
     o.n("vln_harm", 76, t0, 16, "Violini", vel=0.3, gain=0.14, attack=2.0, release=2.5)
-    o.n("vla_harm", 71, t0, 16, "Viole", vel=0.3, gain=0.12, attack=2.0, release=2.5)
-    for i in range(4):
-        o.n("tubular", 64 if i % 2 == 0 else 71, t0 + 4 * i, 4, "Campane", vel=0.4, gain=0.3, release=3.5)
+    o.n("vla_harm", 64, t0, 16, "Viole", vel=0.3, gain=0.12, attack=2.0, release=2.5)
+    for i in range(0, 4, 2):
+        o.n("tubular", 64, t0 + 4 * i, 2, "Campane", vel=0.4, gain=0.3, release=1.5)
     o.n("tubular", 64, t0 + 16, 4, "Campane", vel=0.45, gain=0.36, release=4.0)
 
 
