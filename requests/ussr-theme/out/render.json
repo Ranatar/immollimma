@@ -10,53 +10,56 @@
   "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
  ],
  "by_instrument": {
-  "bsn_sus@plain": 18,
-  "cb_sus@plain": 78,
-  "celesta@sso": 12,
+  "cb_pizz@plain": 32,
+  "cb_sus@plain": 67,
+  "celesta@sso": 10,
   "choir@sso": 76,
-  "harp@plain": 24,
-  "hn_sus@plain": 63,
-  "hns_sus@sso": 38,
-  "sample@plain": 102,
+  "cl_sus@plain": 24,
+  "harp@plain": 8,
+  "hn_sus@plain": 72,
+  "hns_sus@sso": 56,
+  "ob_sus@plain": 5,
+  "sample@plain": 74,
   "sample@sso": 1,
-  "tba_sus@plain": 54,
-  "tbn_sus@plain": 114,
-  "timp@plain": 40,
-  "timp_roll@plain": 1,
-  "tpt_sus@plain": 38,
-  "tubular@sso": 12,
-  "tubular@vsco": 13,
-  "vc_leg@sso": 38,
-  "vc_sus@plain": 16,
+  "tba_sus@plain": 31,
+  "tbn_sus@plain": 113,
+  "tbn_sus@sso": 1,
+  "timp@plain": 64,
+  "tpt_sus@plain": 56,
+  "tubular@sso": 9,
+  "tubular@vsco": 18,
+  "vc_leg@sso": 45,
+  "vc_pizz@plain": 32,
+  "vc_sus@plain": 48,
   "vla_harm@sso": 2,
-  "vla_leg@sso": 32,
-  "vla_sus@plain": 32,
-  "vla_trem@plain": 48,
-  "vln_harm@sso": 2,
-  "vln_sus@plain": 86,
-  "vln_trem@plain": 12
+  "vla_leg@sso": 25,
+  "vla_sus@plain": 24,
+  "vla_trem@plain": 90,
+  "vln_harm@sso": 3,
+  "vln_leg@sso": 50
  },
  "substitutions": {
-  "tubular": "vsco unavailable → sso"
+  "tubular": "vsco unavailable → sso",
+  "tbn_sus": "plain unavailable → sso"
  },
  "missing": {},
  "out_of_range_rescued": {
-  "tubular": 12
+  "tubular": 9,
+  "tbn_sus": 1
  },
- "sfizz_notes": 114,
+ "sfizz_notes": 246,
  "lengthened": 0,
  "window": [
   0.0,
-  146.9
+  176.625
  ],
- "seconds": 146.9,
+ "seconds": 176.625,
  "mp3": "/home/claude/immollimma/requests/ussr-theme/out/audio.mp3",
  "notation": {
   "midi": "/home/claude/immollimma/requests/ussr-theme/out/score.mid",
   "lost": {
-   "notes with a glissando inside": 8,
-   "notes with detune (out-of-tune doubles)": 14,
-   "raw samples (noises, unpitched percussion)": 103
+   "raw samples (noises, unpitched percussion)": 75,
+   "notes with detune (out-of-tune doubles)": 9
   },
   "musicxml": "/home/claude/immollimma/requests/ussr-theme/out/score.musicxml",
   "pdf": "/home/claude/immollimma/requests/ussr-theme/out/score.pdf",
@@ -66,47 +69,49 @@
   ]
  },
  "qa": {
-  "gaps": [],
+  "gaps": [
+   [
+    120.1,
+    122.5
+   ]
+  ],
   "clipped": 0,
   "clicks": [],
   "flat": [],
   "bounds": [
-   14.5,
-   41.5,
-   80.5,
-   85.8,
-   86.5,
-   89.8,
-   91.2,
-   92.8,
-   113.2,
-   123.2,
-   123.8,
-   141.5
+   84.8,
+   97.2,
+   100.2,
+   103.5,
+   109.8,
+   111.8,
+   115.0,
+   116.2,
+   118.8,
+   122.8,
+   150.5,
+   167.5
   ],
   "png": "/home/claude/immollimma/requests/ussr-theme/out/report.png"
  },
  "parts_lufs": {
-  "Trombe": -21.7,
-  "Coro": -24.6,
-  "Coro (uomini)": -25.8,
-  "Violoncello solo": -27.7,
-  "Contrabassi": -28.1,
-  "Horns": -28.1,
-  "Tromboni": -30.4,
-  "Tuba": -31.0,
-  "Fagotti": -31.7,
-  "Timpani": -33.3,
-  "Violoncelli": -35.1,
-  "Viole": -35.6,
-  "Harp": -36.5,
-  "Violini": -36.9,
-  "Basses": -47.7,
-  "Violins": -51.6,
-  "Campane": -52.9,
-  "Violas": -53.4,
-  "Celesta": -54.5,
-  "Tubular bells": -60.3
+  "Coro": -23.0,
+  "Trombe": -23.9,
+  "Coro (uomini)": -24.5,
+  "Violoncello solo": -26.2,
+  "Violoncelli": -27.3,
+  "Contrabassi": -27.8,
+  "Corni": -28.1,
+  "Oboe": -29.5,
+  "Tromboni": -31.5,
+  "Tuba": -32.1,
+  "Violini": -32.2,
+  "Viole": -33.0,
+  "Clarinetti": -33.5,
+  "Timpani": -38.6,
+  "Celesta": -38.9,
+  "Arpa": -39.3,
+  "Campane": -42.8
  },
- "seconds_taken": 45.3
+ "seconds_taken": 50.5
 }
