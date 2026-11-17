@@ -31,7 +31,7 @@
   "tbn_stac@vsco": 64,
   "tbn_sus@plain": 15,
   "timp@plain": 3,
-  "timp_roll@plain": 2,
+  "timp_roll@vsco": 2,
   "tpt_mute@plain": 9,
   "tpt_stac@vsco": 64,
   "tpt_sus@plain": 3,
@@ -44,13 +44,15 @@
   "xylo@vsco": 32
  },
  "substitutions": {
+  "timp_roll": "plain unavailable → vsco",
   "vln_sus": "plain unavailable → sso"
  },
  "missing": {},
  "out_of_range_rescued": {
+  "timp_roll": 2,
   "vln_sus": 2
  },
- "sfizz_notes": 342,
+ "sfizz_notes": 344,
  "lengthened": 0,
  "window": [
   0.0,
@@ -67,37 +69,34 @@
   "musicxml": "/home/claude/immollimma/requests/tractatus/out/score.musicxml",
   "pdf": "/home/claude/immollimma/requests/tractatus/out/score.pdf",
   "grid": [
-   4
+   4,
+   3
   ]
  },
  "qa": {
   "gaps": [
    [
-    158.8,
+    159.2,
     160.4
    ],
    [
-    180.6,
-    181.7
-   ],
-   [
     349.2,
-    350.7
+    350.6
    ],
    [
-    353.1,
-    354.4
+    353.2,
+    354.5
    ]
   ],
   "clipped": 0,
   "clicks": [],
   "flat": [],
   "bounds": [
-   5.8,
    65.0,
    112.8,
    160.5,
    190.8,
+   224.0,
    264.8,
    282.2,
    310.5,
@@ -111,8 +110,8 @@
  "parts_lufs": {
   "Bassoon": -21.2,
   "Clarinet": -22.5,
-  "Trumpet": -23.1,
-  "Horn": -23.6,
+  "Trumpet": -23.3,
+  "Horn": -23.5,
   "Flute": -23.7,
   "Choir": -23.9,
   "Alto flute": -24.9,
@@ -125,12 +124,12 @@
   "Piccolo": -27.7,
   "Violins": -27.9,
   "Basses": -28.9,
+  "Timpani": -29.3,
   "Violas": -29.7,
   "Celesta": -31.6,
   "Xylophone": -32.4,
-  "Timpani": -32.9,
-  "Trombone": -33.9,
+  "Trombone": -33.8,
   "Crotales": -37.9
  },
- "seconds_taken": 273.1
+ "seconds_taken": 163.8
 }

@@ -44,13 +44,13 @@
   "bounds": [
    17.0,
    19.2,
-   35.5,
+   19.8,
    37.0,
-   56.2,
    67.0,
    67.5,
-   75.8,
+   75.5,
    113.2,
+   131.8,
    141.5,
    150.2,
    170.2
@@ -58,12 +58,12 @@
   "png": "/home/claude/immollimma/requests/namarie/out/report.png"
  },
  "parts_lufs": {
-  "Choir II": -28.5,
-  "Alto Flute": -30.9,
+  "Choir II": -28.6,
+  "Alto Flute": -31.2,
   "Contrabassi": -31.3,
   "Choir I": -32.0,
   "Violoncelli": -35.5,
-  "Timpani": -40.7
+  "Timpani": -40.4
  },
- "seconds_taken": 33.8
+ "seconds_taken": 38.2
 }

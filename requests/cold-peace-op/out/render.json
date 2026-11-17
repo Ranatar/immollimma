@@ -64,7 +64,8 @@
   "musicxml": "/home/claude/immollimma/requests/cold-peace-op/out/score.musicxml",
   "pdf": "/home/claude/immollimma/requests/cold-peace-op/out/score.pdf",
   "grid": [
-   4
+   4,
+   3
   ]
  },
  "qa": {
@@ -76,13 +77,12 @@
    7.0,
    17.5,
    20.8,
-   30.8,
+   22.2,
    32.2,
-   32.8,
-   33.2,
    34.0,
    34.8,
-   79.2,
+   79.0,
+   80.2,
    81.2,
    88.2
   ],
@@ -97,14 +97,14 @@
   "Cellos": -25.5,
   "Violins": -27.0,
   "Trombone": -27.2,
-  "Celesta": -27.3,
+  "Celesta": -27.4,
   "Organ": -27.6,
   "Flute": -28.8,
-  "Timpani": -29.7,
   "Violas": -29.7,
+  "Timpani": -29.9,
   "Harp": -31.1,
   "Tuba": -32.4,
   "Tubular bells": -45.1
  },
- "seconds_taken": 173.1
+ "seconds_taken": 92.2
 }

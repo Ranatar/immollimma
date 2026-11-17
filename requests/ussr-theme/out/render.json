@@ -26,8 +26,7 @@
   "tbn_sus@sso": 1,
   "timp@plain": 64,
   "tpt_sus@plain": 56,
-  "tubular@sso": 9,
-  "tubular@vsco": 18,
+  "tubular@vsco": 27,
   "vc_leg@sso": 45,
   "vc_pizz@plain": 32,
   "vc_sus@plain": 48,
@@ -39,15 +38,13 @@
   "vln_leg@sso": 50
  },
  "substitutions": {
-  "tubular": "vsco unavailable → sso",
   "tbn_sus": "plain unavailable → sso"
  },
  "missing": {},
  "out_of_range_rescued": {
-  "tubular": 9,
   "tbn_sus": 1
  },
- "sfizz_notes": 246,
+ "sfizz_notes": 247,
  "lengthened": 0,
  "window": [
   0.0,
@@ -71,7 +68,7 @@
  "qa": {
   "gaps": [
    [
-    120.1,
+    120.4,
     122.5
    ]
   ],
@@ -79,6 +76,7 @@
   "clicks": [],
   "flat": [],
   "bounds": [
+   4.0,
    84.8,
    97.2,
    100.2,
@@ -89,29 +87,28 @@
    116.2,
    118.8,
    122.8,
-   150.5,
-   167.5
+   150.5
   ],
   "png": "/home/claude/immollimma/requests/ussr-theme/out/report.png"
  },
  "parts_lufs": {
-  "Coro": -23.0,
+  "Coro": -23.2,
   "Trombe": -23.9,
-  "Coro (uomini)": -24.5,
+  "Coro (uomini)": -24.4,
   "Violoncello solo": -26.2,
   "Violoncelli": -27.3,
   "Contrabassi": -27.8,
   "Corni": -28.1,
   "Oboe": -29.5,
   "Tromboni": -31.5,
+  "Violini": -32.0,
   "Tuba": -32.1,
-  "Violini": -32.2,
   "Viole": -33.0,
   "Clarinetti": -33.5,
-  "Timpani": -38.6,
+  "Campane": -37.6,
+  "Timpani": -37.8,
   "Celesta": -38.9,
-  "Arpa": -39.3,
-  "Campane": -42.8
+  "Arpa": -39.3
  },
- "seconds_taken": 50.5
+ "seconds_taken": 84.5
 }

@@ -154,11 +154,15 @@ class U:
 
 
 # ===================================================================== разделы
+# колокола — только E4/A4/B4: у трубчатых колоколов ниже ля малой октавы (E3, B3) сильнейший обертон — квинта
+# (у B3 громче основного звучит F#), и низкий колокол «фальшивит» против гармонии
+
+
 def intro(o):
     """снег; голова темы обрывками — перекличка кларнета, гобоя, валторны — и вырастание в первое проведение;
     в басу — педаль E, колокол"""
     for i in range(6):
-        o.n("tubular", 52 if i % 2 == 0 else 59, 4 * i, 4, "Campane", vel=0.42, gain=0.32, release=3.0)
+        o.n("tubular", 64 if i % 2 == 0 else 71, 4 * i, 4, "Campane", vel=0.42, gain=0.32, release=3.0)
     o.n("cb_sus", 28, 0, 24, "Contrabassi", vel=0.4, gain=0.4, attack=2.0)
     o.n("vln_harm", 76, 0, 22, "Violini", vel=0.33, gain=0.16, attack=3.0, release=2.0)
     o.n("vla_harm", 71, 2, 20, "Viole", vel=0.33, gain=0.14, attack=3.0, release=2.0)
@@ -214,7 +218,7 @@ def statement_choir(o, t0):
     o.phrase("vln_leg", counter, "Violini", vel=0.48, gain=0.34, attack=0.05)
     o.pad("vla_sus", harm, t0, t0 + 32, 57, 68, "Viole", mel + counter, vel=0.38, gain=0.18, size=2)
     for b in range(8):
-        o.n("tubular", 57 if b % 2 == 0 else 64, t0 + 4 * b, 4, "Campane", vel=0.45, gain=0.3, release=3.0)
+        o.n("tubular", 69 if b % 2 == 0 else 64, t0 + 4 * b, 4, "Campane", vel=0.45, gain=0.3, release=3.0)
     return [mel, bass, counter], harm
 
 
@@ -285,7 +289,7 @@ def apotheosis(o, t0):
     for b, d, m in bass:
         o.n("timp", next(x for x in range(40, 52) if x % 12 == m % 12), b, 1, "Timpani", vel=0.55, gain=0.32)
     for b in range(8):
-        o.n("tubular", 52 if b % 2 == 0 else 59, t0 + 4 * b, 4, "Campane", vel=0.6, gain=0.38, release=3.0)
+        o.n("tubular", 64 if b % 2 == 0 else 71, t0 + 4 * b, 4, "Campane", vel=0.6, gain=0.38, release=3.0)
         o.fx("bd", t0 + 4 * b, gain=0.2)
     o.fx("clash", t0, gain=0.25)
     o.fx("tamtam", t0 + 30, gain=0.3)
@@ -302,8 +306,8 @@ def coda(o, t0):
     o.n("vln_harm", 76, t0, 16, "Violini", vel=0.3, gain=0.14, attack=2.0, release=2.5)
     o.n("vla_harm", 71, t0, 16, "Viole", vel=0.3, gain=0.12, attack=2.0, release=2.5)
     for i in range(4):
-        o.n("tubular", 52 if i % 2 == 0 else 59, t0 + 4 * i, 4, "Campane", vel=0.4, gain=0.3, release=3.5)
-    o.n("tubular", 40, t0 + 16, 4, "Campane", vel=0.45, gain=0.36, release=4.0)
+        o.n("tubular", 64 if i % 2 == 0 else 71, t0 + 4 * i, 4, "Campane", vel=0.4, gain=0.3, release=3.5)
+    o.n("tubular", 64, t0 + 16, 4, "Campane", vel=0.45, gain=0.36, release=4.0)
 
 
 def build(ctx):

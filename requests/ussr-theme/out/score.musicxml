@@ -22,81 +22,81 @@
     </scaling>
   </defaults>
   <part-list>
-    <score-part id="P2ddb1ad34e6d88f128538853108bbe3d">
+    <score-part id="Pf911bf6d1fa7b8ecc1445d8cae40edeb">
       <part-name>Oboe</part-name>
       <part-abbreviation>Oboe</part-abbreviation>
     </score-part>
-    <score-part id="P5431aff1826e8ceb6f304e833ec5867a">
+    <score-part id="P627a3d08e32101e03ffb875129cfe1e4">
       <part-name>Tuba</part-name>
       <part-abbreviation>Tuba</part-abbreviation>
     </score-part>
-    <score-part id="Pc13df403f15f056259e65ad3f100848a">
+    <score-part id="Peb9b965424678dad16cfb47d0a4c24c1">
       <part-name>Timpani</part-name>
       <part-abbreviation>Timpa</part-abbreviation>
     </score-part>
-    <score-part id="P4e699ba78f42960f0dbd66ba17cadece">
+    <score-part id="P579d6110187c5c8abb1a1af2f989244e">
       <part-name>Celesta 1</part-name>
       <part-abbreviation>Celes</part-abbreviation>
     </score-part>
-    <score-part id="Padbdfa816dccbadab75c1136a862d36a">
+    <score-part id="P45c8b9e5e95ec2c9f3b7fc4d2585001e">
       <part-name>Celesta 2</part-name>
       <part-abbreviation>Celes</part-abbreviation>
     </score-part>
-    <score-part id="P178ed7d2dba82ed436ec76ecb08dde67">
+    <score-part id="P0af001843fff57c60a95c058f68a259c">
       <part-name>Campane</part-name>
       <part-abbreviation>Campa</part-abbreviation>
     </score-part>
-    <score-part id="Pf09cbf4f16083c5551b0273bda9fd22a">
+    <score-part id="P7962ebbf31e7f46317bf1ce0f82d393c">
       <part-name>Contrabassi</part-name>
       <part-abbreviation>Contr</part-abbreviation>
     </score-part>
-    <score-part id="P79038f7a60057e8f3e6214bd897d3dc3">
+    <score-part id="P503d56395a7e583974ec3facee5eb4c3">
       <part-name>Violini</part-name>
       <part-abbreviation>Violi</part-abbreviation>
     </score-part>
-    <score-part id="P58c41bd4ae5b144dc7f26c6f83d125f5">
+    <score-part id="P4ef6d6b433cd89c48af011ac362e063c">
       <part-name>Viole</part-name>
       <part-abbreviation>Viole</part-abbreviation>
     </score-part>
-    <score-part id="Pd56c2c59628f3632a987479a2cc450b2">
+    <score-part id="P5b9fb9276722d8db50a75b65f596401d">
       <part-name>Arpa</part-name>
       <part-abbreviation>Arpa</part-abbreviation>
     </score-part>
-    <score-part id="P0732a37c24d344110898dd62564b12da">
+    <score-part id="Pf94b362a2f30479342ef25241b4fa860">
       <part-name>Clarinetti</part-name>
       <part-abbreviation>Clari</part-abbreviation>
     </score-part>
-    <score-part id="Pd67c2c2145ff17340b601a927e329fdb">
+    <score-part id="P49676a6eea280964aeb2a6c95aeb711a">
       <part-name>Corni</part-name>
       <part-abbreviation>Corni</part-abbreviation>
     </score-part>
-    <score-part id="P50d149805160384f5cd4f1a530ace6d3">
+    <score-part id="P2b51be3868ff8f6ddbcd9548062bca4b">
       <part-name>Violoncello solo</part-name>
       <part-abbreviation>Violo</part-abbreviation>
     </score-part>
-    <score-part id="P62ec6b3eedc8de18a30e880c59cbd411">
+    <score-part id="P40adc73cb06a79578b2359eb19c4a9bd">
       <part-name>Violoncelli</part-name>
       <part-abbreviation>Violo</part-abbreviation>
     </score-part>
-    <score-part id="P107652d84a2704ff95d885702bc3b750">
+    <score-part id="P4dfd964393248b569407f85782c424b4">
       <part-name>Coro (uomini)</part-name>
       <part-abbreviation>Coro </part-abbreviation>
     </score-part>
-    <score-part id="Pccfc8122d6e770d960fbb03863602238">
+    <score-part id="Pc212d0017c81e58104576412998a2a3a">
       <part-name>Tromboni</part-name>
       <part-abbreviation>Tromb</part-abbreviation>
     </score-part>
-    <score-part id="P19e003b7d81c0f2c663e07e3a7a5d592">
+    <score-part id="P5bc7543126d571f8468a562149f4d8af">
       <part-name>Trombe</part-name>
       <part-abbreviation>Tromb</part-abbreviation>
     </score-part>
-    <score-part id="P97a1682ec775366907dde6780ae3f872">
+    <score-part id="Pac0ca48bfbda5104682d4caf2ad43a9b">
       <part-name>Coro</part-name>
       <part-abbreviation>Coro</part-abbreviation>
     </score-part>
   </part-list>
   <!--=========================== Part 1 ===========================-->
-  <part id="P2ddb1ad34e6d88f128538853108bbe3d">
+  <part id="Pf911bf6d1fa7b8ecc1445d8cae40edeb">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -553,7 +553,7 @@
     </measure>
   </part>
   <!--=========================== Part 2 ===========================-->
-  <part id="P5431aff1826e8ceb6f304e833ec5867a">
+  <part id="P627a3d08e32101e03ffb875129cfe1e4">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -1127,7 +1127,7 @@
     </measure>
   </part>
   <!--=========================== Part 3 ===========================-->
-  <part id="Pc13df403f15f056259e65ad3f100848a">
+  <part id="Peb9b965424678dad16cfb47d0a4c24c1">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -2125,7 +2125,7 @@
     </measure>
   </part>
   <!--=========================== Part 4 ===========================-->
-  <part id="P4e699ba78f42960f0dbd66ba17cadece">
+  <part id="P579d6110187c5c8abb1a1af2f989244e">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -2754,7 +2754,7 @@
     </measure>
   </part>
   <!--=========================== Part 5 ===========================-->
-  <part id="Padbdfa816dccbadab75c1136a862d36a">
+  <part id="P45c8b9e5e95ec2c9f3b7fc4d2585001e">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -3253,7 +3253,7 @@
     </measure>
   </part>
   <!--=========================== Part 6 ===========================-->
-  <part id="P178ed7d2dba82ed436ec76ecb08dde67">
+  <part id="P0af001843fff57c60a95c058f68a259c">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -3266,14 +3266,14 @@
           <beat-type>4</beat-type>
         </time>
         <clef>
-          <sign>F</sign>
-          <line>4</line>
+          <sign>G</sign>
+          <line>2</line>
         </clef>
       </attributes>
       <note>
         <pitch>
           <step>E</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3284,7 +3284,7 @@
       <note>
         <pitch>
           <step>B</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3295,7 +3295,7 @@
       <note>
         <pitch>
           <step>E</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3306,7 +3306,7 @@
       <note>
         <pitch>
           <step>B</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3317,7 +3317,7 @@
       <note>
         <pitch>
           <step>E</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3328,7 +3328,7 @@
       <note>
         <pitch>
           <step>B</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3409,7 +3409,7 @@
       <note>
         <pitch>
           <step>A</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3431,7 +3431,7 @@
       <note>
         <pitch>
           <step>A</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3453,7 +3453,7 @@
       <note>
         <pitch>
           <step>A</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3475,7 +3475,7 @@
       <note>
         <pitch>
           <step>A</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3574,7 +3574,7 @@
       <note>
         <pitch>
           <step>E</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3585,7 +3585,7 @@
       <note>
         <pitch>
           <step>B</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3596,7 +3596,7 @@
       <note>
         <pitch>
           <step>E</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3607,7 +3607,7 @@
       <note>
         <pitch>
           <step>B</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3618,7 +3618,7 @@
       <note>
         <pitch>
           <step>E</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3629,7 +3629,7 @@
       <note>
         <pitch>
           <step>B</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3640,7 +3640,7 @@
       <note>
         <pitch>
           <step>E</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3651,7 +3651,7 @@
       <note>
         <pitch>
           <step>B</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3662,7 +3662,7 @@
       <note>
         <pitch>
           <step>E</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3673,7 +3673,7 @@
       <note>
         <pitch>
           <step>B</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3684,7 +3684,7 @@
       <note>
         <pitch>
           <step>E</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3695,7 +3695,7 @@
       <note>
         <pitch>
           <step>B</step>
-          <octave>3</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3706,7 +3706,7 @@
       <note>
         <pitch>
           <step>E</step>
-          <octave>2</octave>
+          <octave>4</octave>
         </pitch>
         <duration>40320</duration>
         <type>whole</type>
@@ -3717,7 +3717,7 @@
     </measure>
   </part>
   <!--=========================== Part 7 ===========================-->
-  <part id="Pf09cbf4f16083c5551b0273bda9fd22a">
+  <part id="P7962ebbf31e7f46317bf1ce0f82d393c">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -4862,7 +4862,7 @@
     </measure>
   </part>
   <!--=========================== Part 8 ===========================-->
-  <part id="P79038f7a60057e8f3e6214bd897d3dc3">
+  <part id="P503d56395a7e583974ec3facee5eb4c3">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -5721,7 +5721,7 @@
     </measure>
   </part>
   <!--=========================== Part 9 ===========================-->
-  <part id="P58c41bd4ae5b144dc7f26c6f83d125f5">
+  <part id="P4ef6d6b433cd89c48af011ac362e063c">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -7520,7 +7520,7 @@
     </measure>
   </part>
   <!--========================== Part 10 ===========================-->
-  <part id="Pd56c2c59628f3632a987479a2cc450b2">
+  <part id="P5b9fb9276722d8db50a75b65f596401d">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -8013,7 +8013,7 @@
     </measure>
   </part>
   <!--========================== Part 11 ===========================-->
-  <part id="P0732a37c24d344110898dd62564b12da">
+  <part id="Pf94b362a2f30479342ef25241b4fa860">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -8543,7 +8543,7 @@
     </measure>
   </part>
   <!--========================== Part 12 ===========================-->
-  <part id="Pd67c2c2145ff17340b601a927e329fdb">
+  <part id="P49676a6eea280964aeb2a6c95aeb711a">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -9924,7 +9924,7 @@
     </measure>
   </part>
   <!--========================== Part 13 ===========================-->
-  <part id="P50d149805160384f5cd4f1a530ace6d3">
+  <part id="P2b51be3868ff8f6ddbcd9548062bca4b">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -10644,7 +10644,7 @@
     </measure>
   </part>
   <!--========================== Part 14 ===========================-->
-  <part id="P62ec6b3eedc8de18a30e880c59cbd411">
+  <part id="P40adc73cb06a79578b2359eb19c4a9bd">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -11585,7 +11585,7 @@
     </measure>
   </part>
   <!--========================== Part 15 ===========================-->
-  <part id="P107652d84a2704ff95d885702bc3b750">
+  <part id="P4dfd964393248b569407f85782c424b4">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -12249,7 +12249,7 @@
     </measure>
   </part>
   <!--========================== Part 16 ===========================-->
-  <part id="Pccfc8122d6e770d960fbb03863602238">
+  <part id="Pc212d0017c81e58104576412998a2a3a">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -13547,7 +13547,7 @@
     </measure>
   </part>
   <!--========================== Part 17 ===========================-->
-  <part id="P19e003b7d81c0f2c663e07e3a7a5d592">
+  <part id="P5bc7543126d571f8468a562149f4d8af">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>
@@ -14357,7 +14357,7 @@
     </measure>
   </part>
   <!--========================== Part 18 ===========================-->
-  <part id="P97a1682ec775366907dde6780ae3f872">
+  <part id="Pac0ca48bfbda5104682d4caf2ad43a9b">
     <!--========================= Measure 1 ==========================-->
     <measure implicit="no" number="1">
       <attributes>

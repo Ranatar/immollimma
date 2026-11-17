@@ -70,13 +70,38 @@ for name, d in ART.items():
         rows = organ(rows)
     out[name] = [r for r in rows if r["note"] is not None]
     print(f"{name:10} files {len(files):3}  offset {off:+d}  range {min(r['note'] for r in out[name])}-{max(r['note'] for r in out[name])}  vels {sorted({r['vel'] for r in rows})}", flush=True)
-pitch = {1: 42, 2: 46, 3: 49, 4: 52, 5: 54}  # VSCO's Timpani.sfz keycenters
+pitch = {1: 42, 2: 46, 3: 49, 4: 52, 5: 54}  # VSCO's Timpani.sfz keycenters — only approximate:
+
+
+def timp_note(path, key, roll):
+    """the drums are not tuned to equal temperament: 41.45, 46.8, 49.5, 52.4, 54.6 (a quarter to four fifths of a
+    semitone off the SFZ keycenters). With the integer keycenter a timpani note sounded that far out of tune
+    against the orchestra. The principal is the strongest partial within ±1.5 semitones of the keycenter."""
+    import numpy as np
+    import soundfile as sf
+    y, sr = sf.read(path, always_2d=True)
+    y = y.mean(1)
+    if len(y) > sr // 2:  # a short sample (some rolls' tails): the whole file
+        y = y[int((0.3 if roll else 0.1) * sr):int((2.5 if roll else 1.6) * sr)]
+    S = np.abs(np.fft.rfft(y * np.hanning(len(y))))
+    f = np.fft.rfftfreq(len(y), 1 / sr)
+    w = (f > 440 * 2 ** ((key - 1.5 - 69) / 12)) & (f < 440 * 2 ** ((key + 1.5 - 69) / 12))
+    return round(69 + 12 * np.log2(f[w][np.argmax(S[w])] / 440), 2) if w.any() else key
+
 for key, pat in (("timp", "Percussion/Timpani/Timpani%d_Hit_*.wav"), ("timp_roll", "Percussion/Timpani/Rolls/Timpani%d_Roll_*.wav")):
     out[key] = []
     for i, m in pitch.items():
         for f in sorted(glob.glob(os.path.join(V, pat % i))):
             out[key].append(dict(path=f, named=None, vel=int(re.search(r"_v(\d)", f).group(1)),
-                                 rr=re.search(r"_rr(\d)", f).group(1), note=m))
+                                 rr=re.search(r"_rr(\d)", f).group(1), note=timp_note(f, m, key == "timp_roll")))
+for key in ("timp", "timp_roll"):  # one pitch per drum (the median of its files), so round robins stay together
+    by = collections.defaultdict(list)
+    for r in out[key]:
+        by[re.search(r"Timpani(\d)_", r["path"]).group(1)].append(r)
+    for rs in by.values():
+        med = round(sorted(r["note"] for r in rs)[len(rs) // 2], 2)
+        for r in rs:
+            r["note"] = med
 for rows in out.values():
     for r in rows:
         r["path"] = os.path.relpath(r["path"], V)
