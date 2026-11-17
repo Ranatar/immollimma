@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Protocollum Excitationis</title>
+<style>
+  html,body{margin:0;height:100%;background:#020403;overflow:hidden}
+  canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+  #ui{position:fixed;left:0;right:0;bottom:0;display:flex;flex-direction:column;opacity:0;transition:opacity .6s;
+    font:13px/1 ui-monospace,"DejaVu Sans Mono",monospace;letter-spacing:.06em;z-index:5}
+  #btns{display:flex;gap:8px;justify-content:flex-end;align-items:center;padding:8px 14px 10px}
+  #tl{position:relative;height:4px;background:rgba(67,255,134,.15)}
+  #tlFill{height:100%;width:0;background:#43ff86}
+  #tl i{position:absolute;top:-3px;width:1px;height:10px;background:rgba(220,255,230,.7)}
+  #ui.show{opacity:1}
+  #ui button{background:rgba(2,8,5,.8);color:#5dff9a;border:1px solid rgba(67,255,134,.35);font:inherit;padding:6px 10px;cursor:pointer}
+  #ui button:hover{background:rgba(10,40,24,.9);color:#d8ffe6}
+  #ui span{color:rgba(93,255,154,.5);margin-left:4px}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="ui">
+  <div id="btns">
+    <button data-a="restart" title="R">Сначала</button>
+    <button data-a="loop" id="bLoop" title="L">Повтор: вкл</button>
+    <button data-a="pause" title="P, пробел">Пауза</button>
+    <button data-a="fs" title="F">Во весь экран</button>
+    <span>R · L · P · F</span>
+  </div>
+  <div id="tl"><div id="tlFill"></div></div>
+</div>
+<script>
+'use strict';
+/* =============================== утилиты =============================== */
+const TAU = Math.PI * 2;
+const rnd = (a = 1, b) => b === undefined ? Math.random() * a : a + Math.random() * (b - a);
+const pick = a => a[(Math.random() * a.length) | 0];
+const clamp = (x, a = 0, b = 1) => x < a ? a : x > b ? b : x;
+const lerp = (a, b, t) => a + (b - a) * t;
+const sstep = (a, b, x) => { const u = clamp((x - a) / (b - a)); return u * u * (3 - 2 * u); };
+function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function mk(w, h) { const c = document.createElement('canvas'); c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(h)); return c; }
+
+const COL = { light: '#43ff86', hot: '#e4ffec', dim: '#1d6e41', star: '#ffeec0', red: '#ff3b2c', redHot: '#ffd2c8' };
+
+/* =============================== холсты =============================== */
+const disp = document.getElementById('c'), dctx = disp.getContext('2d');
+const lightC = mk(1, 1), lctx = lightC.getContext('2d');        // всё светящееся — на чёрном
+const bloomC = mk(1, 1), bctx = bloomC.getContext('2d');
+let amb, traceC, hallC;
+let W, H, DPR, CX, HY, VY, RF, RT, g, rowH, WT, NR, NC, pitch, innerL, xbb, kk;
+
+/* =============================== глифы =============================== */
+// узлы: x ∈ {-1,0,1}, y ∈ {0..4}; глиф строго симметричен относительно вертикальной оси
+let glyphSeq = 0;
+function genGlyph(rng, asym = false) {
+  const S = [];
+  const mirror = s => {
+    if (asym) return;
+    if (s.t === 'l' && !(s.x1 === 0 && s.x2 === 0)) S.push({ t: 'l', x1: -s.x1, y1: s.y1, x2: -s.x2, y2: s.y2 });
+    else if ((s.t === 'd' || s.t === 'c') && s.x !== 0) S.push({ ...s, x: -s.x });
+  };
+  if (rng() < .75 && !asym) { const a = (rng() * 2) | 0; S.push({ t: 'l', x1: 0, y1: a, x2: 0, y2: Math.min(4, a + 2 + ((rng() * 2) | 0)) }); }
+  const nL = (asym ? 3 : 1) + ((rng() * 3) | 0);
+  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1], [0, 2], [0, -2]];
+  for (let i = 0, guard = 0; i < nL && guard < 40; guard++) {
+    const x1 = asym ? ((rng() * 3) | 0) - 1 : -((rng() * 2) | 0), y1 = (rng() * 5) | 0;
+    const [dx, dy] = dirs[(rng() * dirs.length) | 0], x2 = x1 + dx, y2 = y1 + dy;
+    if (y2 < 0 || y2 > 4 || x2 < -1 || x2 > (asym ? 1 : 0)) continue;
+    if (!asym && x1 === 0 && x2 === 0) continue;
+    const s = { t: 'l', x1, y1, x2, y2 }; S.push(s); mirror(s); i++;
+  }
+  if (rng() < .4) S.push({ t: 'a', y: 1 + ((rng() * 3) | 0), up: rng() < .5, x: asym ? (rng() < .5 ? -.5 : .5) : 0 });
+  if (rng() < .3) S.push({ t: 'c', x: asym ? ((rng() * 3) | 0) - 1 : 0, y: (rng() * 5) | 0, r: rng() < .5 ? .32 : .55 });
+  if (rng() < .35) { const s = { t: 'd', x: -1, y: (rng() * 5) | 0 }; S.push(s); mirror(s); }
+  if (S.length < 3) S.push({ t: 'l', x1: -1, y1: 4, x2: 1, y2: 4 });
+  S.sort((a, b) => strokeY(a) - strokeY(b));
+  return { S, id: ++glyphSeq, spr: null };
+}
+const strokeY = s => s.t === 'l' ? Math.min(s.y1, s.y2) : s.y;
+// отрисовка штрихов: prog(k) — доля проведённости штриха, coll(k) — стягивание штриха в точку
+function drawStrokes(x, gl, cx, cy, size, prog = null, coll = null) {
+  const ux = size * .3, uy = size * .2, P = (nx, ny) => [cx + nx * ux, cy + (ny - 2) * uy];
+  gl.S.forEach((s, k) => {
+    const q = prog ? prog(k) : 1; if (q <= 0) return;
+    const kc = coll ? coll(k) : 0; if (kc >= 1) return;
+    x.beginPath();
+    if (s.t === 'l') {
+      let [x1, y1] = P(s.x1, s.y1), [x2, y2] = P(s.x2, s.y2);
+      if (kc) { const mx = (x1 + x2) / 2, my = (y1 + y2) / 2; x1 = lerp(x1, mx, kc); y1 = lerp(y1, my, kc); x2 = lerp(x2, mx, kc); y2 = lerp(y2, my, kc); }
+      x.moveTo(x1, y1); x.lineTo(lerp(x1, x2, q), lerp(y1, y2, q)); x.stroke();
+    } else if (s.t === 'a') {
+      const [ax, ay] = P(s.x, s.y), r = ux * (1 - kc), a0 = s.up ? 0 : Math.PI;
+      x.arc(ax, ay, Math.max(.1, r), a0, a0 + Math.PI * q); x.stroke();
+    } else if (s.t === 'c') {
+      const [ax, ay] = P(s.x, s.y); x.arc(ax, ay, Math.max(.1, s.r * ux * (1 - kc)), -Math.PI / 2, -Math.PI / 2 + TAU * q); x.stroke();
+    } else {
+      const [ax, ay] = P(s.x, s.y); x.arc(ax, ay, Math.max(.3, x.lineWidth * .9 * q * (1 - kc)), 0, TAU); x.fill();
+    }
+  });
+}
+function glyphSprites(gl, size, col = COL.light) {
+  const key = size + col;
+  if (!gl.sprs) gl.sprs = new Map();
+  if (gl.sprs.has(key)) return gl.sprs.get(key);
+  const S = Math.ceil(size * 1.25), lw = Math.max(1.1, size * .055);
+  const L = mk(S, S), lx = L.getContext('2d');
+  lx.strokeStyle = lx.fillStyle = col; lx.lineWidth = lw; lx.lineCap = 'round'; lx.lineJoin = 'round';
+  drawStrokes(lx, gl, S / 2, S / 2, size);
+  const G = mk(S, S), gx = G.getContext('2d'); gx.lineCap = 'round';
+  gx.strokeStyle = gx.fillStyle = 'rgba(0,0,0,.75)'; gx.lineWidth = lw * 2.7; drawStrokes(gx, gl, S / 2, S / 2, size);
+  gx.strokeStyle = gx.fillStyle = 'rgba(120,200,160,.11)'; gx.lineWidth = lw * .7; drawStrokes(gx, gl, S / 2, S / 2 + lw * 1.05, size);
+  const out = { L, G, S }; gl.sprs.set(key, out);
+  return out;
+}
+
+/* =============================== раскладка =============================== */
+let cells = [], carts = [], buses = [], floorLines = [], niches = [], wards = [], nameGlyphs = [], digitBox;
+let trunkDown, trunkUp, lintel, friezeUnits = [];
+const NROWS = 13, QZ = 1.28, Z0 = 1.15, SX = .5, NWID = .24, NHT = .52;
+let dVP = 0, dLintel = 0, rowStep = 0, hallMaxD = 0;
+
+function build() {
+  DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+  W = Math.floor(innerWidth * DPR); H = Math.floor(innerHeight * DPR);
+  disp.width = lightC.width = W; disp.height = lightC.height = H;
+  bloomC.width = Math.ceil(W / 4); bloomC.height = Math.ceil(H / 4);
+  const rng = mulberry(20261118);
+  CX = W / 2; HY = H * .6; VY = H * .318;
+  RF = Math.min(H * .19, W * .17); kk = H / 1000;
+  g = Math.min(H * .04, W * .028); rowH = g * 1.25; WT = H * .125;
+  NR = Math.max(4, Math.floor((HY - H * .035 - WT) / rowH));
+  pitch = g * 1.1; innerL = CX - RF * 1.36; xbb = innerL + RF * .14;
+  NC = Math.max(0, Math.floor((innerL - W * .03) / pitch));
+  // --- клетки стены, симметрично слева и справа
+  cells = [];
+  for (const side of [-1, 1]) for (let r = 0; r < NR; r++) for (let c = 0; c < NC; c++) {
+    const xl = innerL - (c + .5) * pitch, x = side < 0 ? xl : 2 * CX - xl;
+    const y = WT + (r + .5) * rowH - rowH * .1, busY = WT + (r + 1) * rowH - rowH * .1;
+    cells.push({ side, r, c, x, y, busY, glyph: genGlyph(rng), state: 'norm', flip: null, ev: null, cart: -1, d: 0, void: false });
+  }
+  const cellAt = (side, r, c) => cells.find(q => q.side === side && q.r === r && q.c === c);
+  // картуши: одинаковые места слева и справа
+  carts = [];
+  const cartRows = NR >= 8 ? [1, 4, 7] : [1, NR - 2];
+  for (const r of cartRows) {
+    if (NC < 6) break;
+    const c0 = 1 + ((rng() * (NC - 5)) | 0);
+    for (const side of [-1, 1]) {
+      const k = carts.length, list = [];
+      for (let c = c0; c < c0 + 4; c++) { const q = cellAt(side, r, c); q.cart = k; list.push(q); }
+      const xs = list.map(q => q.x), x0 = Math.min(...xs) - pitch * .55, x1 = Math.max(...xs) + pitch * .55;
+      carts.push({ side, r, c0, cells: list, x0, x1, y: list[0].y, h: g * 1.12 });
+    }
+  }
+  // --- каналы: порты на поле склепа → магистраль → шины рядов
+  const ports = [-.6, 0, .6].map(f => VY + RF * f);
+  const portY = y => ports.reduce((a, b) => Math.abs(b - y) < Math.abs(a - y) ? b : a);
+  buses = [];
+  for (const side of [-1, 1]) for (let r = 0; r < NR; r++) {
+    const by = WT + (r + 1) * rowH - rowH * .1, py = portY(by);
+    const px = CX + side * -Math.sqrt(Math.max(0, RF * RF - (py - VY) ** 2));
+    const xb = side < 0 ? xbb : 2 * CX - xbb, xe = side < 0 ? W * .02 : W * .98, cs = Math.min(rowH * .3, Math.abs(by - py));
+    const sgn = Math.sign(by - py) || 1;
+    const pts = [[px, py], [xb, py]];
+    if (Math.abs(by - py) > 1) { pts.push([xb, by - sgn * cs]); pts.push([xb + side * -cs, by]); }
+    pts.push([xe, by]);
+    const path = polyline(pts, RF);
+    buses.push({ side, r, path, y: by, pieces: pieces(path, 7 * kk) });
+  }
+  cells.forEach(q => { const b = buses.find(b => b.side === q.side && b.r === q.r); q.d = dAtX(b.path, q.x) + (q.busY - q.y); q.bus = b; });
+  // вверх к притолоке, вниз к точке схода зала
+  trunkUp = polyline([[CX, VY - RF], [CX, H * .088]], RF);
+  trunkDown = polyline([[CX, VY + RF], [CX, HY]], RF);
+  dLintel = trunkUp.len + RF; dVP = trunkDown.len + RF;
+  // --- притолока: имя повелителя в картуше и фризы
+  const ly0 = H * .022, ly1 = H * .082, lh = ly1 - ly0, gb = lh * .78;
+  nameGlyphs = Array.from({ length: 5 }, (_, i) => ({ glyph: genGlyph(rng), x: CX + (i - 2) * gb * 1.05, y: (ly0 + ly1) / 2, size: gb * .82 }));
+  lintel = { x0: CX - gb * 3.0, x1: CX + gb * 3.0, y0: ly0, y1: ly1 };
+  friezeUnits = [];
+  const u = lh * .62;
+  for (const side of [-1, 1]) for (let i = 0; ; i++) {
+    const x = lintel[side < 0 ? 'x0' : 'x1'] + side * (u * .9 + i * u);
+    if (x < W * .02 || x > W * .98) break;
+    friezeUnits.push({ x, y: (ly0 + ly1) / 2, kind: i % 2, h: lh, d: dLintel + Math.abs(x - CX) });
+  }
+  digitBox = { y: H * .104, h: H * .02 };
+  // --- склеп: обереги по кольцу
+  wards = Array.from({ length: 24 }, (_, i) => ({ a: i / 24 * TAU, glyph: genGlyph(rng) }));
+  // масштаб тессеракта по наибольшему размаху
+  let mx = 0; for (let tt = 0; tt < 60; tt += .37) for (const p of tessRaw(tt)) mx = Math.max(mx, Math.hypot(p[0], p[1]));
+  RT = RF * .86 / mx;
+  // --- зал спящих: ряды саркофагов в перспективе
+  const F = H - HY;
+  niches = []; floorLines = [];
+  rowStep = H * .05;
+  for (let i = 0; i < NROWS; i++) {
+    const Z = Z0 * QZ ** i, sy = HY + F / Z, h = NHT * F / Z, w = NWID * F / Z;
+    for (let j = 0; ; j++) {
+      const X = (j + .5) * SX, sx = X * F / Z;
+      if (sx - w > W / 2) break;
+      for (const s of [-1, 1]) {
+        const x = CX + s * sx;
+        niches.push({ i, Z, x, y: sy, w, h, d: dVP + (NROWS - 1 - i) * rowStep + Math.abs(X) * rowStep * .35,
+          bad: rng() < .035, state: 'sleep', t0: 0, lvl: .05, stir: -9, ph: rng() * TAU, mark: false, jit: rng() * rowStep * .4 });
+      }
+    }
+  }
+  hallMaxD = Math.max(...niches.map(n => n.d));
+  const Zfar = Z0 * QZ ** (NROWS - 1) * 1.04;
+  for (let k = -60; k <= 60; k++) {
+    const X = k * SX; if (k === 0) continue;
+    const xa = CX + X * F / Zfar, xb2 = CX + X * F / 1.0;
+    if (Math.abs(xa - CX) > W) continue;
+    const pts = [[xa, HY + F / Zfar], [xb2, H + 2]];
+    const path = polyline(pts, dVP);
+    floorLines.push({ X, path, pieces: piecesFloor(X, Zfar) });
+  }
+  makeAmbient(); makeTraceCache(); makeHallCache();
+  particles = []; pulses = [];
+}
+function polyline(pts, d0 = 0) {
+  const seg = []; let L = 0;
+  for (let i = 1; i < pts.length; i++) { const l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); seg.push({ a: pts[i - 1], b: pts[i], l, s: L }); L += l; }
+  return { pts, seg, len: L, d0 };
+}
+function pointAt(path, s) {
+  for (const q of path.seg) if (s <= q.s + q.l) { const f = q.l ? (s - q.s) / q.l : 0; return [lerp(q.a[0], q.b[0], f), lerp(q.a[1], q.b[1], f)]; }
+  return path.pts[path.pts.length - 1];
+}
+function dAtX(path, x) { // для шины: d точки над x (последний горизонтальный участок)
+  const last = path.seg[path.seg.length - 1];
+  return path.d0 + last.s + Math.abs(x - last.a[0]);
+}
+function pieces(path, step) {
+  const out = []; for (let s = 0; s < path.len; s += step) { const [x1, y1] = pointAt(path, s), [x2, y2] = pointAt(path, Math.min(path.len, s + step)); out.push({ x1, y1, x2, y2, d: path.d0 + s + step / 2, xm: (x1 + x2) / 2 }); }
+  return out;
+}
+function piecesFloor(X, Zfar) { // d по рядам зала (дальний ряд — раньше)
+  const F = H - HY, out = [], n = 40;
+  for (let k = 0; k < n; k++) {
+    const za = Zfar * Math.pow(1 / Zfar, k / n), zb = Zfar * Math.pow(1 / Zfar, (k + 1) / n);
+    const ri = (Math.log(Z0 * QZ ** (NROWS - 1)) - Math.log((za + zb) / 2)) / Math.log(QZ);
+    out.push({ x1: CX + X * F / za, y1: HY + F / za, x2: CX + X * F / zb, y2: HY + F / zb, d: dVP + ri * rowStep + Math.abs(X) * rowStep * .35 });
+  }
+  return out;
+}
+
+/* =============================== статичные слои =============================== */
+function makeAmbient() {
+  amb = mk(W, H); const x = amb.getContext('2d');
+  const g0 = x.createRadialGradient(CX, VY, 0, CX, VY, Math.max(W, H) * .8);
+  g0.addColorStop(0, '#08100c'); g0.addColorStop(.5, '#040806'); g0.addColorStop(1, '#010202');
+  x.fillStyle = g0; x.fillRect(0, 0, W, H);
+  // базовая сетка живого металла
+  x.strokeStyle = 'rgba(90,160,120,.035)'; x.lineWidth = 1;
+  const st = g * .5;
+  x.beginPath();
+  for (let xx = CX % st; xx < W; xx += st) { x.moveTo(xx, 0); x.lineTo(xx, HY); }
+  for (let yy = 0; yy < HY; yy += st) { x.moveTo(0, yy); x.lineTo(W, yy); }
+  x.stroke();
+  for (let i = 0; i < 2600; i++) { x.fillStyle = `rgba(${120 + rnd(60) | 0},${170 + rnd(60) | 0},150,${rnd(.008, .03)})`; const s = rnd(.6, 1.6) * DPR; x.fillRect(rnd(W), rnd(H), s, s); }
+  // правила регистров (гравировка)
+  const groove = (pts, w = 1.6 * kk) => {
+    x.lineCap = 'butt';
+    x.strokeStyle = 'rgba(0,0,0,.7)'; x.lineWidth = w * 2.4; x.beginPath(); pts.forEach((p, i) => i ? x.lineTo(...p) : x.moveTo(...p)); x.stroke();
+    x.strokeStyle = 'rgba(120,200,160,.09)'; x.lineWidth = w * .6; x.beginPath(); pts.forEach((p, i) => i ? x.lineTo(p[0], p[1] + w) : x.moveTo(p[0], p[1] + w)); x.stroke();
+  };
+  for (let r = 0; r <= NR; r++) {
+    const y = WT + r * rowH - rowH * .62;
+    groove([[innerL + pitch * .2, y], [W * .025, y]]); groove([[2 * CX - innerL - pitch * .2, y], [W * .975, y]]);
+  }
+  // поле склепа
+  for (const rr of [RF, RF * .9, RF * 1.08]) { x.strokeStyle = 'rgba(0,0,0,.7)'; x.lineWidth = 3 * kk; x.beginPath(); x.arc(CX, VY, rr, 0, TAU); x.stroke(); }
+  // притолока
+  groove([[W * .02, lintel.y0], [W * .98, lintel.y0]]); groove([[W * .02, lintel.y1], [W * .98, lintel.y1]]);
+  // горизонт зала
+  const hz = x.createLinearGradient(0, HY - H * .02, 0, HY + H * .06);
+  hz.addColorStop(0, 'rgba(0,0,0,0)'); hz.addColorStop(.5, 'rgba(0,0,0,.55)'); hz.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = hz; x.fillRect(0, HY - H * .02, W, H * .08);
+}
+let deadSpans = [];  // {side, r, x0, x1} — вырезанные куски шин
+function inDead(side, r, xm) { return deadSpans.some(s => s.side === side && s.r === r && xm >= s.x0 && xm <= s.x1); }
+function makeTraceCache() {
+  traceC = mk(W, H); const x = traceC.getContext('2d');
+  x.lineCap = 'round'; x.lineJoin = 'round';
+  const draw = (pts, alpha) => {
+    x.strokeStyle = 'rgba(0,0,0,.75)'; x.lineWidth = 4 * kk; x.beginPath(); pts.forEach((p, i) => i ? x.lineTo(...p) : x.moveTo(...p)); x.stroke();
+  };
+  for (const b of buses) {
+    // шина с вырезами
+    let run = [];
+    const flush = () => { if (run.length > 1) draw(run, .16); run = []; };
+    for (const p of b.pieces) {
+      if (inDead(b.side, b.r, p.xm)) { flush(); continue; }
+      if (!run.length) run.push([p.x1, p.y1]);
+      run.push([p.x2, p.y2]);
+    }
+    flush();
+  }
+  for (const q of cells) if (!q.void) draw([[q.x, q.busY], [q.x, q.y + g * .48]], .12);
+  draw(trunkUp.pts, .2); draw(trunkDown.pts, .2);
+}
+function nicheShape(x, n, ox = 0, oy = 0) {
+  const { w, h } = n, cx = n.x + ox, y = n.y + oy;
+  x.beginPath();
+  x.moveTo(cx - w * .32, y - h); x.lineTo(cx + w * .32, y - h); x.lineTo(cx + w * .5, y - h * .8);
+  x.lineTo(cx + w * .4, y); x.lineTo(cx - w * .4, y); x.lineTo(cx - w * .5, y - h * .8); x.closePath();
+}
+function makeHallCache() {
+  hallC = mk(W, H); const x = hallC.getContext('2d');
+  const F = H - HY;
+  // пол: линии между колоннами и швы рядов
+  x.lineWidth = Math.max(1, kk);
+  for (const fl of floorLines) { x.strokeStyle = 'rgba(67,255,134,.07)'; x.beginPath(); x.moveTo(...fl.path.pts[0]); x.lineTo(...fl.path.pts[1]); x.stroke(); }
+  for (let i = 0; i < NROWS; i++) { const y = HY + F / (Z0 * QZ ** i); x.strokeStyle = 'rgba(67,255,134,.05)'; x.beginPath(); x.moveTo(0, y); x.lineTo(W, y); x.stroke(); }
+  // саркофаги — от дальних к ближним
+  const sorted = [...niches].sort((a, b) => b.Z - a.Z);
+  for (const n of sorted) {
+    if (n.h < 3) continue;
+    nicheShape(x, n);
+    const gr = x.createLinearGradient(0, n.y - n.h, 0, n.y);
+    gr.addColorStop(0, '#07100b'); gr.addColorStop(1, '#020504');
+    x.fillStyle = gr; x.fill();
+    x.lineWidth = Math.max(.6, n.w * .02); x.strokeStyle = `rgba(67,255,134,${clamp(.05 + n.h / H * .9, .05, .22)})`; x.stroke();
+    if (n.h > 26) { // внутренняя рамка и щель лица
+      x.save(); x.translate(n.x, n.y - n.h * .45); x.scale(.78, .82); x.translate(-n.x, -(n.y - n.h * .45));
+      nicheShape(x, n); x.strokeStyle = 'rgba(67,255,134,.06)'; x.stroke(); x.restore();
+      x.fillStyle = 'rgba(0,0,0,.6)'; x.fillRect(n.x - n.w * .28, n.y - n.h * .86, n.w * .56, n.h * .09);
+    }
+  }
+}
+
+/* =============================== волны сигнала =============================== */
+let waves = [];   // {t0, v, w, amp, col, kind}
+function boost(d) {
+  let b = 0;
+  for (const wv of waves) { const f = (t - wv.t0) * wv.v, e = (d - f) / wv.w; if (e > -3 && e < 3) b += wv.amp * Math.exp(-e * e); }
+  return b;
+}
+function emit(kind, o = {}) { waves.push({ t0: t, v: H * .55, w: H * .05, amp: .9, kind, ...o }); }
+
+/* =============================== тессеракт =============================== */
+const TV = Array.from({ length: 16 }, (_, i) => [i & 1 ? 1 : -1, i & 2 ? 1 : -1, i & 4 ? 1 : -1, i & 8 ? 1 : -1]);
+const TE = []; for (let i = 0; i < 16; i++) for (let j = i + 1; j < 16; j++) { const x = i ^ j; if (x && !(x & (x - 1))) TE.push([i, j]); }
+function tessRaw(tt) {
+  const a = tt * .19, b = tt * .13, c = tt * .047, ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b), cc = Math.cos(c), sc = Math.sin(c);
+  return TV.map(([x, y, z, w]) => {
+    const x1 = x * ca - w * sa, w1 = x * sa + w * ca, y1 = y * cb - z * sb, z1 = y * sb + z * cb;
+    const x2 = x1 * cc - y1 * sc, y2 = x1 * sc + y1 * cc;
+    const k4 = 1 / (2.4 - w1), X = x2 * k4, Y = y2 * k4, Z = z1 * k4, k3 = 1 / (2.2 - Z * .9);
+    return [X * k3, Y * k3, w1 + Z];
+  });
+}
+
+/* =============================== частицы, импульсы =============================== */
+let particles = [], pulses = [];
+function burst(x0, y0, n, col, sp = 60, life = 1) {
+  for (let i = 0; i < n; i++) { const a = rnd(TAU), v = rnd(.2, 1) * sp * kk; particles.push({ x: x0, y: y0, vx: Math.cos(a) * v, vy: Math.sin(a) * v - sp * .2 * kk, life: rnd(.5, 1) * life, max: life, col, s: rnd(1, 2.2) * kk }); }
+}
+function launchPulse() {
+  const r = Math.random();
+  if (r < .78) { const b = pick(buses); pulses.push({ path: b.path, bus: b, s: 0, v: H * rnd(.35, .6), len: H * .05, col: COL.light }); }
+  else { const f = pick(floorLines); pulses.push({ path: f.path, s: 0, v: H * rnd(.25, .4), len: H * .08, col: COL.light }); }
+}
+
+/* =============================== события =============================== */
+let t = 0, power = .6, wakeState = { phase: 'sleep', t0: 0 };
+const sched = { wake: 5, press: 24, mad: 48, gauss: 7, phase: 16, flip: 1, beat: 3, stir: .5, pulse: .2 };
+let press = { on: false, t0: 0, p: 0 };
+let mad = null, voids = [];
+
+function startWake() {
+  if (wakeState.phase !== 'sleep') return;
+  wakeState = { phase: 'waking', t0: t };
+  emit('wake', { amp: 1.3, w: H * .07, v: H * .5 });
+}
+function updWake() {
+  const ws = wakeState, e = t - ws.t0, vw = H * .5;
+  if (ws.phase === 'waking' || ws.phase === 'awake') {
+    const f = e * vw;
+    for (const n of niches) if (n.state === 'sleep' && f >= n.d + n.jit) { n.state = n.bad && !n.mark ? 'failing' : n.mark ? 'sleep-dead' : 'ign'; n.t0 = t; }
+    power = lerp(power, 1, .02);
+    if (ws.phase === 'waking' && f > hallMaxD + rowStep) ws.phase = 'awake';
+    if (e > 34) { ws.phase = 'dormant'; ws.t0 = t; }
+  } else if (ws.phase === 'dormant') {
+    const f = (t - ws.t0) * vw;           // ближние гаснут первыми
+    for (const n of niches) if ((n.state === 'awake' || n.state === 'ign') && f >= (hallMaxD - n.d) + n.jit) { n.state = 'fade'; n.t0 = t; }
+    power = lerp(power, .6, .01);
+    if (f > hallMaxD + rowStep * 2) { ws.phase = 'sleep'; sched.wake = t + rnd(45, 75); }
+  }
+}
+function eyeLevel(n) {
+  const e = t - n.t0;
+  switch (n.state) {
+    case 'ign':
+      if (e > .8) { n.state = 'awake'; return .85; }
+      if (e < .16) return [.9, .05, 1, .15][Math.floor(e / .04)] ?? .9;
+      return .85 + .7 * Math.exp(-(e - .16) * 6);
+    case 'awake': return .82 + .06 * Math.sin(t * 1.6 + n.ph);
+    case 'fade': { const q = clamp(e / 1.6); if (q >= 1) n.state = 'sleep'; return lerp(.85, .05, q); }
+    case 'failing':
+      if (e > .7) { n.state = 'sleep-dead'; n.mark = true; return 0; }
+      return [.3, 0, .22, 0, .12, 0, 0][Math.floor(e / .1)] ?? 0;
+    case 'sleep-dead': return 0;
+    default: { const s = t - n.stir; return .07 + (s < 1.4 ? .3 * Math.sin(Math.PI * clamp(s / 1.4)) : 0); }
+  }
+}
+
+function startGauss() {
+  const pool = cells.filter(q => q.state === 'norm' && !q.flip && !q.void && q.cart < 0 && cellReveal(q) >= 1);
+  if (!pool.length) return;
+  const q = pick(pool); q.state = 'gauss'; q.ev = { t0: t };
+}
+function startPhase() {
+  const avail = carts.filter(k => k.cells.every(q => q.state === 'norm' && !q.void && cellReveal(q) >= 1));
+  if (avail.length < 2) return;
+  const a = pick(avail); let b = pick(avail); let guard = 0; while (b === a && guard++ < 10) b = pick(avail);
+  if (a === b) return;
+  const ev = { t0: t, a, b, done: false };
+  for (const q of [...a.cells, ...b.cells]) { q.state = 'phase'; q.ev = ev; }
+}
+function startPress() { if (!press.on) { press = { on: true, t0: t, p: 0 }; } }
+function startMad() {
+  if (mad || voids.length >= 3) return;
+  const pool = cells.filter(q => q.state === 'norm' && !q.void && q.cart < 0 && q.c >= 1 && q.c <= NC - 2 && q.r >= 1 && q.r <= NR - 2);
+  if (!pool.length) return;
+  const c0 = pick(pool);
+  mad = { t0: t, side: c0.side, r: c0.r, c: c0.c, rho: 0, region: [], quarantined: false, cut: false };
+}
+function updMad() {
+  if (!mad) return;
+  const e = t - mad.t0;
+  if (e < 5.2) {
+    mad.rho = 2.6 * sstep(0, 5.2, e);
+    for (const q of cells) {
+      if (q.side !== mad.side || q.void || q.cart >= 0) continue;
+      const dist = Math.abs(q.r - mad.r) + Math.abs(q.c - mad.c);
+      if (dist <= mad.rho && q.state !== 'corrupt' && (q.state === 'norm')) {
+        q.state = 'corrupt'; q.ev = { t0: t, wrong: genGlyph(Math.random, true) }; mad.region.push(q);
+      }
+    }
+  }
+  if (e > 5.2 && !mad.box) {
+    const rs = mad.region.map(q => q.r), cs = mad.region.map(q => q.c);
+    const r0 = Math.min(...rs), r1 = Math.max(...rs), c0 = Math.min(...cs), c1 = Math.max(...cs);
+    const xs = mad.region.map(q => q.x), x0 = Math.min(...xs) - pitch * .55, x1 = Math.max(...xs) + pitch * .55;
+    const y0 = WT + r0 * rowH - rowH * .62, y1 = WT + (r1 + 1) * rowH - rowH * .02;
+    // в карантин попадают все клетки прямоугольника
+    for (const q of cells) if (q.side === mad.side && q.r >= r0 && q.r <= r1 && q.c >= c0 && q.c <= c1 && q.cart < 0 && q.state === 'norm') { q.state = 'corrupt'; q.ev = { t0: t, wrong: genGlyph(Math.random, true) }; mad.region.push(q); }
+    mad.box = { x0, x1, y0, y1, r0, r1, c0, c1 };
+  }
+  if (e > 6.4 && !mad.cut) {               // ампутация: шины перерезаны по границам карантина
+    mad.cut = true;
+    const B = mad.box;
+    for (let r = B.r0; r <= B.r1; r++) {
+      deadSpans.push({ side: mad.side, r, x0: B.x0 - 2 * kk, x1: B.x1 + 2 * kk });
+      const by = WT + (r + 1) * rowH - rowH * .1;
+      burst(B.x0, by, 14, COL.hot, 90, .8); burst(B.x1, by, 14, COL.hot, 90, .8);
+    }
+    for (const q of mad.region) q.void = true;
+    makeTraceCache();
+  }
+  if (e > 8.2) {
+    voids.push({ box: mad.box, side: mad.side, cells: mad.region, t0: t, regen: null });
+    for (const q of mad.region) { q.state = 'norm'; q.ev = null; }
+    mad = null; sched.mad = t + rnd(120, 200);
+  }
+}
+function updVoids() {
+  for (const v of voids) {
+    if (!v.regen && t - v.t0 > 240) {             // живой металл затягивает мёртвый участок
+      v.regen = t;
+      deadSpans = deadSpans.filter(s => !(s.side === v.side && s.r >= v.box.r0 && s.r <= v.box.r1 && Math.abs(s.x0 - (v.box.x0 - 2 * kk)) < 1));
+      for (const q of v.cells) { q.void = false; q.state = 'gauss'; q.ev = { t0: t - 2.0, regenOnly: true }; }
+      makeTraceCache();
+    }
+  }
+  voids = voids.filter(v => !v.regen || t - v.regen < 4);
+}
+
+/* =============================== протокол пробуждения: режиссура =============================== */
+// сетка для музыки: 100 уд/мин, доля 0,6 с; сердце гробницы — каждые 1,2 с с 28,8 по 57,6; ключевые метки кратны 0,3 с
+const RITE_LEN = 96, BEAT_S = .6;
+const STAGES = [[0, 'I', 'Тьма и счётчик сна'], [8.1, 'II', 'Склеп'], [15, 'III', 'Каналы и стена'], [21, 'IV', 'Сердце гробницы'],
+  [28.8, 'V', 'Зал'], [31.2, 'VI', 'Легион просыпается'], [48, 'VII', 'Имя повелителя'], [52.8, 'VIII', 'Давление в склепе'],
+  [57.6, 'IX', 'Приказ'], [59.4, 'X', 'Уход легиона'], [72, 'XI', 'Возвращение в сон'], [86.4, 'XII', 'Новый сон']];
+const BEATS_ACC = [21.0, 23.1, 24.6, 25.8, 26.7, 27.3, 27.9, 28.5];
+const BEATS = []; for (let k = 0; k <= 24; k++) BEATS.push(+(28.8 + 1.2 * k).toFixed(1));
+const V_WALL = .24, T_WALL = 15, T_LEG = 31.2, D_LEG = 13.2, T_GO = 59.4, D_GO = 10.2, T_RET = 72, D_RET = 8.4;
+let rt = 0, loopOn = true, tessAng = 0, cueIdx = 0, lastStage = null;
+const vis = { power: 0, hall: 0, F: 0, FH: 0, star: 0, flare: 0, tessEdges: 0, tessSpeed: 0, field: 0, wards: 0, name: 0, nameGlow: 0,
+  counterA: 0, counterV: 0, cy: 0, ch: 1, counterPad: 8, counterFlash: 0, life: false };
+let FMAX = 0, FHMAX = 0;
+const TE_ORDER = new Map(); TE.forEach(([i, j], k) => TE_ORDER.set(i * 16 + j, k));
+function riteTimes() {   // моменты пробуждения и ухода каждой ниши — заранее и детерминированно
+  FMAX = Math.max(...cells.map(q => q.d), dLintel + W / 2) + H * .2;
+  FHMAX = Math.max(...floorLines.flatMap(f => f.pieces.map(p => p.d))) + H * .05;
+  const span = hallMaxD - dVP + rowStep * .4;
+  for (const n of niches) {
+    n.ta = T_LEG + (n.d - dVP + n.jit) / span * D_LEG;
+    n.tg = T_GO + (hallMaxD - n.d + n.jit) / span * D_GO;
+  }
+}
+const lin = (a, b, x) => clamp((x - a) / (b - a));
+const EVLOG = []; let cueT = null;
+const ev = (type, data = {}) => EVLOG.push({ type, ...data, t: +(data.t ?? cueT ?? rt).toFixed(4) });
+const CUES = [
+  [1.2, 'counter_on'], [7.2, 'counter_stop'], [8.1, 'star_ignites'], [8.4, 'tesseract_draw'], [11.4, 'field_draw'], [12.6, 'wards_light'],
+  [15.0, 'wall_front'], ...BEATS_ACC.map(x => [x, 'heart_acc']), ...BEATS.map(x => [x, 'heart']), [28.8, 'hall_front'],
+  [31.2, 'legion_wave'], [48.0, 'name_1'], [48.9, 'name_2'], [49.8, 'name_3'], [50.7, 'name_4'], [51.6, 'name_5'],
+  [52.8, 'vault_pressure'], [57.6, 'command'], [59.4, 'legion_depart'], [72.0, 'retract'], [80.4, 'wards_off'], [82.2, 'field_off'],
+  [83.4, 'tesseract_undraw'], [86.4, 'counter_zero'], [89.4, 'star_dot'], [90.0, 'star_off']
+].sort((a, b) => a[0] - b[0]);
+function fireCue(name, at) {
+  cueT = at;
+  const late = rt - at;   // на сколько кадр опоздал к метке — волны и давление ставятся на точное время
+  if (name.startsWith('heart')) {
+    const k = name === 'heart' ? 1 : (BEATS_ACC.indexOf(at) + 1) / BEATS_ACC.length;
+    emit('beat', { amp: name === 'heart' ? .55 : .25 + .35 * k, w: H * .04, v: H * .8, t0: t - late });
+  }
+  if (name === 'star_ignites') burst(CX, VY, 24, COL.star, 70, 1.2);
+  if (name === 'vault_pressure') press = { on: true, t0: at, p: 0 };
+  if (name === 'command') emit('cmd', { amp: 2.2, w: H * .07, v: H * .9, t0: t - late });
+  if (name.startsWith('name_')) { const ng = nameGlyphs[+name.slice(5) - 1]; burst(ng.x, ng.y, 16, COL.hot, 50, .9); }
+  ev(name.startsWith('heart') ? 'heart' : 'cue', name.startsWith('heart') ? { kind: name } : { name });
+  cueT = null;
+}
+function riteRestart() {
+  rt = 0; cueIdx = 0; lastStage = null; tessAng = 0; waves = []; pulses = []; particles = [];
+  press = { on: false, p: 0 };
+  for (const q of cells) { q.state = 'norm'; q.ev = null; q.flip = null; }
+  for (const n of niches) n.mark = false;
+}
+const tlFill = document.getElementById('tlFill');
+(() => { const tl = document.getElementById('tl'); for (const [at, num, name] of STAGES) { const i = document.createElement('i'); i.style.left = (at / RITE_LEN * 100) + '%'; i.title = num + ' · ' + name; tl.appendChild(i); } })();
+
+function riteUpdate(dt) {
+  rt += dt;
+  if (rt >= RITE_LEN) { if (loopOn) { const over = rt - RITE_LEN; riteRestart(); rt = over; ev('restart', { t: 0 }); } else rt = RITE_LEN; }
+  while (cueIdx < CUES.length && CUES[cueIdx][0] <= rt) { const [at, name] = CUES[cueIdx++]; fireCue(name, at); }
+  const st = STAGES.reduce((a, s) => rt >= s[0] ? s : a, STAGES[0]);
+  if (st !== lastStage) { lastStage = st; ev('stage', { t: st[0], num: st[1], name: st[2] }); }
+  const x = rt;
+  vis.F = x < T_WALL ? 0 : x < T_RET ? Math.min(FMAX, (x - T_WALL) * H * V_WALL) : FMAX * (1 - lin(T_RET, T_RET + D_RET, x));
+  vis.FH = x < 28.8 ? 0 : x < T_RET ? lerp(dVP - 1, FHMAX, lin(28.8, 31.2, x)) : lerp(FHMAX, 0, lin(T_RET, 75.6, x));
+  vis.hall = sstep(28.8, 31.2, x) * (1 - sstep(T_RET, 76, x));
+  vis.power = clamp(.15 + .35 * sstep(15, 20, x) + .5 * sstep(28.8, 44.4, x) - .5 * sstep(59.4, 69.6, x) - .35 * sstep(T_RET, 80.4, x)) * (x < 1.2 ? 0 : 1);
+  vis.star = x < 8.1 ? 0 : x < 86.4 ? sstep(8.1, 8.6, x) : x < 90 ? lerp(1, .12, lin(86.4, 89.4, x)) : 0;
+  vis.flare = (x >= 57.6 ? Math.exp(-(x - 57.6) * 1.6) : 0) + (x >= 8.1 ? .6 * Math.exp(-(x - 8.1) * 4) : 0);
+  vis.tessEdges = x < 8.4 ? 0 : x < 83.4 ? Math.min(TE.length, (x - 8.4) / .1) : TE.length * (1 - lin(83.4, 86.4, x));
+  vis.field = x < 11.4 ? 0 : x < 82.2 ? lin(11.4, 12.9, x) : 1 - lin(82.2, 83.7, x);
+  vis.wards = x < 12.6 ? 0 : x < 80.4 ? Math.min(24, (x - 12.6) / .1) : 24 * (1 - lin(80.4, 82.8, x));
+  vis.tessSpeed = x < 8.4 ? 0 : x < 57.3 ? sstep(8.4, 12, x) : x < 59.4 ? 1 - sstep(57.3, 57.6, x) : x < 80 ? sstep(59.4, 61, x) : 1 - sstep(80, 86.4, x);
+  tessAng += dt * vis.tessSpeed;
+  vis.name = x < 48 ? 0 : x < T_RET ? Math.min(5, (x - 48) / .9) : 5 * (1 - lin(T_RET, 74, x));
+  vis.nameGlow = x >= 51.6 ? Math.exp(-(x - 51.6) * 1.2) * .8 + (x >= 57.6 ? Math.exp(-(x - 57.6) * 1.5) : 0) : 0;
+  vis.life = x > 20 && x < T_RET;
+  vis.counterFlash = x >= 7.2 && x < 31.2 ? Math.exp(-(x - 7.2) * 3) : 0;
+  if (x < 31.2) { vis.counterPad = 8; vis.counterV = 65000000 + 4800 * (1 - Math.exp(-(clamp(x, 1.2, 7.2) - 1.2) / 1.7)); vis.counterA = sstep(1.2, 1.8, x) * (1 - .45 * sstep(9, 12, x)) * (1 - sstep(30.4, 31.2, x)); }
+  else if (x < 86.4) { vis.counterPad = 3; let awake = 0; for (const n of niches) if (!n.bad && rt >= n.ta && rt < n.tg + .5) awake++; vis.counterV = awake; vis.counterA = .55 * sstep(31.2, 32, x) * (1 - sstep(70, 72, x)); }
+  else { vis.counterPad = 8; vis.counterV = (x - 86.4) * 3.7; vis.counterA = sstep(86.4, 87, x) * (1 - sstep(90, 92.4, x)); }
+  const cs = sstep(8.1, 10.5, x);
+  vis.cy = x < 86.4 ? lerp(VY, digitBox.y, cs) : VY + RF * .55; vis.ch = x < 86.4 ? lerp(H * .055, digitBox.h, cs) : H * .03;
+  tlFill.style.width = (rt / RITE_LEN * 100).toFixed(2) + '%';
+}
+window.__protocol = { step, render, EVLOG: () => EVLOG, RITE_LEN, STAGES, BEATS, BEATS_ACC, get rt() { return rt; },
+  niches: () => niches.map(n => ({ row: n.i, ta: +n.ta.toFixed(4), tg: +n.tg.toFixed(4), bad: n.bad })),
+  state: () => ({ rt, power: vis.power, hall: vis.hall, star: vis.star, F: vis.F, tessSpeed: vis.tessSpeed, press: press.p }) };
+
+/* =============================== кадр =============================== */
+let paused = false, last = performance.now();
+function update(dt) {
+  t += dt;
+  power = vis.power;
+  if (vis.life && t >= sched.gauss) { startGauss(); sched.gauss = t + rnd(6, 11); }
+  if (vis.life && t >= sched.phase) { startPhase(); sched.phase = t + rnd(14, 22); }
+  if (vis.life && t >= sched.flip) {
+    const pool = cells.filter(q => q.state === 'norm' && !q.flip && !q.void && q.cart < 0);
+    if (pool.length) { const q = pick(pool); q.flip = { t0: t, old: q.glyph }; q.glyph = genGlyph(Math.random); }
+    sched.flip = t + rnd(.4, 1.0);
+  }
+  if (t >= sched.stir) { const n = pick(niches); n.stir = t; sched.stir = t + rnd(.15, .45); }
+  if (vis.life && t >= sched.pulse) { launchPulse(); sched.pulse = t + rnd(.12, .35) / (power > .8 ? 2 : 1); }
+  waves = waves.filter(w => (t - w.t0) * Math.abs(w.v) < hallMaxD + H * 2);
+
+  if (press.on) {
+    const e = rt - press.t0;
+    press.p = e < 1.6 ? sstep(0, 1.6, e) : e < 3.6 ? 1 : 1 - sstep(3.6, 4.1, e);
+    if (e > 3.6 && !press.snap) { press.snap = true; emit('ward', { amp: .8, w: H * .03, v: H * .9, t0: t - (e - 3.6) }); }
+    if (e > 4.3) press = { on: false, p: 0 };
+  }
+  for (const p of particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 8 * kk * dt; p.life -= dt; }
+  particles = particles.filter(p => p.life > 0);
+  for (const p of pulses) p.s += p.v * dt;
+  pulses = pulses.filter(p => p.s - p.len < p.path.len && !(p.bus && inDead(p.bus.side, p.bus.r, pointAt(p.path, p.s)[0])));
+}
+
+function drawGlyphCell(q) {
+  const sz = g * .92;
+  if (q.void && q.state !== 'corrupt') return;
+  const rp = cellReveal(q);
+  if (rp <= 0) return;
+  if (rp < 1 && q.state === 'norm') { drawWriteOn(q, sz, rp); return; }
+  const B = boost(q.d), base = .3 * power + .08;
+  let col = COL.light;
+  if (q.state === 'corrupt') {
+    const e = t - q.ev.t0, fadeOut = mad && mad.cut ? 1 - clamp((t - mad.t0 - 6.4) / 1.6) : 1;
+    const spr = glyphSprites(q.ev.wrong, sz, COL.red);
+    dctx.drawImage(spr.G, q.x - spr.S / 2, q.y - spr.S / 2);
+    lctx.globalAlpha = clamp(e / .4) * (.6 + .3 * Math.sin(t * 9 + q.c)) * fadeOut;
+    lctx.drawImage(spr.L, q.x - spr.S / 2, q.y - spr.S / 2);
+    lctx.globalAlpha = 1; return;
+  }
+  if (q.state === 'gauss') { drawGauss(q, sz); return; }
+  if (q.state === 'phase') { drawPhaseCell(q, sz); return; }
+  const spr = glyphSprites(q.glyph, sz, col);
+  dctx.drawImage(spr.G, q.x - spr.S / 2, q.y - spr.S / 2);
+  let a = base + .75 * B;
+  if (q.flip) {
+    const e = t - q.flip.t0;
+    if (e < .3) { const o = glyphSprites(q.flip.old, sz); lctx.globalAlpha = clamp(a * (1 - e / .3)); lctx.drawImage(o.L, q.x - o.S / 2, q.y - o.S / 2); a *= e / .3; }
+    else if (e > .9) q.flip = null;
+    if (e < .6) a += .5 * (1 - e / .6);
+  }
+  lctx.globalAlpha = clamp(a); lctx.drawImage(spr.L, q.x - spr.S / 2, q.y - spr.S / 2); lctx.globalAlpha = 1;
+}
+function cellReveal(q) { return clamp((vis.F - q.d) / (H * .15)); }
+function drawWriteOn(q, sz, rp) {
+  const n = q.glyph.S.length, lw = Math.max(1.1, sz * .055), pr = k => clamp(rp * n - k);
+  const spr = glyphSprites(q.glyph, sz); dctx.globalAlpha = rp; dctx.drawImage(spr.G, q.x - spr.S / 2, q.y - spr.S / 2); dctx.globalAlpha = 1;
+  lctx.lineCap = 'round'; lctx.lineJoin = 'round'; lctx.lineWidth = lw;
+  lctx.strokeStyle = lctx.fillStyle = COL.hot; lctx.globalAlpha = .9 * (1 - rp) + .2;
+  drawStrokes(lctx, q.glyph, q.x, q.y, sz, pr);
+  lctx.globalAlpha = 1;
+}
+function drawGauss(q, sz) {
+  const e = t - q.ev.t0, n = q.glyph.S.length, lw = Math.max(1.1, sz * .055);
+  lctx.lineCap = 'round'; lctx.lineJoin = 'round'; lctx.lineWidth = lw;
+  if (e < 1.2 && !q.ev.regenOnly) {       // распад: штрихи уходят в обратном порядке, сканирующая черта
+    const gone = k => (n - 1 - k) / n * 1.0 + .15 < e;
+    if (!q.ev.parts) q.ev.parts = new Set();
+    for (let k = 0; k < n; k++) if (gone(k) && !q.ev.parts.has(k)) { q.ev.parts.add(k); burst(q.x + rnd(-sz * .3, sz * .3), q.y + rnd(-sz * .4, sz * .4), 10, COL.light, 45, 1.1); }
+    lctx.strokeStyle = lctx.fillStyle = COL.hot; lctx.globalAlpha = .9;
+    drawStrokes(lctx, q.glyph, q.x, q.y, sz, k => gone(k) ? 0 : 1);
+    const sy = q.y - sz * .5 + sz * clamp(e / 1.1);
+    lctx.globalAlpha = .8; lctx.fillStyle = COL.hot; lctx.fillRect(q.x - sz * .45, sy, sz * .9, Math.max(1, kk * 1.2));
+  } else if (e < 2.0) {                     // пусто
+  } else if (e < 3.0) {                     // скарабеи сходятся к клетке
+    const f = (e - 2.0) / 1.0;
+    lctx.fillStyle = COL.light;
+    for (let i = 0; i < 6; i++) {
+      const a = i / 6 * TAU + q.c, r0 = g * 2.2, rr = r0 * (1 - f);
+      lctx.globalAlpha = .9; lctx.fillRect(q.x + Math.cos(a) * rr - kk, q.y + Math.sin(a) * rr * .5 + g * .2 * (1 - f) - kk, 2.2 * kk, 2.2 * kk);
+    }
+  } else if (e < 4.6) {                     // регенерация: штрихи отрастают по порядку
+    const f = (e - 3.0) / 1.6;
+    const pr = k => clamp(f * n - k);
+    lctx.strokeStyle = lctx.fillStyle = COL.hot; lctx.globalAlpha = .55 + .4 * (1 - f);
+    drawStrokes(lctx, q.glyph, q.x, q.y, sz, pr);
+    lctx.strokeStyle = lctx.fillStyle = COL.light; lctx.globalAlpha = .5;
+    drawStrokes(lctx, q.glyph, q.x, q.y, sz, pr);
+    const spr = glyphSprites(q.glyph, sz); dctx.globalAlpha = f; dctx.drawImage(spr.G, q.x - spr.S / 2, q.y - spr.S / 2); dctx.globalAlpha = 1;
+  } else { q.state = 'norm'; q.ev = null; }
+  lctx.globalAlpha = 1;
+}
+function drawPhaseCell(q, sz) {
+  const ev = q.ev, e = t - ev.t0, lw = Math.max(1.1, sz * .055);
+  if (!ev.swapped && e >= 1.2) {         // содержимое картушей меняется местами
+    ev.swapped = true;
+    const ga = ev.a.cells.map(c => c.glyph), gb = ev.b.cells.map(c => c.glyph);
+    ev.a.cells.forEach((c, i) => c.glyph = gb[i]); ev.b.cells.forEach((c, i) => c.glyph = ga[i]);
+  }
+  if (e > 2.4) { if (!ev.done) { ev.done = true; for (const c of [...ev.a.cells, ...ev.b.cells]) { c.state = 'norm'; c.ev = null; } } return drawGlyphCell(q); }
+  const kc = e < 1.2 ? sstep(0, .9, e) : 1 - sstep(1.4, 2.3, e);
+  lctx.lineCap = 'round'; lctx.lineWidth = lw; lctx.strokeStyle = lctx.fillStyle = COL.light;
+  lctx.globalAlpha = clamp(.9 - kc * .5);
+  drawStrokes(lctx, q.glyph, q.x, q.y, sz, null, () => kc);
+  // узлы базовой сетки
+  if (kc > .3) { lctx.fillStyle = COL.hot; lctx.globalAlpha = (kc - .3) * 1.2; const st = g * .5;
+    for (let ix = -1; ix <= 1; ix++) for (let iy = -1; iy <= 1; iy++) lctx.fillRect(Math.round((q.x + ix * st) / st) * st - kk, Math.round((q.y + iy * st) / st) * st - kk, 2 * kk, 2 * kk); }
+  lctx.globalAlpha = 1;
+}
+
+function drawCarts() {
+  for (const k of carts) {
+    const busy = k.cells.some(q => q.state === 'phase'), B = boost(k.cells[0].d), rv = Math.min(...k.cells.map(cellReveal));
+    if (rv <= 0) continue;
+    const y = k.y, h = k.h, r = h / 2;
+    const path = x => { x.beginPath(); x.moveTo(k.x0 + r, y - r); x.lineTo(k.x1 - r, y - r); x.arc(k.x1 - r, y, r, -Math.PI / 2, Math.PI / 2); x.lineTo(k.x0 + r, y + r); x.arc(k.x0 + r, y, r, Math.PI / 2, Math.PI * 1.5); };
+    dctx.strokeStyle = 'rgba(0,0,0,.7)'; dctx.lineWidth = 3.6 * kk; path(dctx); dctx.stroke();
+    lctx.strokeStyle = busy ? COL.hot : COL.light; lctx.lineWidth = 1.3 * kk; lctx.globalAlpha = clamp(.28 * power + .1 + B * .7 + (busy ? .35 : 0)) * rv; path(lctx); lctx.stroke();
+    // замыкающая черта у внешнего края
+    const xe = k.side < 0 ? k.x0 - 3 * kk : k.x1 + 3 * kk;
+    lctx.beginPath(); lctx.moveTo(xe, y - r * .9); lctx.lineTo(xe, y + r * .9); lctx.stroke(); lctx.globalAlpha = 1;
+  }
+}
+function drawTraceBoosts() {
+  lctx.lineCap = 'round'; lctx.lineWidth = 1.6 * kk;
+  for (const b of buses) for (const p of b.pieces) {
+    if (p.d > vis.F) continue;
+    const head = clamp(1 - (vis.F - p.d) / (H * .04));
+    const B = boost(p.d) + head * .9;
+    lctx.strokeStyle = B > .7 ? COL.hot : COL.light; lctx.globalAlpha = clamp(.16 * (.4 + .6 * vis.power) + B);
+    lctx.beginPath(); lctx.moveTo(p.x1, p.y1); lctx.lineTo(p.x2, p.y2); lctx.stroke();
+  }
+  for (const f of floorLines) for (const p of f.pieces) {
+    if (p.d > vis.FH) continue;
+    const B = boost(p.d) + clamp(1 - (vis.FH - p.d) / (H * .04)) * .9 + .05; if (B < .03) continue;
+    lctx.strokeStyle = COL.light; lctx.globalAlpha = clamp(B * .6);
+    lctx.beginPath(); lctx.moveTo(p.x1, p.y1); lctx.lineTo(p.x2, p.y2); lctx.stroke();
+  }
+  // стволы
+  for (const [tr, Fr] of [[trunkUp, vis.F], [trunkDown, vis.FH]]) {
+    const L = clamp(Fr - tr.d0, 0, tr.len); if (L <= 0) continue;
+    const B = boost(tr.d0 + tr.len * .5) + .25 * power;
+    lctx.strokeStyle = COL.light; lctx.globalAlpha = clamp(B); lctx.lineWidth = 1.6 * kk;
+    lctx.beginPath(); lctx.moveTo(...tr.pts[0]); lctx.lineTo(...pointAt(tr, L)); lctx.stroke();
+  }
+  lctx.lineWidth = 1.2 * kk; lctx.strokeStyle = COL.light;
+  for (const q of cells) { if (q.void) continue; const rp = cellReveal(q); if (rp <= 0) continue; lctx.globalAlpha = clamp(.13 * rp * (.4 + .6 * vis.power) + boost(q.d) * .4);
+    lctx.beginPath(); lctx.moveTo(q.x, q.busY); lctx.lineTo(q.x, lerp(q.busY, q.y + g * .48, rp)); lctx.stroke(); }
+  lctx.globalAlpha = 1;
+}
+function drawPulses() {
+  lctx.lineCap = 'round';
+  for (const p of pulses) {
+    for (let j = 0; j < 8; j++) {
+      const s1 = p.s - j * p.len / 8, s0 = s1 - p.len / 8; if (s1 < 0 || s0 > p.path.len) continue;
+      const [x1, y1] = pointAt(p.path, Math.max(0, s0)), [x2, y2] = pointAt(p.path, Math.min(p.path.len, s1));
+      lctx.strokeStyle = j < 2 ? COL.hot : COL.light; lctx.globalAlpha = (1 - j / 8) * .9; lctx.lineWidth = (2.2 - j * .15) * kk;
+      lctx.beginPath(); lctx.moveTo(x1, y1); lctx.lineTo(x2, y2); lctx.stroke();
+    }
+  }
+  lctx.globalAlpha = 1;
+}
+function drawVault() {
+  const P = press.p, Bc = boost(RF * .5);
+  // звезда-узник
+  if (vis.star <= 0 && vis.tessEdges <= 0) return;
+  const sr = RF * (.17 + .1 * P + .25 * vis.flare) * Math.max(.05, vis.star), s = (.55 + .12 * Math.sin(t * 1.3) + .1 * Math.sin(t * 3.7) + P * .9 + vis.flare * 1.5) * Math.min(1, vis.star * 1.5);
+  let gr = lctx.createRadialGradient(CX, VY, 0, CX, VY, sr);
+  gr.addColorStop(0, `rgba(255,248,225,${clamp(.75 * s)})`); gr.addColorStop(.35, `rgba(255,214,120,${clamp(.35 * s)})`); gr.addColorStop(1, 'rgba(0,0,0,0)');
+  lctx.fillStyle = gr; lctx.beginPath(); lctx.arc(CX, VY, sr, 0, TAU); lctx.fill();
+  if (P > .05) { // лучи
+    lctx.strokeStyle = COL.star; lctx.lineWidth = 1.2 * kk;
+    for (let i = 0; i < 12; i++) { const a = i / 12 * TAU + t * .2, l = RF * (.25 + .5 * P * (.6 + .4 * Math.sin(t * 17 + i * 2.1))); lctx.globalAlpha = .35 * P; lctx.beginPath(); lctx.moveTo(CX + Math.cos(a) * sr * .4, VY + Math.sin(a) * sr * .4); lctx.lineTo(CX + Math.cos(a) * l, VY + Math.sin(a) * l); lctx.stroke(); }
+  }
+  // тессеракт
+  const raw = tessRaw(tessAng).map(([X, Y, dpt], i) => {
+    let n = 1; if (P > 0) n += P * (.12 + .2 * Math.sin(t * 21 + i * 1.7));
+    return { x: CX + X * RT * n, y: VY + Y * RT * n, d: dpt };
+  });
+  lctx.lineCap = 'round';
+  const order = TE.map(([i, j]) => ({ i, j, d: (raw[i].d + raw[j].d) / 2 })).sort((a, b) => a.d - b.d);
+  for (const e of order) {
+    const ve = clamp(vis.tessEdges - TE_ORDER.get(e.i * 16 + e.j)); if (ve <= 0) continue;
+    const q = clamp((e.d + 2.6) / 5.2), a = raw[e.i], b0 = raw[e.j], b = { x: lerp(a.x, b0.x, ve), y: lerp(a.y, b0.y, ve) };
+    lctx.strokeStyle = P > .5 && Math.random() < P * .3 ? COL.star : q > .7 ? COL.hot : COL.light;
+    lctx.globalAlpha = clamp(.25 + .7 * q + Bc * .3); lctx.lineWidth = (.8 + 1.8 * q) * kk;
+    lctx.beginPath(); lctx.moveTo(a.x, a.y); lctx.lineTo(b.x, b.y); lctx.stroke();
+  }
+  if (vis.tessEdges >= 1) for (const v of raw) { const q = clamp((v.d + 2.6) / 5.2), r = (1.5 + 2.5 * q) * kk; lctx.fillStyle = COL.hot; lctx.globalAlpha = .4 + .6 * q; lctx.beginPath(); lctx.moveTo(v.x, v.y - r); lctx.lineTo(v.x + r, v.y); lctx.lineTo(v.x, v.y + r); lctx.lineTo(v.x - r, v.y); lctx.closePath(); lctx.fill(); }
+  // поле удержания (проседает под давлением)
+  const ring = (rr, amp, alpha, col, lw) => {
+    if (vis.field <= 0) return;
+    lctx.strokeStyle = col; lctx.globalAlpha = alpha; lctx.lineWidth = lw; lctx.beginPath();
+    for (let i = 0; i <= Math.round(120 * vis.field); i++) { const a = -Math.PI / 2 + i / 120 * TAU, w = amp * Math.sin(a * 7 + t * 11) * Math.sin(a * 3 - t * 5); const r2 = rr * (1 + w); const x = CX + Math.cos(a) * r2, y = VY + Math.sin(a) * r2; i ? lctx.lineTo(x, y) : lctx.moveTo(x, y); }
+    lctx.stroke();
+  };
+  ring(RF, .035 * P, clamp(.35 + .4 * P + Bc * .4), P > .4 ? COL.hot : COL.light, 1.4 * kk);
+  ring(RF * .9, .02 * P, .2 + .2 * P, COL.light, kk);
+  ring(RF * 1.08, .025 * P, .15 + .2 * P, COL.light, kk);
+  // обереги по кольцу: цепью вспыхивают, когда поле держит
+  const wsz = g * .5;
+  wards.forEach((wd, i) => {
+    const wv = clamp(vis.wards - i); if (wv <= 0) return;
+    const a = wd.a + t * .004, x = CX + Math.cos(a) * RF * .99, y = VY + Math.sin(a) * RF * .99;
+    const chain = P > .3 ? clamp(Math.sin((i / 24 - t * .9) * TAU) * 2 - .6) * P : 0;
+    const spr = glyphSprites(wd.glyph, wsz, chain > .3 ? COL.hot : COL.light);
+    lctx.save(); lctx.translate(x, y); lctx.rotate(a + Math.PI / 2);
+    lctx.globalAlpha = clamp(.3 * power + .15 + chain + Bc * .4 + (1 - wv) * .8) * wv; lctx.drawImage(spr.L, -spr.S / 2, -spr.S / 2); lctx.restore();
+  });
+  if (press.snap && rt - press.t0 < 4.3) { const q = (rt - press.t0 - 3.6) / .7; lctx.strokeStyle = COL.hot; lctx.globalAlpha = clamp(1 - q); lctx.lineWidth = 4 * kk; lctx.beginPath(); lctx.arc(CX, VY, RF * (1 + q * .25), 0, TAU); lctx.stroke(); }
+  lctx.globalAlpha = 1;
+}
+function drawLintel() {
+  const L = lintel, y = (L.y0 + L.y1) / 2, r = (L.y1 - L.y0) * .45;
+  const B = boost(dLintel), lv = clamp((vis.F - dLintel) / (H * .1));
+  if (lv <= 0) return;
+  const path = x => { x.beginPath(); x.moveTo(L.x0 + r, y - r); x.lineTo(L.x1 - r, y - r); x.arc(L.x1 - r, y, r, -Math.PI / 2, Math.PI / 2); x.lineTo(L.x0 + r, y + r); x.arc(L.x0 + r, y, r, Math.PI / 2, Math.PI * 1.5); };
+  dctx.strokeStyle = 'rgba(0,0,0,.75)'; dctx.lineWidth = 4 * kk; path(dctx); dctx.stroke();
+  lctx.strokeStyle = COL.light; lctx.lineWidth = 1.5 * kk; lctx.globalAlpha = clamp(.3 * power + .15 + B) * lv; path(lctx); lctx.stroke();
+  nameGlyphs.forEach((ng, i) => {
+    const spr = glyphSprites(ng.glyph, ng.size), nv = clamp(vis.name - i), fl = nv > 0 && nv < 1 ? 1 - nv : 0;
+    dctx.globalAlpha = lv; dctx.drawImage(spr.G, ng.x - spr.S / 2, ng.y - spr.S / 2); dctx.globalAlpha = 1;
+    if (nv <= 0) return;
+    lctx.globalAlpha = clamp((.55 + .45 * vis.power) * nv + B * .8 + vis.nameGlow); lctx.drawImage(spr.L, ng.x - spr.S / 2, ng.y - spr.S / 2);
+    if (fl > 0 || vis.nameGlow > .05) { const h = glyphSprites(ng.glyph, ng.size, COL.hot); lctx.globalAlpha = clamp(fl * 1.2 + vis.nameGlow); lctx.drawImage(h.L, ng.x - h.S / 2, ng.y - h.S / 2); }
+  });
+  // фриз: черта — ромб — черта — ромб…
+  lctx.strokeStyle = lctx.fillStyle = COL.light; lctx.lineWidth = 1.2 * kk;
+  for (const u of friezeUnits) {
+    const fv = clamp((vis.F - u.d) / (H * .06)); if (fv <= 0) continue;
+    const b = boost(u.d); lctx.globalAlpha = clamp(.18 * power + .06 + b * .8 + vis.nameGlow * .5) * fv;
+    const hh = u.h * .28;
+    if (u.kind) { lctx.beginPath(); lctx.moveTo(u.x, u.y - hh); lctx.lineTo(u.x + hh * .6, u.y); lctx.lineTo(u.x, u.y + hh); lctx.lineTo(u.x - hh * .6, u.y); lctx.closePath(); lctx.stroke(); }
+    else { lctx.beginPath(); lctx.moveTo(u.x, u.y - hh * 1.15); lctx.lineTo(u.x, u.y + hh * 1.15); lctx.stroke(); }
+  }
+  lctx.globalAlpha = 1;
+}
+function drawCounter() {
+  if (vis.counterA <= 0) return;
+  const s = String(Math.max(0, Math.floor(vis.counterV))).padStart(vis.counterPad, '0'), n = s.length;
+  const h = vis.ch, w = h * .62, gap = w * .45, x0 = CX - (n * (w + gap) - gap) / 2, y = vis.cy;
+  lctx.strokeStyle = lctx.fillStyle = COL.light; lctx.lineWidth = Math.max(1, kk * 1.1); lctx.lineCap = 'round';
+  for (let i = 0; i < n; i++) {
+    const v = +s[i], x = x0 + i * (w + gap) + w / 2, isLow = i === n - 1;
+    lctx.globalAlpha = clamp((.45 + (isLow ? .25 : 0) + vis.counterFlash) * vis.counterA); lctx.lineWidth = Math.max(1, h * .07);
+    lctx.strokeStyle = lctx.fillStyle = vis.counterFlash > .05 ? COL.hot : COL.light;
+    if (v === 0) { lctx.beginPath(); lctx.ellipse(x, y, w * .3, h * .18, 0, 0, TAU); lctx.stroke(); continue; }
+    const bars = Math.floor(v / 5), dots = v % 5;
+    for (let b = 0; b < bars; b++) { const yy = y + h * .42 - b * h * .24; lctx.beginPath(); lctx.moveTo(x - w * .45, yy); lctx.lineTo(x + w * .45, yy); lctx.stroke(); }
+    const yd = y + h * .42 - bars * h * .24 - h * .02;
+    for (let d = 0; d < dots; d++) { lctx.beginPath(); lctx.arc(x + (d - (dots - 1) / 2) * w * .26, yd, Math.max(kk * 1.3, h * .065), 0, TAU); lctx.fill(); }
+  }
+  lctx.globalAlpha = 1;
+}
+function riteEye(n) {
+  // [уровень, ширина щели 0..1]; полностью определяется временем обряда
+  const ta = n.ta, tg = n.tg;
+  if (rt < ta) { const s = t - n.stir; return [vis.hall * (.06 + (s < 1.4 && rt > 31 ? .25 * Math.sin(Math.PI * clamp(s / 1.4)) : 0)), 1]; }
+  if (n.bad) { n.mark = rt > ta + .7; const e = rt - ta; return [[.3, 0, .22, 0, .12, 0, 0][Math.floor(e / .1)] ?? 0, 1]; }
+  let L, w = 1; const e = rt - ta;
+  if (e < .16) L = [.9, .05, 1, .15][Math.floor(e / .04)] ?? .9; else L = .82 + .7 * Math.exp(-(e - .16) * 6) + .05 * Math.sin(t * 1.6 + n.ph);
+  if (rt >= tg) { const f = rt - tg; if (f < .15) L = .85 + 5 * f; else if (f < .5) { L = 1.6; w = 1 - (f - .15) / .35; } else return [0, 0]; }
+  return [L, w];
+}
+function drawEyes() {
+  for (const n of niches) {
+    let [L, wf] = riteEye(n); L += boost(n.d) * (L > .3 ? .8 : 0);
+    if (n.mark && vis.hall < .02) continue;
+    if (wf <= 0) continue;
+    const ew = Math.max(.6, n.w * .19 * wf), eh = Math.max(1, n.h * .022), gap = n.w * .11, ye = n.y - n.h * .82;
+    if (n.mark) {                         // помечен и отключён
+      if (n.h > 8) { lctx.globalAlpha = .22 * vis.hall; lctx.fillStyle = COL.dim; lctx.fillRect(n.x - n.w * .3, ye, n.w * .6, Math.max(1, kk)); }
+      continue;
+    }
+    if (L < .02) continue;
+    lctx.fillStyle = L > 1.1 ? COL.hot : COL.light; lctx.globalAlpha = clamp(L);
+    if (n.h < 9) { lctx.fillRect(n.x - gap / 2 - ew, ye, ew, eh); lctx.fillRect(n.x + gap / 2, ye, ew, eh); continue; }
+    // прорезь — скошенная к центру
+    for (const sgn of [-1, 1]) {
+      const xa = n.x + sgn * gap / 2, xb = n.x + sgn * (gap / 2 + ew);
+      lctx.beginPath(); lctx.moveTo(xa, ye + eh * .2); lctx.lineTo(xb, ye - eh * .6); lctx.lineTo(xb, ye + eh * .5); lctx.lineTo(xa, ye + eh * 1.1); lctx.closePath(); lctx.fill();
+    }
+  }
+  lctx.globalAlpha = 1;
+}
+function drawMad() {
+  // красные шины в зоне скверны
+  if (mad) {
+    const e = t - mad.t0;
+    lctx.lineWidth = 1.6 * kk;
+    for (const q of mad.region) {
+      const a = (.5 + .4 * Math.sin(t * 8 + q.c * 1.3)) * (mad.cut ? 1 - clamp((e - 6.4) / 1.6) : 1);
+      lctx.strokeStyle = COL.red; lctx.globalAlpha = a; lctx.beginPath(); lctx.moveTo(q.x - pitch * .5, q.busY); lctx.lineTo(q.x + pitch * .5, q.busY); lctx.stroke();
+      lctx.beginPath(); lctx.moveTo(q.x, q.busY); lctx.lineTo(q.x, q.y + g * .48); lctx.stroke();
+    }
+    if (mad.box) {                        // контур карантина проводится по периметру
+      const B = mad.box, f = clamp((e - 5.2) / .9), per = 2 * (B.x1 - B.x0 + B.y1 - B.y0);
+      const pts = [[B.x0, B.y0], [B.x1, B.y0], [B.x1, B.y1], [B.x0, B.y1], [B.x0, B.y0]];
+      lctx.strokeStyle = COL.hot; lctx.globalAlpha = .95; lctx.lineWidth = 1.8 * kk; lctx.beginPath(); lctx.moveTo(...pts[0]);
+      let left = f * per;
+      for (let i = 1; i < pts.length && left > 0; i++) { const l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]), q = Math.min(1, left / l); lctx.lineTo(lerp(pts[i - 1][0], pts[i][0], q), lerp(pts[i - 1][1], pts[i][1], q)); left -= l; }
+      lctx.stroke();
+    }
+  }
+  // мёртвые участки: тёмная пластина и шов
+  for (const v of [...voids, ...(mad && mad.cut ? [{ box: mad.box, t0: t }] : [])]) {
+    const B = v.box, rg = v.regen ? clamp((t - v.regen) / 3.5) : 0;
+    dctx.fillStyle = `rgba(0,0,0,${.55 * (1 - rg)})`; dctx.fillRect(B.x0, B.y0, B.x1 - B.x0, B.y1 - B.y0);
+    dctx.strokeStyle = `rgba(0,0,0,${.8 * (1 - rg)})`; dctx.lineWidth = 3 * kk; dctx.strokeRect(B.x0, B.y0, B.x1 - B.x0, B.y1 - B.y0);
+    lctx.strokeStyle = COL.dim; lctx.globalAlpha = .45 * (1 - rg); lctx.lineWidth = kk; lctx.strokeRect(B.x0, B.y0, B.x1 - B.x0, B.y1 - B.y0);
+    // косая штриховка — запечатано
+    lctx.save(); lctx.beginPath(); lctx.rect(B.x0, B.y0, B.x1 - B.x0, B.y1 - B.y0); lctx.clip();
+    lctx.globalAlpha = .07 * (1 - rg); lctx.strokeStyle = COL.red;
+    for (let s = B.x0 - (B.y1 - B.y0); s < B.x1; s += g * .5) { lctx.beginPath(); lctx.moveTo(s, B.y1); lctx.lineTo(s + (B.y1 - B.y0), B.y0); lctx.stroke(); }
+    lctx.restore();
+  }
+  lctx.globalAlpha = 1;
+}
+function render() {
+  dctx.globalCompositeOperation = 'source-over'; dctx.globalAlpha = 1;
+  dctx.fillStyle = '#000'; dctx.fillRect(0, 0, W, H);
+  dctx.globalAlpha = .22 + .78 * vis.power; dctx.drawImage(amb, 0, 0); dctx.drawImage(traceC, 0, 0);
+  dctx.globalAlpha = vis.hall; dctx.drawImage(hallC, 0, 0); dctx.globalAlpha = 1;
+  lctx.globalCompositeOperation = 'source-over'; lctx.globalAlpha = 1; lctx.fillStyle = '#000'; lctx.fillRect(0, 0, W, H);
+  drawTraceBoosts(); drawPulses();
+  for (const q of cells) drawGlyphCell(q);
+  drawCarts(); drawLintel(); drawCounter(); drawVault(); drawEyes(); drawMad();
+  for (const p of particles) { lctx.globalAlpha = clamp(p.life / p.max); lctx.fillStyle = p.col; lctx.fillRect(p.x, p.y, p.s, p.s); }
+  lctx.globalAlpha = 1;
+  // сведение: свет поверх металла + узкое свечение
+  dctx.globalCompositeOperation = 'lighter'; dctx.drawImage(lightC, 0, 0);
+  bctx.clearRect(0, 0, bloomC.width, bloomC.height); bctx.filter = `blur(${Math.max(1.5, 2.2 * DPR)}px)`;
+  bctx.drawImage(lightC, 0, 0, bloomC.width, bloomC.height); bctx.filter = 'none';
+  dctx.globalAlpha = .75; dctx.drawImage(bloomC, 0, 0, W, H); dctx.globalAlpha = 1;
+  dctx.globalCompositeOperation = 'source-over';
+}
+function frame(now) {
+  requestAnimationFrame(frame);
+  const rdt = (now - last) / 1000; last = now;
+  if (paused) return;
+  step(rdt); render();
+}
+// часы обряда идут по настоящему времени без ограничения шага (события не отстают); dt ограничен лишь для частиц
+function step(rdt) { riteUpdate(rdt); update(Math.min(.05, rdt)); }
+
+/* =============================== управление =============================== */
+const ui = document.getElementById('ui'); let uiT = 0;
+const showUI = () => { ui.classList.add('show'); clearTimeout(uiT); uiT = setTimeout(() => ui.classList.remove('show'), 2800); };
+addEventListener('mousemove', showUI); addEventListener('touchstart', showUI, { passive: true });
+function act(a) {
+  if (a === 'restart') { riteRestart(); paused = false; }
+  else if (a === 'loop') { loopOn = !loopOn; document.getElementById('bLoop').textContent = 'Повтор: ' + (loopOn ? 'вкл' : 'выкл'); }
+  else if (a === 'pause') paused = !paused;
+  else if (a === 'fs') { const d = document; (d.fullscreenElement ? d.exitFullscreen() : d.documentElement.requestFullscreen?.())?.catch?.(() => {}); }
+}
+ui.addEventListener('click', e => { const b = e.target.closest('button'); if (b) act(b.dataset.a); });
+addEventListener('keydown', e => { const m = { KeyR: 'restart', KeyL: 'loop', KeyP: 'pause', Space: 'pause', KeyF: 'fs' }[e.code]; if (m) { e.preventDefault(); act(m); } });
+let rzT = 0; addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(() => { deadSpans = []; voids = []; mad = null; build(); riteTimes(); }, 150); });
+
+build(); riteTimes(); riteRestart();
+requestAnimationFrame(n => { last = n; requestAnimationFrame(frame); });
+</script>
+</body>
+</html>

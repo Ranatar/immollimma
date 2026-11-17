@@ -1,0 +1,127 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso",
+  "vsco"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "afl_sus@sso": 13,
+  "cb_pizz@plain": 32,
+  "cb_sus@plain": 5,
+  "cb_sus@vsco": 2,
+  "cbsn_sus@sso": 7,
+  "crotales@sso": 29,
+  "harp@plain": 82,
+  "hn_sus@plain": 8,
+  "sample@plain": 111,
+  "sample@sso": 2,
+  "tba_sus@plain": 1,
+  "tbn_sus@plain": 16,
+  "timp@plain": 34,
+  "timp_roll@plain": 1,
+  "tpt_sus@plain": 3,
+  "tubular@vsco": 5,
+  "vc_colleg@sso": 13,
+  "vc_harm@sso": 2,
+  "vc_pizz@plain": 33,
+  "vc_sus@plain": 14,
+  "vibes@sso": 123,
+  "vla_harm@sso": 2,
+  "vla_pizz@plain": 34,
+  "vla_sus@plain": 5,
+  "vln_colleg@sso": 67,
+  "vln_harm@sso": 55,
+  "vln_pizz@plain": 59,
+  "vln_solo@vsco": 4,
+  "vln_sus@plain": 8,
+  "vln_trem@plain": 4
+ },
+ "substitutions": {
+  "cb_sus": "plain unavailable → vsco"
+ },
+ "missing": {},
+ "out_of_range_rescued": {
+  "cb_sus": 2
+ },
+ "sfizz_notes": 178,
+ "lengthened": 1,
+ "window": [
+  0.0,
+  96.0
+ ],
+ "seconds": 96.0,
+ "mp3": "/home/claude/immollimma/requests/protocollum-excitationis/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/protocollum-excitationis/out/score.mid",
+  "lost": {
+   "raw samples (noises, unpitched percussion)": 113,
+   "notes with a glissando inside": 12,
+   "notes with detune (out-of-tune doubles)": 36,
+   "reversed notes": 32
+  },
+  "musicxml": "/home/claude/immollimma/requests/protocollum-excitationis/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/protocollum-excitationis/out/score.pdf",
+  "grid": [
+   4,
+   3
+  ]
+ },
+ "qa": {
+  "gaps": [
+   [
+    15.7,
+    16.9
+   ],
+   [
+    22.1,
+    23.1
+   ],
+   [
+    69.4,
+    70.6
+   ]
+  ],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   6.8,
+   7.2,
+   8.8,
+   16.0,
+   16.5,
+   18.0,
+   21.2,
+   77.8,
+   80.5,
+   83.5,
+   87.5,
+   91.5
+  ],
+  "png": "/home/claude/immollimma/requests/protocollum-excitationis/out/report.png"
+ },
+ "parts_lufs": {
+  "Trumpet": -24.3,
+  "Contrabassoon": -24.6,
+  "Horn": -25.2,
+  "Alto flute": -25.5,
+  "Tuba": -26.0,
+  "Timpani": -26.8,
+  "Cellos": -27.0,
+  "Basses": -27.6,
+  "Violas": -29.4,
+  "Violins": -29.5,
+  "Harp": -29.7,
+  "Trombone": -29.9,
+  "Violin solo": -30.5,
+  "Tubular bells": -34.4,
+  "Vibraphone": -35.3,
+  "Crotales": -41.4
+ },
+ "seconds_taken": 50.3
+}
