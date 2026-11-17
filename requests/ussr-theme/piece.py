@@ -65,6 +65,38 @@ def harmony(key, t0, degs=HARM_DEG, step=1.0):
     return h
 
 
+def chord_pcs(harm, t, d):
+    """звуки, общие для всех аккордов на отрезке [t, t+d) (шаг — доля)"""
+    pcs, x = None, t
+    while x < t + d - 1e-9:
+        c = set(harm.at(x)[1].pcs)
+        pcs = c if pcs is None else pcs & c
+        x += 1.0
+    return pcs or set()
+
+
+def bells(o, harm, t0, count, prefer, vel, gain, every=4, dur=2, melody=()):
+    """колокол — только звуком, который входит во все аккорды, пока колокол звенит; иначе пропуск.
+    (прежде ми и си чередовались вслепую и звенели 4 доли + 3 с: си над до-мажором — большая септима)"""
+    for i in range(count):
+        t = t0 + every * i
+        pcs = chord_pcs(harm, t, dur + 1)
+        mel = [mm for b, d, mm in melody if b < t + dur + 1 - 1e-9 and b + d > t + 1e-9 and abs(b - round(b)) < 1e-9]
+        m = next((x for x in prefer[i % len(prefer):] + prefer if x % 12 in pcs
+                  and all(abs(x - mm) % 12 not in (1, 2, 6, 10, 11) for mm in mel)), None)
+        if m is not None:
+            o.n("tubular", m, t, dur, "Campane", vel=vel, gain=gain, release=1.2)
+
+
+def timp_hits(o, harm, key_tonic, notes, vel, gain, dur=1):
+    """литавры — только тоника и доминанта и только на сильных долях, когда этот звук в аккорде: у литавр
+    неровные обертоны (сильный призвук на полутон выше), и бас-«гамма» на литаврах давала грязь"""
+    td = {key_tonic % 12, (key_tonic + 7) % 12}
+    for b, d, m in notes:
+        if m % 12 in td and abs(b - round(b)) < 1e-9 and round(b) % 2 == 0 and m % 12 in harm.at(b)[1].pcs:
+            o.n("timp", next(x for x in range(40, 52) if x % 12 == m % 12), b, dur, "Timpani", vel=vel, gain=gain)
+
+
 def theme_in(semis=0, dt=0.0, scale_t=1.0, notes=THEME):
     return [(dt + b * scale_t, d * scale_t, m + semis) for b, d, m in notes]
 
@@ -117,7 +149,11 @@ class U:
             s += (min(beat, b1) - b0) * (f - 1)
         return (beat + s) * SPB
 
+    DROP = set(filter(None, os.environ.get("USSR_DROP", "").split(",")))  # замеры: рендер без этих инструментов
+
     def n(self, inst, m, beat, dur, part, legato=0.96, **kw):
+        if inst in self.DROP:
+            return {}
         kw.setdefault("release", 0.4)
         t0, t1 = self.perf(beat), self.perf(beat + dur)
         e = self.p.note(inst, m, t0, max(0.06, (t1 - t0) * legato), part=part, **kw)
@@ -125,6 +161,8 @@ class U:
         return e
 
     def fx(self, kind, beat, **kw):
+        if "fx" in self.DROP:
+            return None
         return self.c.fx(kind, self.perf(beat), bus="perc", **kw)
 
     def phrase(self, inst, notes, part, vel=0.55, gain=0.5, swell=0.12, t_phrase=8, **kw):
@@ -134,15 +172,20 @@ class U:
             arc = max(0.0, 1 - abs(u - 0.45) / 0.55)
             self.n(inst, m, b, d, part, vel=vel + swell * arc, gain=gain * (0.85 + 0.3 * arc), **kw)
 
-    def pad(self, inst, harm, t0, t1, lo, hi, part, melody, vel=0.4, gain=0.2, size=3, step=2.0, **kw):
-        """аккорды по гармонии, без звуков, дающих секунду или септиму с мелодией, пока аккорд звучит"""
+    def pad(self, inst, harm, t0, t1, lo, hi, part, melody, vel=0.4, gain=0.2, size=3, step=2.0, others=(), **kw):
+        """аккорды по гармонии — только ниже темы и без секунд, септим и тритонов с ней, пока аккорд звучит
+        (в первых редакциях аккорды стояли над темой: верхний голос фона слышался как вторая мелодия и спорил с
+        темой — «партия на заднем плане дисгармонирует»)"""
         t = t0
         prev = None
         while t < t1 - 1e-9:
             pcs = harm.at(t)[1].pcs
             mel = [m for b, d, m in melody if b < t + step - 1e-9 and b + d > t + 1e-9]
-            cands = [x for x in range(lo, hi + 1) if x % 12 in pcs
-                     and all(abs(x - m) % 12 not in (1, 2, 10, 11) for m in mel)]
+            top = min(mel) - 3 if mel else hi  # аккомпанемент — всегда ниже темы (не меньше малой терции)
+            oth = [m for b, d, m in others if b < t + step - 1e-9 and b + d > t + 1e-9]
+            cands = [x for x in range(lo, min(hi, top) + 1) if x % 12 in pcs
+                     and all(abs(x - m) % 12 not in (1, 2, 6, 10, 11) for m in mel)
+                     and all(abs(x - m) % 12 not in (1, 11) for m in oth)]
             v = []
             for x in sorted(cands, key=lambda x: (abs(x - (prev[min(len(v), len(prev) - 1)] if prev else (lo + hi) // 2)), x)):
                 if len(v) < size and all(abs(x - y) >= 3 for y in v):
@@ -188,7 +231,7 @@ def statement_solo(o, t0):
     o.phrase("vc_leg", mel, "Violoncello solo", vel=0.52, gain=0.62, attack=0.05)
     o.phrase("cb_sus", bass, "Contrabassi", vel=0.45, gain=0.5, attack=0.2, swell=0.06)
     o.phrase("vla_leg", counter, "Viole", vel=0.42, gain=0.3, attack=0.08, swell=0.08)
-    o.pad("cl_sus", harm, t0, t0 + 32, 55, 67, "Clarinetti", mel + counter, vel=0.35, gain=0.14, size=2)
+    o.pad("cl_sus", harm, t0, t0 + 32, 43, 60, "Clarinetti", mel, vel=0.35, gain=0.14, size=2, others=counter + bass)
     return [mel, bass, counter], harm
 
 
@@ -216,9 +259,8 @@ def statement_choir(o, t0):
     o.phrase("cb_sus", bass, "Contrabassi", vel=0.5, gain=0.52, attack=0.15)
     o.phrase("vc_sus", [(b, d, m + 12) for b, d, m in bass], "Violoncelli", vel=0.45, gain=0.32, attack=0.15)
     o.phrase("vln_leg", counter, "Violini", vel=0.48, gain=0.34, attack=0.05)
-    o.pad("vla_sus", harm, t0, t0 + 32, 57, 68, "Viole", mel + counter, vel=0.38, gain=0.18, size=2)
-    for b in range(8):
-        o.n("tubular", 69 if b % 2 == 0 else 64, t0 + 4 * b, 4, "Campane", vel=0.45, gain=0.3, release=3.0)
+    o.pad("vla_sus", harm, t0, t0 + 32, 45, 64, "Viole", mel, vel=0.38, gain=0.18, size=2, others=bass)
+    bells(o, harm, t0, 8, [69, 64, 76], vel=0.45, gain=0.3, melody=mel)
     return [mel, bass, counter], harm
 
 
@@ -242,9 +284,8 @@ def development(o, t0):
         for b, d, m in bass:
             o.n("cb_pizz", m, b, d, "Contrabassi", vel=0.6 + 0.04 * i, gain=0.5)
             o.n("vc_pizz", m + 12, b, d, "Violoncelli", vel=0.55, gain=0.35)
-            o.n("timp", next(x for x in range(40, 52) if x % 12 == m % 12), b, 0.5, "Timpani",
-                vel=0.5 + 0.05 * i, gain=0.28 + 0.03 * i)
-        o.pad("vla_trem", harm, b0, b0 + 8, 60, 74, "Viole", mel, vel=0.4 + 0.04 * i, gain=0.12 + 0.03 * i, size=3,
+        timp_hits(o, harm, tonic, bass, vel=0.5 + 0.05 * i, gain=0.28 + 0.03 * i, dur=0.5)
+        o.pad("vla_trem", harm, b0, b0 + 8, 48, 70, "Viole", mel, vel=0.4 + 0.04 * i, gain=0.12 + 0.03 * i, size=3,
               step=1.0)
         t = b0
         while t < b0 + 8 - 1e-9:  # малый барабан, марш: ♩ ♪♪
@@ -284,12 +325,11 @@ def apotheosis(o, t0):
     o.phrase("tba_sus", bass, "Tuba", vel=0.6, gain=0.4, attack=0.04)
     o.phrase("cb_sus", bass, "Contrabassi", vel=0.6, gain=0.5, attack=0.04)
     o.phrase("vc_sus", [(b, d, m + 12) for b, d, m in bass], "Violoncelli", vel=0.55, gain=0.35, attack=0.04)
-    o.pad("tbn_sus", harm, t0, t0 + 32, 50, 64, "Tromboni", mel + counter, vel=0.58, gain=0.26, size=3, step=1.0,
+    o.pad("tbn_sus", harm, t0, t0 + 32, 48, 64, "Tromboni", mel, vel=0.58, gain=0.26, size=3, step=1.0, others=bass,
           legato=0.88)
-    for b, d, m in bass:
-        o.n("timp", next(x for x in range(40, 52) if x % 12 == m % 12), b, 1, "Timpani", vel=0.55, gain=0.32)
+    timp_hits(o, harm, 4, bass, vel=0.55, gain=0.32)
+    bells(o, harm, t0, 8, [64, 71, 76], vel=0.6, gain=0.38, melody=mel)
     for b in range(8):
-        o.n("tubular", 64 if b % 2 == 0 else 71, t0 + 4 * b, 4, "Campane", vel=0.6, gain=0.38, release=3.0)
         o.fx("bd", t0 + 4 * b, gain=0.2)
     o.fx("clash", t0, gain=0.25)
     o.fx("tamtam", t0 + 30, gain=0.3)
