@@ -414,6 +414,15 @@ function buildWorld() {
   for (const sg of segs) {
     const mx = x + ((sg.lx0 + sg.lx1) / 2) * ca - ((sg.ly0 + sg.ly1) / 2) * sa, my = y + ((sg.lx0 + sg.lx1) / 2) * sa + ((sg.ly0 + sg.ly1) / 2) * ca;
     sg.brk = Math.min(77.6, 62.6 + Math.hypot(mx - cx, my - cy) / (2 * R) * 13.2 + sg.j * 1.6 + (sg.shell ? -.6 : 0));
+    // крошка: какие звенья дают крошку — постоянно; приход — на ударе сердца (перекачка толчками)
+    sg.crumb = sg.sub ? sg.j < .22 : sg.j < .7;
+    if (sg.crumb) {
+      const dn = Math.hypot(mx - SEED[0], my - SEED[1]) / Math.min(W, H);
+      const due = sg.brk + Math.max(.8, dn * 4.5);
+      sg.arr = MAIN_BEATS.find(b => b >= due) ?? 80; if (sg.arr > 80) sg.arr = 80;
+      sg.surges = MAIN_BEATS.filter(b => b > sg.brk && b <= sg.arr);
+      sg.pan = +((mx / W) * 2 - 1).toFixed(3);
+    }
   }
   prey.segs = segs; prey.contact = [cx, cy];
 }
@@ -440,7 +449,8 @@ function updPrey() {
   const th = worldAngle(rt);
   for (const sg of p.segs) if (rt >= sg.brk) { broken++;
     if (!sg.eaten) { sg.eaten = true; const [x0, y0, x1, y1] = segWorld(sg, th), mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
-      if (!sg.sub || rng() < .3) { if (rng() < .6) morsels.push({ x: mx, y: my, tgt: nearest(mx, my)[0], born: rt }); addSplat(mx, my, 3.5 * k, .18); } } }
+      if (sg.crumb) { morsels.push(makeCrumb(sg, mx, my)); ev('crumb', { t: +sg.brk.toFixed(4), arrive: sg.arr, pan: sg.pan }); }
+      if (!sg.sub || sg.crumb) addSplat(mx, my, 3.5 * k, .18); } }
   p.frac = broken / p.segs.length;
   p.light = rt < 62 ? 1 : 1 - sm(62, 78, rt);
 }
@@ -517,21 +527,35 @@ function drawHiveOrder(fade) {
 }
 
 let morsels = [];
+// крошка идёт по жилам к сердцу толчками — по шагу на каждом ударе — и вливается в сердце ровно на ударе
+function makeCrumb(sg, x, y) {
+  const path = [{ x, y }]; let n = nearest(x, y)[0];
+  while (n) { path.push(n); n = n.parent; }
+  return { path, x, y, brk: sg.brk, arr: sg.arr, surges: sg.surges, pr: 0, done: false };
+}
+function crumbProgress(m, x) {
+  const n = m.surges.length || 1; let s = 0;
+  for (const b of m.surges) s += sm(b - .35, b, x);       // толчок кончается ровно на ударе
+  return clamp(s / n);
+}
 function updMorsels(dt) {
-  const sp = 150 * k;
   for (const m of morsels) {
-    let tg = m.tgt; while (tg && tg.dead) tg = tg.parent; if (!tg) tg = coreN; m.tgt = tg; if (!tg) { m.done = true; continue; }
-    const dx = tg.x - m.x, dy = tg.y - m.y, d = Math.hypot(dx, dy);
-    if (d < sp * dt) { m.x = tg.x; m.y = tg.y;
-      if (tg === coreN) { m.done = true; coreN.flash = 1; coreMass = Math.min(1, coreMass + .006); addSplat(coreN.x, coreN.y, 6 * k, .1); } else m.tgt = tg.parent || coreN; }
-    else { m.x += dx / d * sp * dt; m.y += dy / d * sp * dt; }
+    m.pr = crumbProgress(m, rt);
+    const pts = m.path.filter(q => !q.dead); if (coreN && pts[pts.length - 1] !== coreN) pts.push(coreN);
+    let L = 0; const seg = [];
+    for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y); seg.push(d); L += d; }
+    let want = m.pr * L, i = 0;
+    while (i < seg.length && want > seg[i]) { want -= seg[i]; i++; }
+    if (i >= seg.length) { const e = pts[pts.length - 1]; m.x = e.x; m.y = e.y; }
+    else { const a = pts[i], b = pts[i + 1], f = seg[i] ? want / seg[i] : 0; m.x = a.x + (b.x - a.x) * f; m.y = a.y + (b.y - a.y) * f; }
+    if (rt >= m.arr && !m.done) { m.done = true; if (coreN) { coreN.flash = 1; coreMass = Math.min(1, coreMass + .005); addSplat(coreN.x, coreN.y, 6 * k, .08); } }
   }
   morsels = morsels.filter(m => !m.done);
 }
 function drawMorsels(fade) {
   const P = pal.prey;
   for (const m of morsels) {
-    const f = clamp((rt - m.born) / 6);
+    const f = m.pr;
     const c = `rgb(${[0, 1, 2].map(i => Math.round(lerp(P[i], pal.glow[i], f) * 255)).join(',')})`;
     glowDot(m.x, m.y, 9 * k, '#ffffff', c, .9 * fade);
   }
@@ -616,7 +640,7 @@ function step(rdt) {
   riteUpdate(dt); updPrey(); updNet(); updBeats(); updMorsels(dt);
   if (coreN) for (let i = 0; i < 3; i++) { const n = nodes[(rng() * nodes.length) | 0]; if (n && !n.dying) addSplat(n.x, n.y, 6 * k, .12); }
 }
-const STEPS = 10;
+let STEPS = 10;
 function render(dt = 1 / 60) {
   const fade = fadeAt(rt), shadow = shadowAt(rt), LR = lifeR();
   gl.useProgram(simP.p); gl.viewport(0, 0, SW, SH);
@@ -679,7 +703,7 @@ let rzT = 0; addEventListener('resize', () => { clearTimeout(rzT); rzT = setTime
 (() => { const tl = document.getElementById('tl');
   for (const [at, num, name] of STAGES) { const i = document.createElement('i'); i.style.left = (at / RITE_LEN * 100) + '%'; i.title = num + ' · ' + name; tl.appendChild(i); } })();
 resize(); riteRestart();
-window.__dev = { step, render, EVLOG: () => EVLOG, RITE_LEN, STAGES, BEATS, ORDER: { ORDER_START, ORDER_FULL, ORDER_TURNS, ORDER_RELEASE, ORDER_END }, get rt() { return rt; }, restart: riteRestart,
+window.__dev = { setSteps(n) { STEPS = n; }, step, render, EVLOG: () => EVLOG, RITE_LEN, STAGES, BEATS, ORDER: { ORDER_START, ORDER_FULL, ORDER_TURNS, ORDER_RELEASE, ORDER_END }, get rt() { return rt; }, restart: riteRestart,
   set loop(v) { loopOn = v; }, set paused(v) { paused = v; } };
 requestAnimationFrame(n => { last = n; requestAnimationFrame(frame); });
 </script>

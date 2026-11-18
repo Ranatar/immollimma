@@ -13,7 +13,7 @@ async def film(path, out, fps, seconds, W, H):
         pg = await b.new_page(viewport={"width": W, "height": H}, device_scale_factor=1)
         await pg.goto(pathlib.Path(path).resolve().as_uri())
         await pg.wait_for_function("window.__dev", timeout=20000)
-        await pg.evaluate("__dev.paused = true; __dev.loop = false; __dev.restart(); document.getElementById('ui').style.display='none'")
+        await pg.evaluate("__dev.paused = true; __dev.loop = false; __dev.setSteps(20); __dev.restart(); document.getElementById('ui').style.display='none'")
         T = time.time()
         for f in range(n):
             await pg.evaluate("(T) => { const D = window.__dev; D.render(1/30); while (D.rt < T - 1e-7) D.step(Math.min(1/60, T - D.rt)); }", (f + 1) / fps)

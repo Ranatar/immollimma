@@ -205,13 +205,32 @@ def build(ctx):
                bend=-5.0 - rank * 0.4, detune=0.4)
     c.buzz(51.0, 11.0, notes=(78 + last_r % 12, 84 + last_r % 12 - 12, 89 + last_r % 12 - 12), gain=0.2)
     c.buzz(62.0, 16.0, notes=(73, 80, 86), gain=0.26, rates=(47.0, 59.0, 83.0))
-    # обломки текут к сердцу: стекло и пузыри — справа налево
-    t = 62.6
-    while t < 77.6:
-        prog = lin(62.6, 77.6, t)
-        c.fx("glass" if rng.random() < 0.6 else "bubbles", t, gain=0.05 + 0.05 * rng.random(), pan=WORLD_PAN - 0.9 * rng.random() * (0.5 + prog),
-             shift=rng.uniform(-10, 3), bus="fx")
-        t += rng.uniform(0.25, 0.55)
+    # крошки порядка: откол — цифровой щелчок в высотах последнего аккорда мира (справа), на каждом толчке к сердцу —
+    # отголосок ниже и ближе к середине (перекликивание), на ударе прихода — глоток: звуки мира падают в регистр сердца
+    crumbs = sorted(cues["crumbs"], key=lambda q: q["t"])
+    rip = [60 + last_r % 12 + d + 24 for d in (0, 4, 7, 11, 14)]
+    main_beats = [b["t"] for b in beats if not b["second"]]
+    arrivals = {}
+    for i, q in enumerate(crumbs):
+        m = rip[i % 5]
+        inst = "crotales" if i % 7 == 3 else ("xylo" if i % 2 == 0 else "vln_colleg")
+        mm = m if inst != "vln_colleg" else min(96, m - 12)
+        if inst == "crotales":
+            mm = max(84, min(108, m + 12))
+        p.note(inst, mm, q["t"], 0.08, vel=0.5, gain=0.12 if inst != "crotales" else 0.06, pan=max(-1, min(1, q["pan"])), release=0.25)
+        surges = [b_ for b_ in main_beats if q["t"] < b_ <= q["arrive"]]
+        for j, b_ in enumerate(surges[:-1]):                 # отголоски на толчках
+            f = (j + 1) / len(surges)
+            te = b_ - 0.35 + 0.33 * ((i * 0.618) % 1)
+            p.note("xylo" if j % 2 else "vln_colleg", max(55, mm - round(12 * f)) if inst != "crotales" else m - 12, te, 0.07, vel=0.4,
+                   gain=0.08 * (1 - 0.4 * f), pan=max(-1, min(1, q["pan"] * (1 - f) + SEED_PAN * f)), release=0.2)
+        arrivals.setdefault(q["arrive"], []).append(m)
+    for tb, ms in sorted(arrivals.items()):                  # глоток на ударе прихода
+        n = len(ms)
+        for j, m in enumerate(sorted(set(ms))[:5]):
+            p.note("marimba", m - 36, tb + 0.025 * j, 0.6, vel=0.6, gain=0.045 * n ** 0.5, pan=SEED_PAN * 0.6, release=0.6)
+        p.note("vc_pizz", 40 + last_r % 12, tb, 0.4, vel=0.65, gain=0.07 * n ** 0.5, pan=SEED_PAN * 0.6, release=0.4)
+        c.fx("bubbles", tb, gain=0.03 * n ** 0.5, pan=SEED_PAN * 0.5, shift=-14, bus="fx")
     c.shepard(64.0, 78.0, up=True, gain=0.16)
     for m, inst in ((28, "cb_trem"), (31, "cb_trem"), (40, "vc_trem"), (41, "vc_trem"), (47, "vc_trem")):
         p.note(inst, m, 62.0, 16.0, vel=0.75, gain=0.26, attack=10.0, release=0.2, detune=0.3, pan=rng.uniform(-0.5, 0.3))
@@ -287,5 +306,6 @@ def build(ctx):
 
     # баланс по замеру --parts (эскиз 0–60 с): сердце (литавры, контрабасы) и такт мира — вровень с хором
     p.balance({"Contrabassoon": -9, "Cellos": -2.5, "Violas": -2, "Marimba": +8, "Vibraphone": +12, "Harp": +1,
-               "Flute": +2, "Basses": +10, "Timpani": +15, "Tuba": +10, "Organ": +7, "Trombone": +9, "Choir": -3})
+               "Flute": +2, "Basses": +10, "Timpani": +15, "Tuba": +10, "Organ": +7, "Trombone": +9, "Choir": -3,
+               "Xylophone": +22, "Crotales": +20})
     return p

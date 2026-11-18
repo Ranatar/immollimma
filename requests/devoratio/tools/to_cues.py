@@ -37,6 +37,7 @@ out = dict(version=1, duration_s=d["rite_len"], video="devoratio.html (аним�
            heart_beats=[dict(t=e["t"], amp=e["amp"], second=e["second"]) for e in ev if e["type"] == "beat"],
            beacons=[e["t"] for e in ev if e["type"] == "beacon"],
            world_turns=[e["t"] for e in ev if e["type"] == "world_turn"],
+           crumbs=[dict(t=e["t"], arrive=e["arrive"], pan=e["pan"]) for e in ev if e["type"] == "crumb"],
            world_tick=0.8, grid=dict(bpm=75, meter="4/4", note="такт мира 0,8 с = четверть; все отметки кратны 0,1 с (тридцатьвторая)"))
 json.dump(out, open(sys.argv[2], "w"), ensure_ascii=False, indent=1)
 print(len(cues), "меток,", len(out["heart_beats"]), "ударов,", len(out["beacons"]), "маяков,", len(out["world_turns"]), "поворотов")
