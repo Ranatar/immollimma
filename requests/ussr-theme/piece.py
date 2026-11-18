@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""«Холодный мир» — тема СССР, четвёртая редакция (≈ 3:00). Мелодия — заказчика (MIDI, 8 тактов, e-moll, натуральный
-минор), в проведениях без изменений; оркестровка и драматургия — по образу СССР из опенинга
-(requests/cold-peace-op/storyboard.md): старик у окна, снег, ветеран химической войны 1944 года, держава, которая
-устала быть великой.
+"""«Холодный мир» — тема СССР, пятая редакция (≈ 3:20). Мелодия — заказчика (MIDI, 8 тактов, e-moll, натуральный
+минор), в песенных проведениях без изменений. Образ — по раскадровке опенинга (requests/cold-peace-op/storyboard.md):
+старик у окна, снег, держава, которая устала быть великой. (Откуда в раскадровке подробности сюжета — со слов
+заказчика или допущения сессии 2026-11-13, — в репозитории не записано: не опираться на них, пока заказчик не
+подтвердит.)
 
-После отзыва («фон дисгармонирует, тема из ниоткуда, проведение искусственное и примитивное»):
-- бас и подголоски ищет контрапунктический движок фуги (requests/fugue-grenzen/counterpoint.py) против самой
-  темы, по гармонии на каждую долю, в натуральном миноре (без ре-диеза против ре темы);
-- тема вырастает: во вступлении её голова звучит обрывками, перекличкой голосов, и только затем — целиком;
-- проведения разные: соло — хор в a-moll с подголоском — разработка (голова темы секвенцией вверх, марш, обвал) —
-  шкатулка одна, в тишине — апофеоз с контрапунктом — кода;
-- фразировка: каждая двутактная фраза дышит (нарастание к вершине, спад), концы фраз оттянуты.
+Форма: снег (голова темы обрывками) — соло виолончели — хор в a-moll с подголоском — ФУГАТО на голове темы
+(вступления снизу вверх с удержанным противосложением, интермедия, стретта через долю, вершина: тема в басах против
+своего обращения наверху, марш) — обвал — шкатулка одна — апофеоз — кода с тихим каноном.
+
+Гармонизация песенных проведений — по тактам, по функциям (HARM_DEG); фон ниже темы; бас по основным тонам;
+подголоски — только консонансы к каждому звуку темы. В фугато гармонию задают сами голоса; бас подбирается под них.
 
     python3 -m kit run requests/ussr-theme/piece.py --parts
 """
@@ -341,11 +341,11 @@ def statement_solo(o, t0):
     harm = harmony(key, t0)
     E = {28, 40}
     bass = bass_line(harm, t0, t0 + 32, 28, 45, start=40, mel=mel)
-    counter = counter_line(harm, calm_slots(t0, t0 + 32, mel), mel, 43, 57, "below", bass=bass)
+    counter = counter_line(harm, calm_slots(t0, t0 + 32, mel), mel, 48, 57, "below", bass=bass)
     o.phrase("vc_leg", mel, "Violoncello solo", vel=0.52, gain=0.62, attack=0.05)
     o.phrase("cb_sus", bass, "Contrabassi", vel=0.45, gain=0.5, attack=0.2, swell=0.06)
     o.phrase("vla_leg", counter, "Viole", vel=0.42, gain=0.3, attack=0.08, swell=0.08)
-    o.pad("cl_sus", harm, t0, t0 + 32, 43, 60, "Clarinetti", mel, vel=0.35, gain=0.14, size=2, others=counter + bass)
+    o.pad("cl_sus", harm, t0, t0 + 32, 50, 60, "Clarinetti", mel, vel=0.35, gain=0.14, size=2, others=counter + bass)
     return [mel, bass, counter], harm
 
 
@@ -373,43 +373,128 @@ def statement_choir(o, t0):
     o.phrase("cb_sus", bass, "Contrabassi", vel=0.5, gain=0.52, attack=0.15)
     o.phrase("vc_sus", [(b, d, m + 12) for b, d, m in bass], "Violoncelli", vel=0.45, gain=0.32, attack=0.15)
     o.phrase("vln_leg", counter, "Violini", vel=0.48, gain=0.34, attack=0.05)
-    o.pad("vla_sus", harm, t0, t0 + 32, 45, 64, "Viole", mel, vel=0.38, gain=0.18, size=2, others=bass)
+    o.pad("vla_sus", harm, t0, t0 + 32, 48, 64, "Viole", mel, vel=0.38, gain=0.18, size=2, others=bass)
     bells(o, harm, t0, 8, [69, 64, 76], vel=0.45, gain=0.3, melody=mel)
     return [mel, bass, counter], harm
 
 
-def development(o, t0):
-    """разработка — «1944»: голова темы (два такта) секвенцией вверх — a, h, c, d; под ней марш: бас пиццикато
-    и литавры по четвертям, малый барабан; гармония и бас — движком; на вершине — обвал"""
-    head = [(b, d, m) for b, d, m in THEME if b < 8]
-    steps = [(9, 5), (11, 7), (0, 8), (2, 10)]               # (тоника, сдвиг темы в полутонах)
-    out = []
-    for i, (tonic, sh) in enumerate(steps):
-        b0 = t0 + 8 * i
-        key = NatKey(tonic)
-        mel = theme_in(sh - 12, b0, notes=head)
-        harm = harmony(key, b0, HARM_DEG[:8])
-        bass = bass_line(harm, b0, b0 + 8, 31, 47, step=1.0, mel=mel)
-        insts = (("tbn_sus", 0, "Tromboni"), ("hn_sus", 0, "Corni")) if i < 2 else \
-            (("tbn_sus", 0, "Tromboni"), ("tpt_sus", 12, "Trombe"), ("hns_sus", 0, "Corni"))
-        for inst, sh2, part in insts:
-            o.phrase(inst, [(b, d, m + sh2) for b, d, m in mel], part, vel=0.55 + 0.05 * i, gain=0.36 + 0.03 * i,
-                     attack=0.04)
-        for b, d, m in bass:
-            o.n("cb_pizz", m, b, d, "Contrabassi", vel=0.6 + 0.04 * i, gain=0.5)
-            o.n("vc_pizz", m + 12, b, d, "Violoncelli", vel=0.55, gain=0.35)
-        timp_hits(o, harm, tonic, bass, vel=0.5 + 0.05 * i, gain=0.28 + 0.03 * i, dur=0.5)
-        o.pad("vla_trem", harm, b0, b0 + 8, 48, 70, "Viole", mel, vel=0.4 + 0.04 * i, gain=0.12 + 0.03 * i, size=3,
-              step=1.0)
-        t = b0
-        while t < b0 + 8 - 1e-9:  # малый барабан, марш: ♩ ♪♪
-            o.fx("snare_soft" if i < 2 else "snare", t, gain=0.08 + 0.04 * i)
-            o.fx("snare_soft" if i < 2 else "snare", t + 0.5, gain=0.05 + 0.03 * i)
-            t += 1
-        out.append((mel, bass, harm))
-    o.fx("gong_hit", t0 + 32, gain=0.35)
-    o.n("cb_sus", 28, t0 + 32, 4, "Contrabassi", vel=0.6, gain=0.5, attack=0.02, release=2.0)
+# ===================================================================== фугато (разработка)
+NAT_E = {4, 6, 7, 9, 11, 0, 2}
+SCALE_E = [x for x in range(20, 110) if x % 12 in NAT_E]
+HEAD = [(b, d, m) for b, d, m in THEME if b < 8]       # тема фугато — голова темы: си си до си-ля | соль ля соль ми
+# противосложение (удержанное): нисходящая линия против темы; над темой — с шагом «и», под темой — без кварт к ней
+CS_HI = [(0, 1.5, 79), (1.5, .5, 78), (2, 1, 76), (3, .5, 74), (3.5, .5, 72), (4, 1, 71), (5, 1, 72),
+         (6, .5, 76), (6.5, .5, 74), (7, 1, 72)]
+CS_LO = [(0, 2, 79), (2, 1, 76), (3, .5, 74), (3.5, .5, 72), (4, 1, 71), (5, 1, 72), (6, 1, 76), (7, 1, 72)]
+TRIADS = {}
+for _r in NAT_E:
+    _deg = sorted(NAT_E, key=lambda x: (x - 4) % 12)
+    _i = _deg.index(_r)
+    TRIADS[_r] = {_deg[_i], _deg[(_i + 2) % 7], _deg[(_i + 4) % 7]}
+
+
+def dtr(notes, deg, octv=0, dt=0.0):
+    """диатонический сдвиг в натуральном e-moll (ответ в квинту — +4 ступени: си→фа#, до→соль — без тритонов)"""
+    return [(b + dt, d, SCALE_E[SCALE_E.index(m) + deg] + 12 * octv) for b, d, m in notes]
+
+
+def inversion(notes, axis):
+    """обращение в ладу вокруг звука axis"""
+    a = SCALE_E.index(axis)
+    return [(b, d, SCALE_E[2 * a - SCALE_E.index(m)]) for b, d, m in notes]
+
+
+def bass_under(voices, t0, t1, step, lo, hi, start=40):
+    """бас под уже написанными голосами: звук, над которым звуки голосов образуют трезвучие лада, без секунд,
+    септим и тритонов ни с одним звуком отрезка; если на отрезке такого нет — дробит отрезок пополам"""
+    out, prev, t = [], start, t0
+    while t < t1 - 1e-9:
+        d = min(step, t1 - t)
+        while True:
+            allm = [m for v in voices for b, dd, m in v if b < t + d - 1e-9 and b + dd > t + 1e-9]
+            strong = {m % 12 for v in voices for b, dd, m in v
+                      if (b <= t + 1e-9 < b + dd) or (t < b < t + d - 1e-9 and abs(b - round(b)) < 1e-9)}
+            best = None
+            for x in range(lo, hi + 1):
+                if x % 12 not in NAT_E or any(abs(x - m) % 12 in (1, 2, 6, 10, 11) for m in allm):
+                    continue
+                c = 0 if strong <= TRIADS[x % 12] else 6
+                c += abs(x - prev) * 0.15
+                if best is None or c < best[0]:
+                    best = (c, x)
+            if best is not None or d <= 0.5:
+                break
+            d /= 2
+        if best is not None:
+            out.append((t, d, best[1]))
+            prev = best[1]
+        t += d
     return out
+
+
+def fugato_voices(t0):
+    """четыре вступления (тема – ответ – тема – ответ, снизу вверх), интермедия, стретта, вершина: тема против
+    своего обращения. Все голоса проверены попарно: на сильных долях — ни секунд, ни септим, ни тритонов"""
+    V = {k: [] for k in ("vc", "vla", "hn", "vln", "tpt", "bass")}
+    S = lambda o: dtr(HEAD, 0, o)
+    A = lambda o: dtr(HEAD, 4, o)
+    V["vc"] += S(-1) + dtr(CS_LO, 4, -2, 8)             # 1: тема у виолончелей; 2: противосложение
+    V["vla"] += dtr(A(-1), 0, 0, 8)                      # 2: ответ у альтов
+    V["hn"] += dtr(S(0), 0, 0, 16) + dtr(CS_LO, 4, -1, 24)  # 3: тема у валторн; 4: противосложение
+    V["vln"] += dtr(CS_HI, 0, 0, 16)                     # 3: противосложение у скрипок
+    V["tpt"] += dtr(A(0), 0, 0, 24)                      # 4: ответ у труб
+    mot = [(0, .5, 83), (.5, .5, 84), (1, .5, 83), (1.5, .5, 81)]  # интермедия: си-до-си-ля секвенцией вниз
+    ep = dtr(mot, 0, 0, 32) + dtr(mot, -1, 0, 34)
+    V["vln"] += ep
+    V["hn"] += dtr(ep, -2, -1)
+    V["tpt"] += dtr(S(0), 0, 0, 36)                      # стретта: трубы,
+    V["hn"] += dtr(HEAD, -4, 0, 37)                      # валторны через долю квинтой ниже,
+    strb = dtr(HEAD, -9, -1, 42)                         # басы — с шестой доли
+    inv = inversion(S(1), 83)
+    inv[-1] = (inv[-1][0], inv[-1][1], 79)               # конец обращения — соль (не фа# против ми)
+    V["vln"] += dtr(inv, 0, 0, 50)                       # вершина: обращение наверху,
+    V["tpt"] += dtr(inv, 0, -1, 50)
+    clim = dtr(S(-2), 0, 0, 50)                          # тема внизу
+    upper = [V[k] for k in ("vc", "vla", "hn", "vln", "tpt")]
+    b1 = bass_under(upper, 16, 32, 2.0, 28, 43)
+    b2 = bass_under(upper, 32, 36, 1.0, 28, 43, start=b1[-1][2] if b1 else 40)
+    V["bass"] = b1 + b2 + strb + clim
+    return {k: [(b + t0, d, m) for b, d, m in v] for k, v in V.items()}
+
+
+FUGATO_LEN = 58  # долей; затем обвал (4)
+
+
+def development(o, t0):
+    """разработка — фугато на голове темы: вступления снизу вверх (виолончели — альты — валторны — трубы) с
+    удержанным противосложением, интермедия на мотиве «си-до-си-ля», стретта (вступления через долю), вершина —
+    тема в басах против своего обращения у скрипок и труб; под всем — марш малого барабана; затем обвал"""
+    V = fugato_voices(t0)
+    o.phrase("vc_sus", V["vc"], "Violoncelli", vel=0.48, gain=0.42, attack=0.06)
+    o.phrase("vla_leg", V["vla"], "Viole", vel=0.56, gain=0.7, attack=0.06)
+    o.phrase("hn_sus", V["hn"], "Corni", vel=0.56, gain=0.4, attack=0.05)
+    o.phrase("vln_leg", V["vln"], "Violini", vel=0.58, gain=0.5, attack=0.04)
+    o.phrase("tpt_sus", V["tpt"], "Trombe", vel=0.6, gain=0.4, attack=0.03)
+    for b, d, m in V["bass"]:
+        loud = b >= t0 + 42
+        o.n("cb_sus", m, b, d, "Contrabassi", vel=0.55 + 0.1 * loud, gain=0.45 + 0.1 * loud, attack=0.04)
+        if b >= t0 + 24:
+            o.n("vc_sus", m + 12, b, d, "Violoncelli", vel=0.5, gain=0.3, attack=0.05)
+        if loud:
+            o.n("tba_sus", m, b, d, "Tuba", vel=0.62, gain=0.4, attack=0.04)
+            o.n("tbn_sus", m + 12, b, d, "Tromboni", vel=0.6, gain=0.36, attack=0.04)
+            if m % 12 in (4, 11) and abs(b - round(b)) < 1e-9 and round(b - t0) % 2 == 0:
+                o.n("timp", 40 if m % 12 == 4 else 47, b, 1, "Timpani", vel=0.55, gain=0.3)
+    t = t0 + 8
+    while t < t0 + FUGATO_LEN - 1e-9:  # марш: ♩ ♪♪, нарастает
+        k = (t - t0) / FUGATO_LEN
+        o.fx("snare_soft" if k < 0.5 else "snare", t, gain=0.06 + 0.12 * k)
+        o.fx("snare_soft" if k < 0.5 else "snare", t + 0.5, gain=0.04 + 0.08 * k)
+        t += 1
+    end = t0 + FUGATO_LEN
+    o.fx("gong_hit", end, gain=0.35)
+    o.n("cb_sus", 28, end, 4, "Contrabassi", vel=0.6, gain=0.5, attack=0.02, release=2.0)
+    return V
 
 
 def box_alone(o, t0):
@@ -450,11 +535,13 @@ def apotheosis(o, t0):
 
 
 def coda(o, t0):
-    """снег: голова темы у валторны издалека, каданс-отзвук у виолончели; колокол E, пустая квинта"""
+    """снег: голова темы у валторны издалека и тихий канон кларнета, каданс-отзвук у виолончели; колокол E"""
     head = [(b, d, m) for b, d, m in THEME if b < 8]
     tail = [(b - 28, d, m) for b, d, m in THEME if b >= 28]
     o.phrase("hn_sus", theme_in(-12, t0, notes=head), "Corni", vel=0.4, gain=0.3, attack=0.12)
-    o.phrase("vc_leg", theme_in(-24, t0 + 8, notes=tail), "Violoncello solo", vel=0.42, gain=0.5, attack=0.08)
+    o.phrase("cl_sus", dtr(HEAD, 0, 0, t0 + 6), "Clarinetti", vel=0.34, gain=0.24, attack=0.15)  # канон: через
+    # полтора такта октавой выше — единственная пара, чистая и между голосами, и с педалью ми (проверено перебором)
+    o.phrase("vc_leg", theme_in(-24, t0 + 14, notes=tail), "Violoncello solo", vel=0.42, gain=0.5, attack=0.08)
     o.n("cb_sus", 28, t0, 16, "Contrabassi", vel=0.38, gain=0.4, attack=1.0, release=2.0)
     o.n("vln_harm", 76, t0, 16, "Violini", vel=0.3, gain=0.14, attack=2.0, release=2.5)
     o.n("vla_harm", 64, t0, 16, "Viole", vel=0.3, gain=0.12, attack=2.0, release=2.5)
@@ -465,32 +552,32 @@ def coda(o, t0):
 
 def build(ctx):
     o = U()
-    # доли: вступление 0–24 | соло 24–56 | связка 56–64 | хор (a) 64–96 | разработка 96–128 | обвал 128–132 |
-    #       шкатулка 132–140 | апофеоз 140–172 | кода 172–192
+    # доли: вступление 0–24 | соло 24–56 | связка 56–64 | хор (a) 64–96 | фугато 96–154 | обвал 154–158 |
+    #       шкатулка 158–166 | апофеоз 166–198 | кода 198–218
     o.slow += [(0, 24, 1.15)]
-    for s in (24, 64, 140):  # концы фраз оттянуты
+    for s in (24, 64, 166):  # концы фраз оттянуты
         for ph in range(4):
             e = s + 8 * ph + 8
             o.slow.append((e - 1, e, 1.18 if ph < 3 else 1.35))
-    o.slow += [(96, 128, 0.94), (128, 132, 1.4), (132, 140, 1.25), (172, 192, 1.3)]
-    plan = [(0, "Снег"), (24, "Старик"), (56, "Связка"), (64, "Хор (a-moll)"), (96, "1944: разработка"),
-            (128, "Обвал"), (132, "Шкатулка"), (140, "Держава"), (172, "Снег")]
+    o.slow += [(96, 154, 0.94), (154, 158, 1.4), (158, 166, 1.25), (198, 218, 1.3)]
+    plan = [(0, "Снег"), (24, "Старик"), (56, "Связка"), (64, "Хор (a-moll)"), (96, "Фугато"),
+            (154, "Обвал"), (158, "Шкатулка"), (166, "Держава"), (198, "Снег")]
     intro(o)
     o.checks = [statement_solo(o, 24)]
     link_to_a(o, 56)
     o.checks.append(statement_choir(o, 64))
     development(o, 96)
-    box_alone(o, 132)
-    o.checks.append(apotheosis(o, 140))
-    coda(o, 172)
+    box_alone(o, 158)
+    o.checks.append(apotheosis(o, 166))
+    coda(o, 198)
     for bt, label in plan:
         o.p.mark(o.perf(bt), label)["wt"] = bt * SPB
-    o.p.meta["beats"] = 192
+    o.p.meta["beats"] = 218
     # замер `--parts` без баланса: трубы −19.9, хор −23.0, мужской хор −24.5, виолончель соло −26.2,
     # виолончели −27.3, гобой −29.5, валторны −31.1, контрабасы −32.8, альты −33.0, кларнеты −35.5,
     # тромбоны −37.5, туба −38.1, скрипки −38.2, арфа −43.2, литавры −46.6, челеста −52.8, колокола −56.4 LUFS —
     # шкатулка в тишине почти не слышна (провал 116–122 с), колокола и бас тонули, трубы торчали
     o.p.balance({"Trombe": -4, "Violini": +6, "Tromboni": +6, "Tuba": +6, "Contrabassi": +5, "Timpani": +8,
                  "Arpa": +4, "Corni": +3, "Clarinetti": +2, "Celesta": +14, "Campane": +14})
-    o.p.meta["length"] = o.perf(192) + 5
+    o.p.meta["length"] = o.perf(218) + 5
     return o.p
