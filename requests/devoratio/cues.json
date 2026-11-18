@@ -1,0 +1,723 @@
+{
+ "version": 1,
+ "duration_s": 110,
+ "video": "devoratio.html (анимация, цикл 110 с)",
+ "cues": [
+  {
+   "t": 0,
+   "end": 6,
+   "label": "I VACUUM",
+   "kind": "section",
+   "mood": "пустота; мир-добыча проступает: холодный правильный порядок со своим ровным тактом",
+   "intensity": 0.1,
+   "note": "такт мира 0,8 с, маяк каждые 2,4 с, повороты решётки каждые 3,2 с с 4,8"
+  },
+  {
+   "t": 6,
+   "end": 18,
+   "label": "II SPORA",
+   "kind": "section",
+   "mood": "из угла приплывает спора; садится — рождается сердце Улья, первый удар",
+   "intensity": 0.2,
+   "note": "спора летит 6–12; посадка 12.0"
+  },
+  {
+   "t": 6.0,
+   "end": 12.0,
+   "label": "спора летит",
+   "kind": "transition",
+   "intensity": 0.2,
+   "note": "из левого верхнего угла к посадке"
+  },
+  {
+   "t": 12,
+   "label": "landing",
+   "kind": "hit",
+   "intensity": 0.5,
+   "note": "спора села: сердце Улья"
+  },
+  {
+   "t": 18,
+   "end": 40,
+   "label": "III INCREMENTUM",
+   "kind": "section",
+   "mood": "рост: ткань расползается рваным фронтом, сеть ветвится, сердце учащается",
+   "intensity": 0.5,
+   "note": "двойные удары; интервал 3,0 → 1,8 с"
+  },
+  {
+   "t": 40,
+   "end": 50,
+   "label": "IV UMBRA",
+   "kind": "section",
+   "mood": "Тень в варпе: мир глохнет и замолкает",
+   "intensity": 0.55,
+   "note": "мир замолкает в 46.4"
+  },
+  {
+   "t": 40,
+   "label": "shadow_falls",
+   "kind": "transition",
+   "intensity": 0.5,
+   "note": "опускается Тень"
+  },
+  {
+   "t": 46.4,
+   "label": "world_silent",
+   "kind": "accent",
+   "intensity": 0.4,
+   "note": "мир замолк"
+  },
+  {
+   "t": 50,
+   "end": 62,
+   "label": "V AMPLEXUS",
+   "kind": "section",
+   "mood": "Улей обнимает мир кольцом; мир мерцает, держит оборону",
+   "intensity": 0.7,
+   "note": "интервал 1,8 → 1,4"
+  },
+  {
+   "t": 50,
+   "label": "embrace",
+   "kind": "accent",
+   "intensity": 0.6,
+   "note": "обхват"
+  },
+  {
+   "t": 62,
+   "end": 80,
+   "label": "VI DEVORATIO",
+   "kind": "section",
+   "mood": "пожирание: решётка распадается звено за звеном, обломки текут к сердцу",
+   "intensity": 1.0,
+   "note": "распад 62.6–77.6; сердце раз в 1,2 с; 78 — гаснет сердцевина мира"
+  },
+  {
+   "t": 62,
+   "label": "devour_begin",
+   "kind": "hit",
+   "intensity": 0.9,
+   "note": "начало пожирания"
+  },
+  {
+   "t": 78,
+   "label": "world_dark",
+   "kind": "hit",
+   "intensity": 0.8,
+   "note": "гаснет сердцевина мира"
+  },
+  {
+   "t": 80,
+   "end": 92,
+   "label": "VII DIGESTIO",
+   "kind": "section",
+   "mood": "переваривание; весь организм на миг строится решёткой мира и поворачивает её ударами сердца",
+   "intensity": 0.8,
+   "note": "волна 81.4→82.9, повороты 82.9/84.6/86.5, отпуск 88.6"
+  },
+  {
+   "t": 80,
+   "label": "adaptation",
+   "kind": "accent",
+   "intensity": 0.6,
+   "note": "на месте мира — перенятый строй"
+  },
+  {
+   "t": 81.4,
+   "label": "order_wave",
+   "kind": "swell",
+   "intensity": 0.8,
+   "note": "волна порядка от сердца"
+  },
+  {
+   "t": 82.9,
+   "label": "order_turn",
+   "kind": "hit",
+   "intensity": 0.8,
+   "note": "Улей поворачивает решётку ударом"
+  },
+  {
+   "t": 84.6,
+   "label": "order_turn",
+   "kind": "hit",
+   "intensity": 0.8,
+   "note": "Улей поворачивает решётку ударом"
+  },
+  {
+   "t": 86.5,
+   "label": "order_turn",
+   "kind": "hit",
+   "intensity": 0.8,
+   "note": "Улей поворачивает решётку ударом"
+  },
+  {
+   "t": 88.6,
+   "label": "order_release",
+   "kind": "accent",
+   "intensity": 0.6,
+   "note": "порядок отпущен"
+  },
+  {
+   "t": 92,
+   "end": 104,
+   "label": "VIII EXODUS",
+   "kind": "section",
+   "mood": "исход: ткань отмирает, сеть втягивается, сердце сжимается в спору и улетает",
+   "intensity": 0.3,
+   "note": "уход 103.2"
+  },
+  {
+   "t": 92,
+   "label": "exodus",
+   "kind": "transition",
+   "intensity": 0.4,
+   "note": "исход"
+  },
+  {
+   "t": 103.2,
+   "label": "departure",
+   "kind": "accent",
+   "intensity": 0.3,
+   "note": "спора улетает"
+  },
+  {
+   "t": 104,
+   "end": 110,
+   "label": "IX SILENTIUM",
+   "kind": "section",
+   "mood": "тишина; на месте мира — тусклый след",
+   "intensity": 0.05,
+   "note": "тьма к 109.4, цикл повторяется"
+  },
+  {
+   "t": 108.6,
+   "end": 110,
+   "label": "тишина до повтора",
+   "kind": "silence",
+   "intensity": 0
+  }
+ ],
+ "loop": true,
+ "heart_beats": [
+  {
+   "t": 12,
+   "amp": 0.45,
+   "second": false
+  },
+  {
+   "t": 15.2,
+   "amp": 0.45,
+   "second": false
+  },
+  {
+   "t": 18.4,
+   "amp": 0.56,
+   "second": false
+  },
+  {
+   "t": 18.7,
+   "amp": 0.39,
+   "second": true
+  },
+  {
+   "t": 21.4,
+   "amp": 0.6,
+   "second": false
+  },
+  {
+   "t": 21.7,
+   "amp": 0.42,
+   "second": true
+  },
+  {
+   "t": 24.2,
+   "amp": 0.63,
+   "second": false
+  },
+  {
+   "t": 24.5,
+   "amp": 0.44,
+   "second": true
+  },
+  {
+   "t": 26.9,
+   "amp": 0.67,
+   "second": false
+  },
+  {
+   "t": 27.2,
+   "amp": 0.47,
+   "second": true
+  },
+  {
+   "t": 29.4,
+   "amp": 0.71,
+   "second": false
+  },
+  {
+   "t": 29.7,
+   "amp": 0.49,
+   "second": true
+  },
+  {
+   "t": 31.8,
+   "amp": 0.74,
+   "second": false
+  },
+  {
+   "t": 32.1,
+   "amp": 0.52,
+   "second": true
+  },
+  {
+   "t": 34,
+   "amp": 0.77,
+   "second": false
+  },
+  {
+   "t": 34.3,
+   "amp": 0.54,
+   "second": true
+  },
+  {
+   "t": 36.1,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 36.4,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "t": 38.1,
+   "amp": 0.82,
+   "second": false
+  },
+  {
+   "t": 38.4,
+   "amp": 0.58,
+   "second": true
+  },
+  {
+   "t": 40,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 40.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 41.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 42.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 43.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 43.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 45.4,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 45.7,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 47.2,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 47.5,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 49,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 49.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 50.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 51.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 52.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 52.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 54.3,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 54.6,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 56,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 56.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 57.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 57.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 59.1,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 59.4,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 60.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 60.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 62,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 62.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 63.2,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 63.5,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 64.4,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 64.7,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 65.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 65.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 66.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 67.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 68,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 68.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 69.2,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 69.5,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 70.4,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 70.7,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 71.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 71.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 72.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 73.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 74,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 74.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 75.2,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 75.5,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 76.4,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 76.7,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 77.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 77.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 78.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 79.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 80,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 80.3,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "t": 81.4,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 81.7,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "t": 82.9,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 83.2,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "t": 84.6,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 84.9,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "t": 86.5,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 86.8,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "t": 88.6,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 88.9,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "t": 90.9,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 91.2,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "t": 93.4,
+   "amp": 0.56,
+   "second": false
+  },
+  {
+   "t": 93.7,
+   "amp": 0.39,
+   "second": true
+  },
+  {
+   "t": 96.4,
+   "amp": 0.46,
+   "second": false
+  },
+  {
+   "t": 96.7,
+   "amp": 0.32,
+   "second": true
+  },
+  {
+   "t": 99.7,
+   "amp": 0.35,
+   "second": false
+  }
+ ],
+ "beacons": [
+  0,
+  2.4,
+  4.8,
+  7.2,
+  9.6,
+  12,
+  14.4,
+  16.8,
+  19.2,
+  21.6,
+  24,
+  26.4,
+  28.8,
+  31.2,
+  33.6,
+  36,
+  38.4,
+  40.8,
+  43.2,
+  45.6
+ ],
+ "world_turns": [
+  4.8,
+  8,
+  11.2,
+  14.4,
+  17.6,
+  20.8,
+  24,
+  27.2,
+  30.4,
+  33.6,
+  36.8,
+  40,
+  43.2,
+  46.4
+ ],
+ "world_tick": 0.8,
+ "grid": {
+  "bpm": 75,
+  "meter": "4/4",
+  "note": "такт мира 0,8 с = четверть; все отметки кратны 0,1 с (тридцатьвторая)"
+ }
+}

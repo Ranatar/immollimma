@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Devoratio</title>
+<style>
+  html,body{margin:0;height:100%;background:#000;overflow:hidden}
+  canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+  #ov{mix-blend-mode:screen;pointer-events:none}
+  #ui{position:fixed;left:0;right:0;bottom:0;display:flex;flex-direction:column;opacity:0;transition:opacity .6s;
+    font:15px/1 ui-sans-serif,system-ui,sans-serif;z-index:5}
+  #ui.show{opacity:1}
+  #btns{display:flex;gap:8px;justify-content:flex-end;align-items:center;padding:8px 14px 10px}
+  #btns button{background:rgba(20,6,22,.72);color:#e9c9df;border:1px solid rgba(233,160,210,.35);border-radius:14px;
+    font:inherit;padding:6px 12px;cursor:pointer}
+  #btns button:hover{background:rgba(70,20,60,.8)}
+  #btns span{color:rgba(233,201,223,.55)}
+  #tl{position:relative;height:4px;background:rgba(233,160,210,.16)}
+  #tlFill{height:100%;width:0;background:#e9a0d2}
+  #tl i{position:absolute;top:-3px;width:1px;height:10px;background:rgba(255,220,240,.7)}
+  #err{position:fixed;inset:0;display:none;align-items:center;justify-content:center;color:#e9c9df;font:18px system-ui;padding:2em;text-align:center}
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<canvas id="ov"></canvas>
+<div id="err"></div>
+<div id="ui">
+  <div id="btns">
+    <button data-a="restart" title="R">Сначала</button>
+    <button data-a="loop" id="bLoop" title="L">Повтор: вкл</button>
+    <button data-a="pal" title="G">Окрас</button>
+    <button data-a="pause" title="P, пробел">Пауза</button>
+    <button data-a="fs" title="F">Во весь экран</button>
+    <span>R · L · G · P · F</span>
+  </div>
+  <div id="tl"><div id="tlFill"></div></div>
+</div>
+<script>
+'use strict';
+/* =====================================================================================
+   Devoratio — обряд Улья: пожирание одного мира (цикл 110 с).
+   Все события и удары сердца — на постоянных отметках (часы обряда rt идут по настоящему
+   времени); случайность — только в узоре (зерно ГПСЧ постоянно), не во времени.
+   ===================================================================================== */
+const TAU = Math.PI * 2;
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+let rng = mulberry32(1307);
+const rnd = (a = 1, b) => b === undefined ? rng() * a : a + rng() * (b - a);
+const clamp = (x, a = 0, b = 1) => x < a ? a : x > b ? b : x;
+const lerp = (a, b, f) => a + (b - a) * f;
+const lin = (a, b, x) => clamp((x - a) / (b - a));
+const sm = (a, b, x) => { const u = lin(a, b, x); return u * u * (3 - 2 * u); };
+
+const PALS = {
+  violet: { dark: [.028, .008, .04], flesh: [.44, .12, .38], bone: [.93, .86, .74], glow: [.96, .46, .78], prey: [.45, .9, 1], vein: '#f3a3d6', veinHot: '#fff0fa' },
+  blood:  { dark: [.03, .006, .008], flesh: [.48, .07, .07], bone: [.92, .83, .62], glow: [1, .42, .22], prey: [.5, .95, .85], vein: '#ff9a6a', veinHot: '#fff3e6' }
+};
+let palKey = 'violet', pal = PALS.violet;
+const preyCss = () => `rgb(${pal.prey.map(v => Math.round(v * 255)).join(',')})`;
+
+/* ------------------------------------------------------------- расписание обряда */
+const RITE_LEN = 110;
+const STAGES = [[0, 'I', 'VACUUM'], [6, 'II', 'SPORA'], [18, 'III', 'INCREMENTUM'], [40, 'IV', 'UMBRA'], [50, 'V', 'AMPLEXUS'],
+  [62, 'VI', 'DEVORATIO'], [80, 'VII', 'DIGESTIO'], [92, 'VIII', 'EXODUS'], [104, 'IX', 'SILENTIUM']];
+const stageAt = x => { let r = STAGES[0]; for (const s of STAGES) if (x >= s[0]) r = s; return r; };
+// удары сердца Улья: двойные «тук-тук», интервал — кратен 0,1 с
+function beatInterval(x) {
+  if (x < 18) return 3.2;
+  if (x < 40) return lerp(3.0, 1.8, lin(18, 40, x));
+  if (x < 50) return 1.8;
+  if (x < 62) return lerp(1.8, 1.4, lin(50, 62, x));
+  if (x < 80) return 1.2;
+  if (x < 92) return lerp(1.4, 2.6, lin(80, 92, x));
+  return lerp(2.8, 4.0, lin(92, 103, x));
+}
+const beatAmp = x => x < 18 ? .45 : x < 40 ? lerp(.55, .85, lin(18, 40, x)) : x < 80 ? 1 : x < 92 ? .8 : lerp(.6, .25, lin(92, 103, x));
+const BEATS = (() => { const b = []; let x = 12.0;
+  while (x < 103) { const a = beatAmp(x), dbl = x >= 18 && x < 98;
+    b.push({ t: +x.toFixed(1), amp: a, second: false }); if (dbl) b.push({ t: +(x + .3).toFixed(1), amp: a * .7, second: true });
+    x = +(x + Math.round(beatInterval(x) * 10) / 10).toFixed(1); }
+  return b; })();
+// голос мира: ровный такт 0,8 с и маяк каждые 2,4 с — до Тени
+const TICK = .8, BEACON_EVERY = 3, WORLD_SILENT = 46.4;
+
+/* ------------------------------------------------------------- WebGL: ткань */
+const glc = document.getElementById('gl'), ov = document.getElementById('ov'), ox = ov.getContext('2d');
+const gl = glc.getContext('webgl2', { antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: true });
+function fail(msg) { const e = document.getElementById('err'); e.style.display = 'flex'; e.textContent = msg; throw new Error(msg); }
+if (!gl) fail('Этому браузеру недоступен WebGL2 — ткань не может расти.');
+if (!(gl.getExtension('EXT_color_buffer_float') || gl.getExtension('EXT_color_buffer_half_float'))) fail('Браузер не умеет рисовать в текстуры с плавающей точкой.');
+const VS = `#version 300 es
+in vec2 p; out vec2 vUv; void main(){ vUv = p * .5 + .5; gl_Position = vec4(p, 0., 1.); }`;
+const COMMON = `
+float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float noise(vec2 p){ vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3. - 2. * f);
+  return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y); }
+float fbm(vec2 p){ float a = .5, s = 0.; for (int i = 0; i < 4; i++) { s += a * noise(p); p = p * 2.03 + 1.7; a *= .5; } return s; }
+vec2 hexCenter(vec2 p){ vec2 q = vec2(p.x - p.y / 1.7320508, p.y * 2. / 1.7320508), f = floor(q); float b = 1e9; vec2 best = vec2(0.);
+  for (int i = 0; i < 2; i++) for (int j = 0; j < 2; j++) { vec2 c = f + vec2(float(i), float(j)), cp = vec2(c.x + c.y * .5, c.y * .8660254);
+    float d = length(p - cp); if (d < b) { b = d; best = cp; } }
+  return best; }
+float orderMask(vec2 uv, float aspect, vec4 ord, out vec2 po){ po = (uv - ord.xy) * vec2(aspect, 1.); return (1. - smoothstep(ord.z - .03, ord.z, length(po))) * ord.w; }`;
+const SIM_FS = `#version 300 es
+precision highp float;
+uniform sampler2D S; uniform vec2 px; uniform float uT, aspect, memWrite; uniform vec4 prey, life, ord; uniform float ordAng, ordSp;
+uniform vec4 splat[32]; uniform int nSplat;
+in vec2 vUv; out vec4 o;` + COMMON + `
+void main(){
+  vec4 c = texture(S, vUv);
+  vec4 l = -c
+    + .2 * (texture(S, vUv + vec2(px.x, 0.)) + texture(S, vUv - vec2(px.x, 0.)) + texture(S, vUv + vec2(0., px.y)) + texture(S, vUv - vec2(0., px.y)))
+    + .05 * (texture(S, vUv + px) + texture(S, vUv - px) + texture(S, vUv + vec2(px.x, -px.y)) + texture(S, vUv + vec2(-px.x, px.y)));
+  vec2 q = vUv * vec2(aspect, 1.) * 1.25;
+  float n = fbm(q + vec2(uT * .006, -uT * .004));
+  float m = fbm(q * 1.6 + 7.3 - uT * .005);
+  vec2 coral = vec2(.0545, .0620), mitosis = vec2(.0367, .0649), maze = vec2(.0290, .0570), soliton = vec2(.0300, .0620), dead = vec2(.0300, .0700);
+  vec2 fk = mix(coral, mitosis, smoothstep(.38, .62, n));
+  fk = mix(fk, maze, smoothstep(.58, .78, m) * .85);
+  // граница жизни: фронт с рваным краем
+  vec2 dl = (vUv - life.xy) * vec2(aspect, 1.);
+  float edge = life.z + (fbm(q * 2.2 + uT * .03) - .5) * .09;
+  fk = mix(fk, soliton, c.b);
+  vec2 po; float om = orderMask(vUv, aspect, ord, po);
+  fk = mix(fk, soliton, om * .6);
+  fk = mix(fk, dead, smoothstep(edge - life.w, edge, length(dl)));   // уход Улья убивает и перенятое
+  vec2 dp = (vUv - prey.xy) * vec2(aspect, 1.);
+  float inside = 1. - smoothstep(prey.z * .9, prey.z, length(dp));
+  float k = fk.y + .04 * prey.w * inside;
+  float u = c.r, v = c.g, uvv = u * v * v;
+  u += l.r - uvv + fk.x * (1. - u);
+  v += .5 * l.g + uvv - (fk.x + k) * v;
+  for (int i = 0; i < 32; i++) { if (i >= nSplat) break; vec4 s = splat[i];
+    vec2 d = (vUv - s.xy) * vec2(aspect, 1.); float e = exp(-dot(d, d) / (s.z * s.z)); v += s.w * e; u -= s.w * e * .5; }
+  float b = c.b + .12 * l.b; b = max(b, memWrite * inside); b = max(b, .12 * om); b *= .9999985;
+  o = vec4(clamp(u, 0., 1.), clamp(v, 0., 1.), clamp(b, 0., 1.), 1.);
+}`;
+const SHOW_FS = `#version 300 es
+precision highp float;
+uniform sampler2D S; uniform vec2 px; uniform float uT, aspect, shadow, pulse, pulseR, fade, coreGlow;
+uniform vec2 core; uniform vec3 cDark, cFlesh, cBone, cGlow, cPrey; uniform vec4 ord; uniform float ordAng, ordSp;
+in vec2 vUv; out vec4 o;` + COMMON + `
+void main(){
+  vec4 c = texture(S, vUv);
+  float v = c.g;
+  float vx = texture(S, vUv + vec2(px.x, 0.)).g - texture(S, vUv - vec2(px.x, 0.)).g;
+  float vy = texture(S, vUv + vec2(0., px.y)).g - texture(S, vUv - vec2(0., px.y)).g;
+  vec3 nrm = normalize(vec3(-vx * 7., -vy * 7., 1.));
+  vec3 L = normalize(vec3(-.45, .6, .66));
+  float dif = clamp(dot(nrm, L), 0., 1.);
+  float spec = pow(clamp(dot(reflect(-L, nrm), vec3(0., 0., 1.)), 0., 1.), 22.);
+  float tissue = smoothstep(.07, .3, v);
+  float deep = fbm(vUv * vec2(aspect, 1.) * 3. + uT * .01);
+  vec3 col = cDark * (.55 + .5 * deep);
+  vec2 uv2 = vUv * .55 + vec2(.21, .13) + vec2(sin(uT * .013), cos(uT * .011)) * .02;
+  float v2 = (texture(S, uv2).g + texture(S, uv2 + px * 2.).g + texture(S, uv2 - px * 2.).g) / 3.;
+  col += cFlesh * .28 * smoothstep(.1, .35, v2) * (.5 + .5 * deep);
+  col = mix(col, cFlesh * (.3 + .75 * dif), tissue);
+  col = mix(col, cBone * (.45 + .65 * dif), smoothstep(.3, .46, v));
+  col += spec * .32 * tissue * cBone;
+  float rim = smoothstep(.04, .13, v) * (1. - smoothstep(.13, .28, v));
+  col += cGlow * rim * .3;
+  col = mix(col, col * .35 + cPrey * (.18 + .55 * tissue) * (.5 + .5 * dif), c.b * .75);
+  vec2 po2 = (vUv - ord.xy) * vec2(aspect, 1.);
+  float om2 = (1. - smoothstep(ord.z - .03, ord.z, length(po2))) * ord.w;
+  if (om2 > .001) {   // весь организм строится решёткой добычи — клетка к клетке, там, где есть ткань
+    float ca = cos(ordAng), sa = sin(ordAng);
+    vec2 pr = mat2(ca, -sa, sa, ca) * po2 / ordSp, cp = hexCenter(pr), dv = pr - cp;
+    float dh = length(dv);
+    vec2 cw = mat2(ca, sa, -sa, ca) * cp * ordSp, cuv = ord.xy + cw / vec2(aspect, 1.);
+    vec2 o3 = px * 3.;
+    float avg = (texture(S, cuv).g + texture(S, cuv + o3).g + texture(S, cuv - o3).g + texture(S, cuv + vec2(o3.x, -o3.y)).g + texture(S, cuv - vec2(o3.x, -o3.y)).g) / 5.;
+    float pres = smoothstep(.03, .12, avg);
+    float rad = .41, body = 1. - smoothstep(rad - .05, rad + .02, dh);
+    float z = sqrt(max(0., 1. - pow(dh / rad, 2.)));
+    vec3 n3 = normalize(vec3(-(mat2(ca, sa, -sa, ca) * dv) * 1.6, z + .25));
+    float cd = clamp(dot(n3, L), 0., 1.), cs = pow(clamp(dot(reflect(-L, n3), vec3(0., 0., 1.)), 0., 1.), 18.);
+    vec3 cell = mix(cFlesh * 1.5, cPrey, .42) * (.22 + .8 * cd) + cBone * cs * .3;
+    float memb = smoothstep(rad - .1, rad - .04, dh) * (1. - smoothstep(rad - .01, rad + .04, dh));
+    cell += mix(cGlow, cPrey, .5) * memb * .55;
+    vec3 ordered = mix(cDark * .5, cell, body);
+    col = mix(col, ordered, om2 * pres);
+    col = mix(col, col * .5 + cPrey * .12, om2 * (1. - pres) * .3);
+  }
+  vec2 d = (vUv - core) * vec2(aspect, 1.);
+  float r = length(d);
+  col += cGlow * exp(-pow((r - pulseR) / .045, 2.)) * pulse * (.12 + .3 * tissue) * exp(-r * 1.2);
+  col += cGlow * coreGlow * exp(-r * r * 30.);
+  float g = hash(vUv * vec2(1931., 1087.) + fract(uT * 7.13));
+  col = mix(col, col * .22 + vec3(.06, .0, .09) * g * 1.6, shadow);
+  vec2 w = (vUv - .5) * vec2(1.15, 1.);
+  col *= 1. - .62 * pow(clamp(length(w) * 1.25, 0., 1.), 2.3);
+  o = vec4(pow(col, vec3(.95)) * fade, 1.);
+}`;
+function prog(fs) {
+  const mkS = (tp, src) => { const sh = gl.createShader(tp); gl.shaderSource(sh, src); gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) fail('Шейдер: ' + gl.getShaderInfoLog(sh)); return sh; };
+  const p = gl.createProgram(); gl.attachShader(p, mkS(gl.VERTEX_SHADER, VS)); gl.attachShader(p, mkS(gl.FRAGMENT_SHADER, fs));
+  gl.bindAttribLocation(p, 0, 'p'); gl.linkProgram(p);
+  if (!gl.getProgramParameter(p, gl.LINK_STATUS)) fail('Программа: ' + gl.getProgramInfoLog(p));
+  const u = {}; const n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
+  for (let i = 0; i < n; i++) { const a = gl.getActiveUniform(p, i); u[a.name.replace(/\[0\]$/, '')] = gl.getUniformLocation(p, a.name); }
+  return { p, u };
+}
+const simP = prog(SIM_FS), showP = prog(SHOW_FS);
+const quad = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+let SW = 0, SH = 0, tex = [], fbo = [], cur = 0;
+function makeSim(w, h) {
+  SW = w; SH = h; tex.forEach(x => gl.deleteTexture(x)); fbo.forEach(f => gl.deleteFramebuffer(f)); tex = []; fbo = [];
+  const data = new Float32Array(w * h * 4);
+  for (let i = 0; i < w * h; i++) { data[i * 4] = 1; data[i * 4 + 3] = 1; }
+  for (let i = 0; i < 2; i++) {
+    const tx = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tx);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, w, h, 0, gl.RGBA, gl.FLOAT, data);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    const f = gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER, f);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tx, 0);
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) fail('Не удалось завести текстуру ткани.');
+    tex.push(tx); fbo.push(f);
+  }
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+}
+
+/* ------------------------------------------------------------- размеры и опорные точки */
+let W, H, DPR, CW, CH, k, aspect, SEED = [0, 0], WORLD = { x: 0, y: 0, R: 0 }, DIAG = 1;
+function geometry() {
+  DPR = Math.min(devicePixelRatio || 1, 1.5);
+  CW = innerWidth; CH = innerHeight; W = Math.round(CW * DPR); H = Math.round(CH * DPR);
+  ov.width = W; ov.height = H;
+  const gs = Math.min(1, 1600 / CW); glc.width = Math.round(CW * gs); glc.height = Math.round(CH * gs);
+  aspect = CW / CH; k = Math.min(CW, CH) / 900 * DPR; DIAG = Math.hypot(W, H);
+  SEED = [W * .27, H * .64];
+  WORLD = { x: W * .70, y: H * .40, R: Math.min(W, H) * .16 };
+}
+function resize() {
+  const old = { W, H };
+  geometry();
+  if (old.W) {   // пересчитать положения без перезапуска обряда
+    const sx = W / old.W, sy = H / old.H;
+    for (const n of nodes) { n.x *= sx; n.y *= sy; }
+    for (const m of morsels) { m.x *= sx; m.y *= sy; }
+    buildWorld(); initSpores();
+  }
+  const sw = Math.min(760, Math.round(CW / 2.6)), sh = Math.round(sw / aspect);
+  makeSim(sw, sh);
+}
+
+/* ------------------------------------------------------------- брызги в ткань */
+let splats = [];
+const toUv = (x, y) => [x / W, 1 - y / H];
+function addSplat(x, y, rPx, amt) { if (splats.length < 32) { const [u, v] = toUv(x, y); splats.push([u, v, rPx / H, amt]); } }
+
+/* ------------------------------------------------------------- журнал событий (для музыки) */
+const EVLOG = []; let lastStage = null;
+const evFired = new Set();
+const ev = (type, data = {}) => { const tt = +(data.t ?? rt).toFixed(4), key = type + '@' + tt;
+  if (type !== 'beat' && evFired.has(key)) return; evFired.add(key); EVLOG.push({ type, ...data, t: tt }); };
+
+/* ------------------------------------------------------------- синаптическая сеть */
+let nodes = [], coreN = null, coreMass = 0;
+function addNode(x, y, parent) {
+  const n = { x, y, parent, kids: [], dist: parent ? parent.dist + Math.hypot(x - parent.x, y - parent.y) : 0,
+    born: rt, flash: 0, dying: 0, seed: rnd(TAU), dead: false };
+  if (parent) parent.kids.push(n); nodes.push(n); return n;
+}
+function nearest(x, y) { let best = null, bd = 1e18; for (const n of nodes) { if (n.dying) continue; const d = (n.x - x) ** 2 + (n.y - y) ** 2; if (d < bd) { bd = d; best = n; } } return [best, Math.sqrt(bd)]; }
+function grow(mode) {
+  let ax, ay;
+  if (mode === 'ring') { const a = rnd(TAU), rr = WORLD.R * rnd(1.05, 1.5); ax = WORLD.x + Math.cos(a) * rr; ay = WORLD.y + Math.sin(a) * rr; }
+  else if (mode === 'inside') { const a = rnd(TAU), rr = WORLD.R * Math.sqrt(rnd()) * .9; ax = WORLD.x + Math.cos(a) * rr; ay = WORLD.y + Math.sin(a) * rr; }
+  else { const a = rnd(TAU), rr = Math.sqrt(rnd()) * (lifeR() + 60 * k); ax = SEED[0] + Math.cos(a) * rr; ay = SEED[1] + Math.sin(a) * rr; }
+  if (ax < -.05 * W || ax > 1.05 * W || ay < -.05 * H || ay > 1.05 * H) return;
+  const [nb, d] = nearest(ax, ay);
+  if (!nb || d < 30 * k) return;
+  if (mode !== 'inside' && Math.hypot(ax - WORLD.x, ay - WORLD.y) < WORLD.R * 1.02 && !(prey.phase === 'consume')) return;
+  const step = Math.min(d, rnd(26, 44) * k), a = Math.atan2(ay - nb.y, ax - nb.x) + rnd(-.38, .38);
+  addNode(nb.x + Math.cos(a) * step, nb.y + Math.sin(a) * step, nb);
+}
+function targetNodes(x) {
+  if (x < 12) return 0;
+  if (x < 40) return Math.round(lerp(6, 150, sm(12.5, 40, x)));
+  if (x < 62) return Math.round(lerp(150, 215, lin(40, 62, x)));
+  if (x < 80) return Math.round(lerp(215, 245, lin(62, 80, x)));
+  if (x < 92) return 245;
+  return Math.round(lerp(245, 0, sm(92, 102.6, x)));
+}
+function updNet() {
+  const want = targetNodes(rt);
+  let guard = 0;
+  while (nodes.filter(n => !n.dying).length < want && guard++ < 12) {
+    const r = rng();
+    grow(rt >= 62 && rt < 80 && r < .55 ? 'inside' : rt >= 46 && rt < 70 && r < .6 ? 'ring' : 'free');
+  }
+  const alive = nodes.filter(n => !n.dying);
+  if (alive.length > want + 2) {        // отмирают дальние листья
+    const leaves = alive.filter(n => !n.kids.some(c => !c.dying) && n !== coreN).sort((a, b) => b.dist - a.dist);
+    for (let i = 0; i < Math.min(leaves.length, Math.ceil((alive.length - want) / 6)); i++) leaves[i].dying = rt;
+  }
+  for (const n of nodes) if (n.dying && rt - n.dying > 1.6) { n.dead = true; if (n.parent) n.parent.kids = n.parent.kids.filter(c => c !== n); }
+  nodes = nodes.filter(n => !n.dead);
+  if (coreN && coreN.dead) coreN = null;
+}
+let beatIdx = 0, fronts = [];
+const BEAT_SPEED = () => 330 * k;
+function updBeats() {
+  while (beatIdx < BEATS.length && BEATS[beatIdx].t <= rt) {
+    const b = BEATS[beatIdx++]; fronts.push({ t0: b.t, amp: b.amp, prev: 0 });
+    ev('beat', { t: b.t, amp: +b.amp.toFixed(2), second: b.second });
+    if (coreN) coreN.flash = 1;
+  }
+  const sp = BEAT_SPEED();
+  for (const f of fronts) {
+    const f1 = Math.max(0, (rt - f.t0) * sp);
+    for (const n of nodes) if (n.dist > f.prev && n.dist <= f1) { n.flash = Math.max(n.flash, f.amp); if (rng() < .35) addSplat(n.x, n.y, 8 * k, .35 * f.amp); }
+    f.prev = f1;
+  }
+  const md = maxDist();
+  fronts = fronts.filter(f => (rt - f.t0) * sp < md + 200 * k);
+}
+const maxDist = () => { let m = 0; for (const n of nodes) m = Math.max(m, n.dist); return m; };
+function curvePts(n) {
+  const p = n.parent, mx = (p.x + n.x) / 2, my = (p.y + n.y) / 2, dx = n.x - p.x, dy = n.y - p.y, L = Math.hypot(dx, dy) || 1;
+  const w = Math.sin(rt * .6 + n.seed) * .16 * L;
+  return [p.x, p.y, mx - dy / L * w, my + dx / L * w, n.x, n.y];
+}
+function qpt(c, s) { const a = 1 - s; return [a * a * c[0] + 2 * a * s * c[2] + s * s * c[4], a * a * c[1] + 2 * a * s * c[3] + s * s * c[5]]; }
+function glowDot(x, y, r, core, mid, a) {
+  const g = ox.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, core); if (mid) g.addColorStop(.35, mid); g.addColorStop(1, 'rgba(0,0,0,0)');
+  ox.globalAlpha = a; ox.fillStyle = g; ox.beginPath(); ox.arc(x, y, r, 0, TAU); ox.fill();
+}
+function drawNet() {
+  const md = maxDist() || 1, sp = BEAT_SPEED();
+  ox.lineCap = 'round';
+  for (const pass of [0, 1]) for (const n of nodes) {
+    if (!n.parent) continue;
+    const gr = sm(0, .8, rt - n.born), fd = n.dying ? 1 - clamp((rt - n.dying) / 1.6) : 1, a = gr * fd; if (a <= .01) continue;
+    const thick = (1.1 + 4.2 * Math.exp(-n.dist / (md * .28))) * k, c = curvePts(n);
+    ox.beginPath(); ox.moveTo(c[0], c[1]);
+    if (gr < 1) { const mid = qpt(c, gr / 2), ex = qpt(c, gr); ox.quadraticCurveTo(mid[0], mid[1], ex[0], ex[1]); } else ox.quadraticCurveTo(c[2], c[3], c[4], c[5]);
+    if (pass === 0) { ox.globalAlpha = .14 * a; ox.lineWidth = thick * 5; ox.strokeStyle = pal.vein; }
+    else { ox.globalAlpha = (.38 + .5 * n.flash) * a; ox.lineWidth = thick; ox.strokeStyle = n.flash > .3 ? pal.veinHot : pal.vein; }
+    ox.stroke();
+  }
+  for (const f of fronts) {
+    const fr = (rt - f.t0) * sp; if (fr <= 0) continue;
+    for (const n of nodes) {
+      if (!n.parent || n.dying) continue; const d0 = n.parent.dist, d1 = n.dist; if (fr < d0 || fr >= d1) continue;
+      const [x, y] = qpt(curvePts(n), (fr - d0) / (d1 - d0)), r = (2.2 + 2.5 * Math.exp(-d1 / (md * .3))) * k;
+      glowDot(x, y, r * 4, pal.veinHot, null, .9 * f.amp * Math.exp(-fr / (md * 1.2)));
+    }
+  }
+  for (const n of nodes) {
+    const a = sm(0, .8, rt - n.born) * (n.dying ? 1 - clamp((rt - n.dying) / 1.6) : 1); if (a <= .01) continue;
+    const isCore = n === coreN;
+    const r = (isCore ? 9 + 17 * coreMass * coreShrink : 1.4 + Math.min(4, n.kids.length * .9)) * k * (1 + .25 * n.flash);
+    if (n.kids.length > 1 || isCore || n.flash > .2) glowDot(n.x, n.y, r * 3.2, pal.veinHot, pal.vein, a * (.35 + .65 * n.flash) * (isCore ? 1 : 1));
+    n.flash *= .9;
+  }
+  ox.globalAlpha = 1;
+}
+
+/* ------------------------------------------------------------- споры в толще */
+let spores = [];
+function initSpores() { const r = mulberry32(77); spores = Array.from({ length: Math.round(140 * (CW * CH) / (1600 * 900)) }, () => ({ x: r() * W, y: r() * H, z: .3 + .7 * r(), s: r() * TAU })); }
+function drawSpores(dt, amount) {
+  if (amount <= .01) return;
+  ox.fillStyle = pal.vein;
+  for (const p of spores) {
+    p.x += (Math.sin(rt * .2 + p.s) * 6 + 3) * p.z * k * dt; p.y += (-5 - 4 * p.z + Math.cos(rt * .3 + p.s * 2) * 4) * k * dt;
+    if (p.y < -10) { p.y = H + 10; p.x = (p.s * 9301 % 1) * W; } if (p.x > W + 10) p.x = -10;
+    ox.globalAlpha = (.12 + .18 * p.z * (.6 + .4 * Math.sin(rt * 1.3 + p.s))) * amount;
+    ox.beginPath(); ox.arc(p.x, p.y, (.6 + 1.4 * p.z) * k, 0, TAU); ox.fill();
+  }
+  ox.globalAlpha = 1;
+}
+
+/* ------------------------------------------------------------- мир-добыча: порядок, который меняется по своему закону */
+const prey = { phase: 'calm', segs: [], inhib: 1, mem: 0, frac: 0, light: 1 };
+let worldRings = [], lastTick = -1;
+// поворот решётки — шагами по 30° каждые 4 такта мира (3,2 с), плавно за 0,6 с; с молчанием мира — замирает
+const TURN_TIMES = (() => { const a = []; for (let x = 4.8; x <= WORLD_SILENT + 1e-9; x = +(x + 3.2).toFixed(1)) a.push(x); return a; })();
+function worldAngle(x) { let th = 0; for (const ts of TURN_TIMES) th += sm(ts, ts + .6, Math.min(x, WORLD_SILENT + .6)); return th * Math.PI / 6; }
+// дробление: внутри шестиугольников прорастают и гаснут спицы — волной от центра, период 9,6 с
+function subAlpha(d, x) {
+  x = Math.min(x, WORLD_SILENT); if (x < 2.4) return 0;
+  const ph = (x - 2.4) % 9.6, w = d / WORLD.R * 1.4;
+  return ph < 4.8 ? sm(w, w + .6, ph) : 1 - sm(4.8 + w, 5.4 + w, ph);
+}
+function buildWorld() {
+  const { x, y, R } = WORLD, s = R / 4.6, segs = [], seen = new Set(), r2 = mulberry32(4242);
+  const add = (x0, y0, x1, y1, o) => segs.push(Object.assign({ lx0: x0, ly0: y0, lx1: x1, ly1: y1, d: Math.hypot((x0 + x1) / 2, (y0 + y1) / 2), j: r2(), lit: 0 }, o || {}));
+  for (let q = -7; q <= 7; q++) for (let r = -7; r <= 7; r++) {
+    const cx = s * 1.5 * q, cy = s * Math.sqrt(3) * (r + q / 2);
+    if (Math.hypot(cx, cy) > R * .86) continue;
+    for (let i = 0; i < 6; i++) {
+      const a0 = i * TAU / 6, a1 = (i + 1) * TAU / 6, x0 = cx + Math.cos(a0) * s, y0 = cy + Math.sin(a0) * s, x1 = cx + Math.cos(a1) * s, y1 = cy + Math.sin(a1) * s;
+      const key = Math.round((x0 + x1) * 5) + ',' + Math.round((y0 + y1) * 5);
+      if (!seen.has(key)) { seen.add(key); add(x0, y0, x1, y1); }
+      add(cx, cy, cx + Math.cos(a0) * s * .82, cy + Math.sin(a0) * s * .82, { sub: true });     // спицы дробления
+    }
+  }
+  for (const rr of [R * .93, R]) for (let i = 0; i < 48; i++) {
+    const a0 = i / 48 * TAU, a1 = (i + 1) / 48 * TAU;
+    add(Math.cos(a0) * rr, Math.sin(a0) * rr, Math.cos(a1) * rr, Math.sin(a1) * rr, { shell: true });
+  }
+  // порядок распада — по положению в момент, когда мир замер
+  const th = worldAngle(60), ca = Math.cos(th), sa = Math.sin(th);
+  const ang = Math.atan2(SEED[1] - y, SEED[0] - x), cx = x + Math.cos(ang) * R, cy = y + Math.sin(ang) * R;
+  for (const sg of segs) {
+    const mx = x + ((sg.lx0 + sg.lx1) / 2) * ca - ((sg.ly0 + sg.ly1) / 2) * sa, my = y + ((sg.lx0 + sg.lx1) / 2) * sa + ((sg.ly0 + sg.ly1) / 2) * ca;
+    sg.brk = Math.min(77.6, 62.6 + Math.hypot(mx - cx, my - cy) / (2 * R) * 13.2 + sg.j * 1.6 + (sg.shell ? -.6 : 0));
+  }
+  prey.segs = segs; prey.contact = [cx, cy];
+}
+function segWorld(sg, th) {
+  const ca = Math.cos(th), sa = Math.sin(th), { x, y } = WORLD;
+  return [x + sg.lx0 * ca - sg.ly0 * sa, y + sg.lx0 * sa + sg.ly0 * ca, x + sg.lx1 * ca - sg.ly1 * sa, y + sg.lx1 * sa + sg.ly1 * ca];
+}
+function updPrey() {
+  const p = prey;
+  p.phase = rt < 40 ? 'calm' : rt < 50 ? 'muted' : rt < 62 ? 'resist' : rt < 78 ? 'consume' : rt < 80 ? 'dead' : rt < 92 ? 'adapt' : 'gone';
+  const tick = Math.floor(rt / TICK + 1e-9);
+  if (tick !== lastTick && rt < WORLD_SILENT) {
+    lastTick = tick;
+    const mute = lin(40, 46.4, rt);
+    if (tick % BEACON_EVERY === 0) { worldRings.push({ t0: tick * TICK, amp: 1 - mute * .8, wob: mute }); ev('beacon', { t: +(tick * TICK).toFixed(1) }); }
+    const band = tick % 5, bw = WORLD.R / 5;          // огни: симметричная рябь от центра
+    for (const sg of p.segs) if (!sg.shell && Math.floor(sg.d / bw) === band) sg.lit = 1 - mute * .7;
+  }
+  if (TURN_TIMES.some(ts => ts <= rt && ts > rt - 1e-9 - stepDt)) ev('world_turn', { t: TURN_TIMES.find(ts => ts <= rt && ts > rt - 1e-9 - stepDt) });
+  worldRings = worldRings.filter(r => rt - r.t0 < 3.2);
+  p.inhib = rt < 62 ? 1 : 1 - sm(64, 76, rt);
+  p.mem = sm(80, 84, rt) * (rt < 92 ? 1 : 0);
+  let broken = 0;
+  const th = worldAngle(rt);
+  for (const sg of p.segs) if (rt >= sg.brk) { broken++;
+    if (!sg.eaten) { sg.eaten = true; const [x0, y0, x1, y1] = segWorld(sg, th), mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+      if (!sg.sub || rng() < .3) { if (rng() < .6) morsels.push({ x: mx, y: my, tgt: nearest(mx, my)[0], born: rt }); addSplat(mx, my, 3.5 * k, .18); } } }
+  p.frac = broken / p.segs.length;
+  p.light = rt < 62 ? 1 : 1 - sm(62, 78, rt);
+}
+function drawWorld(fade) {
+  const p = prey, P = preyCss(), { x, y, R } = WORLD;
+  if (p.phase === 'adapt' || p.phase === 'gone') return;
+  const appear = sm(.8, 4.5, rt), th = worldAngle(rt);
+  for (const r of worldRings) {
+    const a = (rt - r.t0) / 3.2, rr = R * (1.05 + 1.3 * a);
+    ox.globalAlpha = (1 - a) * .35 * r.amp * appear * fade; ox.strokeStyle = P; ox.lineWidth = 1.3 * k;
+    ox.beginPath();
+    for (let i = 0; i <= 72; i++) { const g = i / 72 * TAU, w = 1 + r.wob * .06 * Math.sin(g * 7 + rt * 5) * Math.sin(rt * 13 + i);
+      // ровные кольца несут шестигранную огранку мира
+      const hexR = rr * (1 - .035 * (1 - r.wob) * (1 - Math.cos(6 * (g - th))) / 2);
+      const X = x + Math.cos(g) * hexR * w, Y = y + Math.sin(g) * hexR * w; i ? ox.lineTo(X, Y) : ox.moveTo(X, Y); }
+    ox.stroke();
+  }
+  const flick = p.phase === 'resist' ? .78 + .22 * Math.sin(rt * 23) : p.phase === 'consume' ? .7 + .3 * Math.random() : p.phase === 'muted' ? .85 + .15 * Math.sin(rt * 9) : 1;
+  ox.lineCap = 'round';
+  for (const pass of [0, 1]) for (const sg of p.segs) {
+    const rev = clamp((appear * 1.25 * R - sg.d) / (R * .3));
+    let a = rev * flick * (.75 + .25 * sg.lit);
+    if (sg.sub) a *= .55 * (rt < 62 ? subAlpha(sg.d, rt) : subAlpha(sg.d, WORLD_SILENT));
+    if (rt >= sg.brk) a *= clamp(1 - (rt - sg.brk) / .45) * (Math.random() < .5 ? 1 : .3);
+    if (p.phase === 'dead') a = 0;
+    if (a <= .01) continue;
+    const [x0, y0, x1, y1] = segWorld(sg, sg.shell ? 0 : th);
+    ox.globalAlpha = a * (pass ? .85 : .16) * fade; ox.strokeStyle = pass ? (sg.lit > .3 ? '#ffffff' : '#eafcff') : P;
+    ox.lineWidth = (pass ? (sg.sub ? .8 : 1.1) : 5) * k * (sg.shell ? (p.phase === 'resist' ? 1.9 : 1.3) : 1);
+    ox.beginPath(); ox.moveTo(x0, y0); ox.lineTo(x1, y1); ox.stroke();
+  }
+  for (const sg of p.segs) sg.lit *= .9;
+  if (p.light > .01) glowDot(x, y, R * .3, '#f4feff', P, appear * p.light * fade);
+  ox.globalAlpha = 1;
+}
+
+/* ------------------------------------------------------------- перенятый порядок: весь организм на миг строится решёткой */
+const MAIN_BEATS = BEATS.filter(b => !b.second).map(b => b.t);
+// волна идёт от сердца с ударом и доходит до краёв к следующему удару; поворачивает решётку — каждым ударом
+let ORDER_START = MAIN_BEATS.find(x => x >= 81), ORDER_FULL = MAIN_BEATS.find(x => x > ORDER_START);
+let ORDER_RELEASE = MAIN_BEATS.find(x => x >= 88), ORDER_END = +(ORDER_RELEASE + 1.4).toFixed(1);
+let ORDER_TURNS = MAIN_BEATS.filter(x => x > ORDER_FULL - 1e-6 && x < ORDER_RELEASE);
+// отпущенный порядок оживает делением клеток: на время режим «митоз», затем обычный рост
+const releaseMix = x => sm(ORDER_RELEASE, ORDER_RELEASE + .4, x) * (1 - sm(ORDER_END + .6, ORDER_END + 3, x));
+const orderStrength = x => x < ORDER_START ? 0 : x < ORDER_RELEASE ? sm(ORDER_START, ORDER_START + .4, x) : 1 - sm(ORDER_RELEASE, ORDER_END, x);
+const orderRadius = x => DIAG * 1.1 * sm(ORDER_START, ORDER_FULL, x);          // волна порядка от сердца
+function orderAngle(x) { let a = 0; for (const tb of ORDER_TURNS) a += sm(tb, tb + .45, x); return a * Math.PI / 6; }   // поворот — на ударе
+const ORDER_SP = 13;            // шаг решётки, в клетках расчёта
+function drawHiveOrder(fade) {
+  const st = orderStrength(rt); if (st <= .01 || !coreN) return;
+  const R = orderRadius(rt), sp = ORDER_SP / SH * H, ang = orderAngle(rt), cx = coreN.x, cy = coreN.y;
+  ox.save(); ox.beginPath(); ox.arc(cx, cy, Math.max(1, R), 0, TAU); ox.clip();
+  ox.lineCap = 'round';
+  for (const pass of [0, 1]) for (let fam = 0; fam < 3; fam++) {
+    const a = -(ang + fam * Math.PI / 3), dx = Math.cos(a), dy = Math.sin(a), nx = -dy, ny = dx, M = Math.ceil(DIAG / (sp * .866));
+    ox.strokeStyle = pass ? pal.veinHot : pal.vein; ox.lineWidth = (pass ? .9 : 3.5) * k;
+    ox.globalAlpha = st * fade * (pass ? .2 : .06) * (.75 + .25 * Math.sin(rt * 3 + fam));
+    for (let m = -M; m <= M; m++) {
+      const ox0 = cx + nx * m * sp * .866, oy0 = cy + ny * m * sp * .866;
+      if (Math.abs((ox0 - cx) * nx + (oy0 - cy) * ny) > R + 2) continue;
+      ox.beginPath();
+      for (let i = -24; i <= 24; i++) {
+        const s_ = i / 24 * DIAG, wob = Math.sin(s_ * .012 / k + rt * 2.2 + m * 1.7 + fam) * 2.2 * k;
+        const X = ox0 + dx * s_ + nx * wob, Y = oy0 + dy * s_ + ny * wob; i === -24 ? ox.moveTo(X, Y) : ox.lineTo(X, Y);
+      }
+      ox.stroke();
+    }
+  }
+  ox.restore();
+  // фронт волны порядка
+  if (rt < ORDER_FULL + .3) { ox.globalAlpha = .5 * st * fade * (1 - lin(ORDER_FULL - .4, ORDER_FULL + .3, rt)); ox.strokeStyle = pal.veinHot; ox.lineWidth = 3 * k;
+    ox.beginPath(); ox.arc(cx, cy, Math.max(1, R), 0, TAU); ox.stroke(); }
+  ox.globalAlpha = 1;
+}
+
+let morsels = [];
+function updMorsels(dt) {
+  const sp = 150 * k;
+  for (const m of morsels) {
+    let tg = m.tgt; while (tg && tg.dead) tg = tg.parent; if (!tg) tg = coreN; m.tgt = tg; if (!tg) { m.done = true; continue; }
+    const dx = tg.x - m.x, dy = tg.y - m.y, d = Math.hypot(dx, dy);
+    if (d < sp * dt) { m.x = tg.x; m.y = tg.y;
+      if (tg === coreN) { m.done = true; coreN.flash = 1; coreMass = Math.min(1, coreMass + .006); addSplat(coreN.x, coreN.y, 6 * k, .1); } else m.tgt = tg.parent || coreN; }
+    else { m.x += dx / d * sp * dt; m.y += dy / d * sp * dt; }
+  }
+  morsels = morsels.filter(m => !m.done);
+}
+function drawMorsels(fade) {
+  const P = pal.prey;
+  for (const m of morsels) {
+    const f = clamp((rt - m.born) / 6);
+    const c = `rgb(${[0, 1, 2].map(i => Math.round(lerp(P[i], pal.glow[i], f) * 255)).join(',')})`;
+    glowDot(m.x, m.y, 9 * k, '#ffffff', c, .9 * fade);
+  }
+  ox.globalAlpha = 1;
+}
+
+/* ------------------------------------------------------------- спора: приход и уход */
+const SPORE_IN = [6, 12], SPORE_OUT = [103.2, 108.4];
+function bez(p0, p1, p2, s) { const a = 1 - s; return [a * a * p0[0] + 2 * a * s * p1[0] + s * s * p2[0], a * a * p0[1] + 2 * a * s * p1[1] + s * s * p2[1]]; }
+function sporePos(x) {
+  if (x >= SPORE_IN[0] && x < SPORE_IN[1]) {
+    const s = sm(SPORE_IN[0], SPORE_IN[1], x);
+    const [X, Y] = bez([-.06 * W, .12 * H], [.05 * W, .55 * H], SEED, s);
+    return [X + Math.sin(x * 2.1) * 6 * k * (1 - s), Y + Math.cos(x * 1.7) * 6 * k * (1 - s)];
+  }
+  if (x >= SPORE_OUT[0] && x < SPORE_OUT[1]) {
+    const s = sm(SPORE_OUT[0], SPORE_OUT[1], x) ** 1.4;
+    return bez(SEED, [.55 * W, .95 * H], [1.08 * W, -.1 * H], s);
+  }
+  return null;
+}
+let trail = [];
+function drawSpore(fade) {
+  const p = sporePos(rt);
+  if (p) trail.push([p[0], p[1], rt]);
+  trail = trail.filter(q => rt - q[2] < 1.2);
+  for (const q of trail) glowDot(q[0], q[1], 7 * k, pal.vein, null, .25 * (1 - (rt - q[2]) / 1.2) * fade);
+  if (p) { glowDot(p[0], p[1], 22 * k, pal.veinHot, pal.vein, .95 * fade); glowDot(p[0], p[1], 60 * k, pal.vein, null, .2 * fade); }
+  ox.globalAlpha = 1;
+}
+
+/* ------------------------------------------------------------- граница жизни, тень, затемнение */
+function lifeR() {      // радиус живой ткани от споры, px
+  const dWS = Math.hypot(WORLD.x - SEED[0], WORLD.y - SEED[1]);
+  if (rt < 12) return 0;
+  if (rt < 40) return lerp(18 * k, dWS - WORLD.R * 1.25, sm(12, 40, rt));
+  if (rt < 62) return lerp(dWS - WORLD.R * 1.25, dWS + WORLD.R * .4, sm(40, 62, rt));
+  if (rt < 92) return lerp(dWS + WORLD.R * .4, DIAG, sm(62, 82, rt));
+  return lerp(DIAG, 0, sm(92, 103, rt));
+}
+const shadowAt = x => x < 40 ? 0 : x < 62 ? .55 * sm(40, 46, x) - .1 * sm(50, 62, x) : x < 78 ? .45 - .05 * lin(62, 78, x) : .4 * (1 - sm(78, 84, x));
+const fadeAt = x => sm(0, 3, x) * (1 - sm(106, 109.4, x));
+let coreShrink = 1;
+
+/* ------------------------------------------------------------- режиссура */
+let rt = 0, t = 0, loopOn = true, paused = false, last = performance.now();
+function riteRestart() {
+  rt = 0; rng = mulberry32(1307); nodes = []; coreN = null; coreMass = 0; coreShrink = 1; fronts = []; beatIdx = 0; morsels = []; worldRings = [];
+  lastTick = -1; trail = []; splats = []; lastStage = null; evFired.clear(); landed = false; coreGone = false;
+  for (const kf of ['evC', 'evD', 'evA', 'evS', 'evW', 'evE', 'evX', 'evO', 'evR']) prey[kf] = false;
+  buildWorld(); initSpores();
+  makeSim(SW, SH);
+}
+let landed = false, coreGone = false;
+function riteUpdate(dt) {
+  const st = stageAt(rt); if (st !== lastStage) { lastStage = st; ev('stage', { t: st[0], num: st[1], name: st[2] }); }
+  if (!landed && rt >= SPORE_IN[1]) {         // спора села: рождается сердце Улья
+    landed = true; coreN = addNode(SEED[0], SEED[1], null); coreN.born = SPORE_IN[1] - 1;
+    for (let i = 0; i < 9; i++) addSplat(SEED[0] + rnd(-26, 26) * k, SEED[1] + rnd(-26, 26) * k, 16 * k, .8);
+    ev('landing', { t: SPORE_IN[1] });
+  }
+  if (rt >= 62 && !prey.evC) { prey.evC = true; ev('devour_begin', { t: 62 }); }
+  if (rt >= 78 && !prey.evD) { prey.evD = true; ev('world_dark', { t: 78 }); }
+  if (rt >= 80 && !prey.evA) { prey.evA = true; ev('adaptation', { t: 80 }); }
+  if (rt >= 40 && !prey.evS) { prey.evS = true; ev('shadow_falls', { t: 40 }); }
+  if (rt >= WORLD_SILENT && !prey.evW) { prey.evW = true; ev('world_silent', { t: WORLD_SILENT }); }
+  if (rt >= 50 && !prey.evE) { prey.evE = true; ev('embrace', { t: 50 }); }
+  if (rt >= ORDER_START && !prey.evO) { prey.evO = true; ev('order_wave', { t: ORDER_START }); }
+  for (const tb of ORDER_TURNS) if (tb <= rt && tb > rt - stepDt - 1e-9) ev('order_turn', { t: tb });
+  if (rt >= ORDER_RELEASE && !prey.evR) { prey.evR = true; ev('order_release', { t: ORDER_RELEASE }); }
+  if (rt >= 92 && !prey.evX) { prey.evX = true; ev('exodus', { t: 92 }); }
+  if (rt >= SPORE_OUT[0] && !coreGone) { coreGone = true; ev('departure', { t: SPORE_OUT[0] }); }
+  coreShrink = 1 - sm(100, SPORE_OUT[0], rt);
+  if (coreN && rt >= SPORE_OUT[0]) { coreN.dying = coreN.dying || rt; }
+  document.getElementById('tlFill').style.width = (rt / RITE_LEN * 100).toFixed(2) + '%';
+}
+let stepDt = 0;
+function step(rdt) {
+  const dt = Math.min(rdt, .05);
+  rt += rdt; t += rdt; stepDt = rdt;
+  if (rt >= RITE_LEN) { if (loopOn) { const over = rt - RITE_LEN; riteRestart(); rt = over; ev('restart', { t: 0 }); } else { rt = RITE_LEN; return; } }
+  riteUpdate(dt); updPrey(); updNet(); updBeats(); updMorsels(dt);
+  if (coreN) for (let i = 0; i < 3; i++) { const n = nodes[(rng() * nodes.length) | 0]; if (n && !n.dying) addSplat(n.x, n.y, 6 * k, .12); }
+}
+const STEPS = 10;
+function render(dt = 1 / 60) {
+  const fade = fadeAt(rt), shadow = shadowAt(rt), LR = lifeR();
+  gl.useProgram(simP.p); gl.viewport(0, 0, SW, SH);
+  gl.uniform2f(simP.u.px, 1 / SW, 1 / SH); gl.uniform1f(simP.u.uT, t); gl.uniform1f(simP.u.aspect, aspect);
+  const [pu, pv] = toUv(WORLD.x, WORLD.y), [su, sv] = toUv(SEED[0], SEED[1]);
+  gl.uniform4f(simP.u.prey, pu, pv, WORLD.R / H, prey.inhib); gl.uniform1f(simP.u.memWrite, prey.mem);
+  gl.uniform4f(simP.u.life, su, sv, LR / H, .05);
+  const cpo = coreN ? toUv(coreN.x, coreN.y) : [su, sv], ordV = [cpo[0], cpo[1], orderRadius(rt) / H, orderStrength(rt)];
+  gl.uniform4f(simP.u.ord, ...ordV); gl.uniform1f(simP.u.ordAng, orderAngle(rt)); gl.uniform1f(simP.u.ordSp, ORDER_SP / SH);
+
+  for (let i = 0; i < STEPS; i++) {
+    const sp = i === 0 ? splats : [];
+    gl.uniform1i(simP.u.nSplat, sp.length);
+    if (sp.length) gl.uniform4fv(simP.u.splat, new Float32Array(sp.flat().concat(Array((32 - sp.length) * 4).fill(0))));
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo[1 - cur]); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex[cur]);
+    gl.uniform1i(simP.u.S, 0); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); cur = 1 - cur;
+  }
+  splats = [];
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, glc.width, glc.height);
+  gl.useProgram(showP.p); gl.bindTexture(gl.TEXTURE_2D, tex[cur]); gl.uniform1i(showP.u.S, 0);
+  gl.uniform2f(showP.u.px, 1 / SW, 1 / SH); gl.uniform1f(showP.u.uT, t); gl.uniform1f(showP.u.aspect, aspect);
+  gl.uniform1f(showP.u.shadow, shadow); gl.uniform1f(showP.u.fade, fade);
+  const lf = fronts.length ? fronts[fronts.length - 1] : null, f = lf ? Math.max(0, rt - lf.t0) : 99;
+  gl.uniform1f(showP.u.pulse, lf ? Math.exp(-f * .9) * lf.amp : 0); gl.uniform1f(showP.u.pulseR, f * BEAT_SPEED() / H);
+  const cpos = coreN ? [coreN.x, coreN.y] : SEED, [cu, cv] = toUv(cpos[0], cpos[1]);
+  gl.uniform2f(showP.u.core, cu, cv); gl.uniform4f(showP.u.ord, ...ordV);
+  gl.uniform1f(showP.u.ordAng, orderAngle(rt)); gl.uniform1f(showP.u.ordSp, ORDER_SP / SH); gl.uniform1f(showP.u.coreGlow, coreN ? (.08 + .25 * coreMass) * coreShrink : 0);
+  for (const [nm, v] of [['cDark', pal.dark], ['cFlesh', pal.flesh], ['cBone', pal.bone], ['cGlow', pal.glow], ['cPrey', pal.prey]]) gl.uniform3fv(showP.u[nm], v);
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  ox.clearRect(0, 0, W, H); ox.globalCompositeOperation = 'lighter';
+  drawSpores(dt, sm(14, 30, rt) * (1 - sm(92, 104, rt)) * fade);
+  drawWorld(fade); drawHiveOrder(fade); drawNet(); drawMorsels(fade); drawSpore(fade);
+  ox.globalCompositeOperation = 'source-over';
+  const veil = 1 - fade * (1 - .6 * shadow); if (veil > .01) { ox.fillStyle = `rgba(0,0,0,${veil})`; ox.fillRect(0, 0, W, H); }
+}
+function frame(now) {
+  requestAnimationFrame(frame);
+  const rdt = (now - last) / 1000; last = now;
+  if (paused) return;
+  step(rdt); render(Math.min(rdt, .05));
+}
+
+/* ------------------------------------------------------------- управление */
+const ui = document.getElementById('ui'); let uiT = 0;
+function showUI() { ui.classList.add('show'); clearTimeout(uiT); uiT = setTimeout(() => ui.classList.remove('show'), 2800); }
+addEventListener('mousemove', showUI); addEventListener('touchstart', showUI, { passive: true });
+function act(a) {
+  if (a === 'restart') { riteRestart(); paused = false; }
+  else if (a === 'loop') { loopOn = !loopOn; document.getElementById('bLoop').textContent = 'Повтор: ' + (loopOn ? 'вкл' : 'выкл'); }
+  else if (a === 'pal') { palKey = palKey === 'violet' ? 'blood' : 'violet'; pal = PALS[palKey]; }
+  else if (a === 'pause') paused = !paused;
+  else if (a === 'fs') { const d = document; (d.fullscreenElement ? d.exitFullscreen() : d.documentElement.requestFullscreen?.())?.catch?.(() => {}); }
+}
+document.getElementById('btns').addEventListener('click', e => { const b = e.target.closest('button'); if (b) act(b.dataset.a); });
+addEventListener('keydown', e => {
+  const m = { r: 'restart', 'к': 'restart', l: 'loop', 'д': 'loop', g: 'pal', 'п': 'pal', p: 'pause', 'з': 'pause', ' ': 'pause', f: 'fs', 'а': 'fs' }[e.key.toLowerCase()];
+  if (m) { e.preventDefault(); act(m); }
+});
+let rzT = 0; addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(resize, 200); });
+(() => { const tl = document.getElementById('tl');
+  for (const [at, num, name] of STAGES) { const i = document.createElement('i'); i.style.left = (at / RITE_LEN * 100) + '%'; i.title = num + ' · ' + name; tl.appendChild(i); } })();
+resize(); riteRestart();
+window.__dev = { step, render, EVLOG: () => EVLOG, RITE_LEN, STAGES, BEATS, ORDER: { ORDER_START, ORDER_FULL, ORDER_TURNS, ORDER_RELEASE, ORDER_END }, get rt() { return rt; }, restart: riteRestart,
+  set loop(v) { loopOn = v; }, set paused(v) { paused = v; } };
+requestAnimationFrame(n => { last = n; requestAnimationFrame(frame); });
+</script>
+</body>
+</html>

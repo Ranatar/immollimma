@@ -1,0 +1,98 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso",
+  "vsco"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "bsn_stac@vsco": 14,
+  "cb_pizz@plain": 95,
+  "cb_sus@plain": 17,
+  "cb_trem@plain": 2,
+  "cbsn_sus@sso": 3,
+  "choir@sso": 103,
+  "fl_sus@plain": 17,
+  "grains@plain": 4,
+  "harp@plain": 100,
+  "hn_mute@plain": 3,
+  "hn_sus@plain": 11,
+  "marimba@vsco": 58,
+  "org_quiet@plain": 12,
+  "sample@plain": 174,
+  "sample@sso": 5,
+  "tba_stac@vsco": 17,
+  "tba_sus@plain": 7,
+  "tbn_stac@vsco": 51,
+  "tbn_sus@plain": 7,
+  "timp@plain": 99,
+  "vc_pizz@plain": 27,
+  "vc_sus@plain": 13,
+  "vc_trem@plain": 3,
+  "vibes@sso": 60,
+  "vla_pizz@plain": 90,
+  "vla_trem@plain": 4,
+  "vln_harm@sso": 65,
+  "vln_pizz@plain": 48,
+  "vln_pizz@sso": 10,
+  "vln_trem@plain": 12,
+  "vln_trem@sso": 2
+ },
+ "substitutions": {
+  "vln_pizz": "plain unavailable → sso",
+  "vln_trem": "plain unavailable → sso"
+ },
+ "missing": {},
+ "out_of_range_rescued": {
+  "vln_pizz": 10,
+  "vln_trem": 2
+ },
+ "sfizz_notes": 225,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  110.0
+ ],
+ "seconds": 110.0,
+ "mp3": "/home/claude/immollimma/requests/devoratio/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/devoratio/out/score.mid",
+  "lost": {
+   "notes with detune (out-of-tune doubles)": 118,
+   "notes with a glissando inside": 138,
+   "raw samples (noises, unpitched percussion)": 179,
+   "grain clouds": 4,
+   "ring-modulated notes": 6,
+   "reversed notes": 1
+  },
+  "musicxml": "/home/claude/immollimma/requests/devoratio/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/devoratio/out/score.pdf",
+  "grid": [
+   4,
+   3
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   5.0,
+   9.0,
+   12.0,
+   13.8,
+   43.2,
+   78.2,
+   83.0,
+   103.8,
+   106.2
+  ],
+  "png": "/home/claude/immollimma/requests/devoratio/out/report.png"
+ },
+ "seconds_taken": 48.6
+}

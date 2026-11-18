@@ -1,0 +1,1345 @@
+{
+ "events": [
+  {
+   "type": "beacon",
+   "t": 0
+  },
+  {
+   "type": "stage",
+   "t": 0,
+   "num": "I",
+   "name": "VACUUM"
+  },
+  {
+   "type": "beacon",
+   "t": 2.4
+  },
+  {
+   "type": "beacon",
+   "t": 4.8
+  },
+  {
+   "type": "world_turn",
+   "t": 4.8
+  },
+  {
+   "type": "stage",
+   "t": 6,
+   "num": "II",
+   "name": "SPORA"
+  },
+  {
+   "type": "beacon",
+   "t": 7.2
+  },
+  {
+   "type": "world_turn",
+   "t": 8
+  },
+  {
+   "type": "beacon",
+   "t": 9.6
+  },
+  {
+   "type": "world_turn",
+   "t": 11.2
+  },
+  {
+   "type": "beacon",
+   "t": 12
+  },
+  {
+   "type": "beat",
+   "t": 12,
+   "amp": 0.45,
+   "second": false
+  },
+  {
+   "type": "landing",
+   "t": 12
+  },
+  {
+   "type": "beacon",
+   "t": 14.4
+  },
+  {
+   "type": "world_turn",
+   "t": 14.4
+  },
+  {
+   "type": "beat",
+   "t": 15.2,
+   "amp": 0.45,
+   "second": false
+  },
+  {
+   "type": "beacon",
+   "t": 16.8
+  },
+  {
+   "type": "world_turn",
+   "t": 17.6
+  },
+  {
+   "type": "stage",
+   "t": 18,
+   "num": "III",
+   "name": "INCREMENTUM"
+  },
+  {
+   "type": "beat",
+   "t": 18.4,
+   "amp": 0.56,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 18.7,
+   "amp": 0.39,
+   "second": true
+  },
+  {
+   "type": "beacon",
+   "t": 19.2
+  },
+  {
+   "type": "world_turn",
+   "t": 20.8
+  },
+  {
+   "type": "beat",
+   "t": 21.4,
+   "amp": 0.6,
+   "second": false
+  },
+  {
+   "type": "beacon",
+   "t": 21.6
+  },
+  {
+   "type": "beat",
+   "t": 21.7,
+   "amp": 0.42,
+   "second": true
+  },
+  {
+   "type": "beacon",
+   "t": 24
+  },
+  {
+   "type": "world_turn",
+   "t": 24
+  },
+  {
+   "type": "beat",
+   "t": 24.2,
+   "amp": 0.63,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 24.5,
+   "amp": 0.44,
+   "second": true
+  },
+  {
+   "type": "beacon",
+   "t": 26.4
+  },
+  {
+   "type": "beat",
+   "t": 26.9,
+   "amp": 0.67,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 27.2,
+   "amp": 0.47,
+   "second": true
+  },
+  {
+   "type": "world_turn",
+   "t": 27.2
+  },
+  {
+   "type": "beacon",
+   "t": 28.8
+  },
+  {
+   "type": "beat",
+   "t": 29.4,
+   "amp": 0.71,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 29.7,
+   "amp": 0.49,
+   "second": true
+  },
+  {
+   "type": "world_turn",
+   "t": 30.4
+  },
+  {
+   "type": "beacon",
+   "t": 31.2
+  },
+  {
+   "type": "beat",
+   "t": 31.8,
+   "amp": 0.74,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 32.1,
+   "amp": 0.52,
+   "second": true
+  },
+  {
+   "type": "beacon",
+   "t": 33.6
+  },
+  {
+   "type": "world_turn",
+   "t": 33.6
+  },
+  {
+   "type": "beat",
+   "t": 34,
+   "amp": 0.77,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 34.3,
+   "amp": 0.54,
+   "second": true
+  },
+  {
+   "type": "beacon",
+   "t": 36
+  },
+  {
+   "type": "beat",
+   "t": 36.1,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 36.4,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "type": "world_turn",
+   "t": 36.8
+  },
+  {
+   "type": "beat",
+   "t": 38.1,
+   "amp": 0.82,
+   "second": false
+  },
+  {
+   "type": "beacon",
+   "t": 38.4
+  },
+  {
+   "type": "beat",
+   "t": 38.4,
+   "amp": 0.58,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 40,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "shadow_falls",
+   "t": 40
+  },
+  {
+   "type": "stage",
+   "t": 40,
+   "num": "IV",
+   "name": "UMBRA"
+  },
+  {
+   "type": "world_turn",
+   "t": 40
+  },
+  {
+   "type": "beat",
+   "t": 40.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beacon",
+   "t": 40.8
+  },
+  {
+   "type": "beat",
+   "t": 41.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 42.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beacon",
+   "t": 43.2
+  },
+  {
+   "type": "world_turn",
+   "t": 43.2
+  },
+  {
+   "type": "beat",
+   "t": 43.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 43.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 45.4,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beacon",
+   "t": 45.6
+  },
+  {
+   "type": "beat",
+   "t": 45.7,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "world_silent",
+   "t": 46.4
+  },
+  {
+   "type": "world_turn",
+   "t": 46.4
+  },
+  {
+   "type": "beat",
+   "t": 47.2,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 47.5,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 49,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 49.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "embrace",
+   "t": 50
+  },
+  {
+   "type": "stage",
+   "t": 50,
+   "num": "V",
+   "name": "AMPLEXUS"
+  },
+  {
+   "type": "beat",
+   "t": 50.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 51.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 52.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 52.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 54.3,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 54.6,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 56,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 56.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 57.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 57.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 59.1,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 59.4,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 60.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 60.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 62,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "devour_begin",
+   "t": 62
+  },
+  {
+   "type": "stage",
+   "t": 62,
+   "num": "VI",
+   "name": "DEVORATIO"
+  },
+  {
+   "type": "beat",
+   "t": 62.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 63.2,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 63.5,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 64.4,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 64.7,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 65.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 65.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 66.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 67.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 68,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 68.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 69.2,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 69.5,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 70.4,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 70.7,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 71.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 71.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 72.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 73.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 74,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 74.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 75.2,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 75.5,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 76.4,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 76.7,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 77.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 77.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "world_dark",
+   "t": 78
+  },
+  {
+   "type": "beat",
+   "t": 78.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 79.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "type": "adaptation",
+   "t": 80
+  },
+  {
+   "type": "beat",
+   "t": 80,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "type": "stage",
+   "t": 80,
+   "num": "VII",
+   "name": "DIGESTIO"
+  },
+  {
+   "type": "beat",
+   "t": 80.3,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 81.4,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "type": "order_wave",
+   "t": 81.4
+  },
+  {
+   "type": "beat",
+   "t": 81.7,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 82.9,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "type": "order_turn",
+   "t": 82.9
+  },
+  {
+   "type": "beat",
+   "t": 83.2,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 84.6,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "type": "order_turn",
+   "t": 84.6
+  },
+  {
+   "type": "beat",
+   "t": 84.9,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 86.5,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "type": "order_turn",
+   "t": 86.5
+  },
+  {
+   "type": "beat",
+   "t": 86.8,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 88.6,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "type": "order_release",
+   "t": 88.6
+  },
+  {
+   "type": "beat",
+   "t": 88.9,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 90.9,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 91.2,
+   "amp": 0.56,
+   "second": true
+  },
+  {
+   "type": "exodus",
+   "t": 92
+  },
+  {
+   "type": "stage",
+   "t": 92,
+   "num": "VIII",
+   "name": "EXODUS"
+  },
+  {
+   "type": "beat",
+   "t": 93.4,
+   "amp": 0.56,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 93.7,
+   "amp": 0.39,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 96.4,
+   "amp": 0.46,
+   "second": false
+  },
+  {
+   "type": "beat",
+   "t": 96.7,
+   "amp": 0.32,
+   "second": true
+  },
+  {
+   "type": "beat",
+   "t": 99.7,
+   "amp": 0.35,
+   "second": false
+  },
+  {
+   "type": "departure",
+   "t": 103.2
+  },
+  {
+   "type": "stage",
+   "t": 104,
+   "num": "IX",
+   "name": "SILENTIUM"
+  }
+ ],
+ "rite_len": 110,
+ "stages": [
+  [
+   0,
+   "I",
+   "VACUUM"
+  ],
+  [
+   6,
+   "II",
+   "SPORA"
+  ],
+  [
+   18,
+   "III",
+   "INCREMENTUM"
+  ],
+  [
+   40,
+   "IV",
+   "UMBRA"
+  ],
+  [
+   50,
+   "V",
+   "AMPLEXUS"
+  ],
+  [
+   62,
+   "VI",
+   "DEVORATIO"
+  ],
+  [
+   80,
+   "VII",
+   "DIGESTIO"
+  ],
+  [
+   92,
+   "VIII",
+   "EXODUS"
+  ],
+  [
+   104,
+   "IX",
+   "SILENTIUM"
+  ]
+ ],
+ "beats": [
+  {
+   "t": 12,
+   "amp": 0.45,
+   "second": false
+  },
+  {
+   "t": 15.2,
+   "amp": 0.45,
+   "second": false
+  },
+  {
+   "t": 18.4,
+   "amp": 0.5554545454545454,
+   "second": false
+  },
+  {
+   "t": 18.7,
+   "amp": 0.3888181818181818,
+   "second": true
+  },
+  {
+   "t": 21.4,
+   "amp": 0.5963636363636364,
+   "second": false
+  },
+  {
+   "t": 21.7,
+   "amp": 0.41745454545454547,
+   "second": true
+  },
+  {
+   "t": 24.2,
+   "amp": 0.6345454545454545,
+   "second": false
+  },
+  {
+   "t": 24.5,
+   "amp": 0.4441818181818181,
+   "second": true
+  },
+  {
+   "t": 26.9,
+   "amp": 0.6713636363636364,
+   "second": false
+  },
+  {
+   "t": 27.2,
+   "amp": 0.46995454545454546,
+   "second": true
+  },
+  {
+   "t": 29.4,
+   "amp": 0.7054545454545454,
+   "second": false
+  },
+  {
+   "t": 29.7,
+   "amp": 0.49381818181818177,
+   "second": true
+  },
+  {
+   "t": 31.8,
+   "amp": 0.7381818181818182,
+   "second": false
+  },
+  {
+   "t": 32.1,
+   "amp": 0.5167272727272727,
+   "second": true
+  },
+  {
+   "t": 34,
+   "amp": 0.7681818181818182,
+   "second": false
+  },
+  {
+   "t": 34.3,
+   "amp": 0.5377272727272727,
+   "second": true
+  },
+  {
+   "t": 36.1,
+   "amp": 0.7968181818181819,
+   "second": false
+  },
+  {
+   "t": 36.4,
+   "amp": 0.5577727272727273,
+   "second": true
+  },
+  {
+   "t": 38.1,
+   "amp": 0.8240909090909091,
+   "second": false
+  },
+  {
+   "t": 38.4,
+   "amp": 0.5768636363636364,
+   "second": true
+  },
+  {
+   "t": 40,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 40.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 41.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 42.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 43.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 43.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 45.4,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 45.7,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 47.2,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 47.5,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 49,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 49.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 50.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 51.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 52.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 52.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 54.3,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 54.6,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 56,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 56.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 57.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 57.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 59.1,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 59.4,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 60.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 60.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 62,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 62.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 63.2,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 63.5,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 64.4,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 64.7,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 65.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 65.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 66.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 67.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 68,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 68.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 69.2,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 69.5,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 70.4,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 70.7,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 71.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 71.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 72.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 73.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 74,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 74.3,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 75.2,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 75.5,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 76.4,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 76.7,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 77.6,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 77.9,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 78.8,
+   "amp": 1,
+   "second": false
+  },
+  {
+   "t": 79.1,
+   "amp": 0.7,
+   "second": true
+  },
+  {
+   "t": 80,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 80.3,
+   "amp": 0.5599999999999999,
+   "second": true
+  },
+  {
+   "t": 81.4,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 81.7,
+   "amp": 0.5599999999999999,
+   "second": true
+  },
+  {
+   "t": 82.9,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 83.2,
+   "amp": 0.5599999999999999,
+   "second": true
+  },
+  {
+   "t": 84.6,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 84.9,
+   "amp": 0.5599999999999999,
+   "second": true
+  },
+  {
+   "t": 86.5,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 86.8,
+   "amp": 0.5599999999999999,
+   "second": true
+  },
+  {
+   "t": 88.6,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 88.9,
+   "amp": 0.5599999999999999,
+   "second": true
+  },
+  {
+   "t": 90.9,
+   "amp": 0.8,
+   "second": false
+  },
+  {
+   "t": 91.2,
+   "amp": 0.5599999999999999,
+   "second": true
+  },
+  {
+   "t": 93.4,
+   "amp": 0.5554545454545452,
+   "second": false
+  },
+  {
+   "t": 93.7,
+   "amp": 0.3888181818181816,
+   "second": true
+  },
+  {
+   "t": 96.4,
+   "amp": 0.4599999999999998,
+   "second": false
+  },
+  {
+   "t": 96.7,
+   "amp": 0.32199999999999984,
+   "second": true
+  },
+  {
+   "t": 99.7,
+   "amp": 0.35499999999999987,
+   "second": false
+  }
+ ]
+}
