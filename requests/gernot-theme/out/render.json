@@ -1,0 +1,96 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso",
+  "vsco"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "cb_pizz@plain": 12,
+  "cb_sus@plain": 95,
+  "cb_trem@plain": 1,
+  "cl_sus@plain": 21,
+  "hn_mute@plain": 94,
+  "org_quiet@plain": 230,
+  "sample@plain": 1,
+  "sample@sso": 3,
+  "tpt_mute@plain": 35,
+  "vc_harm@sso": 54,
+  "vc_pizz@plain": 6,
+  "vc_sus@plain": 42,
+  "vc_trem@plain": 1,
+  "vln_harm@sso": 107,
+  "vln_solo@vsco": 18
+ },
+ "substitutions": {},
+ "missing": {},
+ "out_of_range_rescued": {},
+ "sfizz_notes": 87,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  130.26999999999998
+ ],
+ "seconds": 130.26999999999998,
+ "mp3": "/home/claude/ranatar/immollimma/requests/gernot-theme/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/ranatar/immollimma/requests/gernot-theme/out/score.mid",
+  "lost": {
+   "raw samples (noises, unpitched percussion)": 4
+  },
+  "musicxml": "/home/claude/ranatar/immollimma/requests/gernot-theme/out/score.musicxml",
+  "pdf": "/home/claude/ranatar/immollimma/requests/gernot-theme/out/score.pdf",
+  "grid": [
+   4,
+   3
+  ]
+ },
+ "qa": {
+  "gaps": [
+   [
+    83.0,
+    85.2
+   ],
+   [
+    103.1,
+    104.1
+   ]
+  ],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   5.0,
+   18.0,
+   22.2,
+   24.5,
+   43.0,
+   53.8,
+   81.5,
+   85.2,
+   99.8,
+   104.2,
+   114.0,
+   118.5
+  ],
+  "png": "/home/claude/ranatar/immollimma/requests/gernot-theme/out/report.png"
+ },
+ "parts_lufs": {
+  "Organo": -34.1,
+  "Violini (flag.)": -35.6,
+  "Violino solo": -35.9,
+  "Clarinetto": -36.0,
+  "Contrabassi": -36.3,
+  "Violoncelli": -36.4,
+  "Corno con sord.": -36.7,
+  "Tromba con sord.": -40.3,
+  "Violoncelli (flag.)": -41.4,
+  "Ombra (flag.)": -44.0,
+  "Violoncelli pizz.": -44.6
+ },
+ "seconds_taken": 34.7
+}
