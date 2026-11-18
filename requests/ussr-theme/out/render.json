@@ -10,6 +10,8 @@
   "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
  ],
  "by_instrument": {
+  "bsn_sus@plain": 18,
+  "cb_pizz@plain": 9,
   "cb_sus@plain": 101,
   "celesta@sso": 10,
   "choir@sso": 76,
@@ -18,7 +20,7 @@
   "hn_sus@plain": 88,
   "hns_sus@sso": 38,
   "ob_sus@plain": 5,
-  "sample@plain": 110,
+  "sample@plain": 187,
   "sample@sso": 1,
   "tba_sus@plain": 49,
   "tbn_sus@plain": 101,
@@ -26,7 +28,8 @@
   "tpt_sus@plain": 65,
   "tubular@vsco": 18,
   "vc_leg@sso": 45,
-  "vc_sus@plain": 92,
+  "vc_pizz@plain": 9,
+  "vc_sus@plain": 110,
   "vla_harm@sso": 2,
   "vla_leg@sso": 19,
   "vla_sus@plain": 28,
@@ -40,14 +43,14 @@
  "lengthened": 0,
  "window": [
   0.0,
-  196.99166666666667
+  203.65833333333333
  ],
- "seconds": 196.99166666666667,
+ "seconds": 203.65833333333333,
  "mp3": "/home/claude/immollimma/requests/ussr-theme/out/audio.mp3",
  "notation": {
   "midi": "/home/claude/immollimma/requests/ussr-theme/out/score.mid",
   "lost": {
-   "raw samples (noises, unpitched percussion)": 111,
+   "raw samples (noises, unpitched percussion)": 188,
    "notes with detune (out-of-tune doubles)": 9
   },
   "musicxml": "/home/claude/immollimma/requests/ussr-theme/out/score.musicxml",
@@ -74,21 +77,22 @@
    103.2,
    114.0,
    117.5,
-   118.2,
    130.5,
    135.5,
    139.0,
    143.0,
-   177.0
+   177.0,
+   183.8
   ],
   "png": "/home/claude/immollimma/requests/ussr-theme/out/report.png"
  },
  "parts_lufs": {
   "Coro": -23.1,
   "Coro (uomini)": -24.5,
+  "Violoncelli": -24.8,
   "Trombe": -25.5,
-  "Violoncelli": -25.6,
   "Violoncello solo": -26.2,
+  "Fagotti": -26.7,
   "Viole": -27.3,
   "Corni": -27.6,
   "Contrabassi": -28.4,
@@ -102,5 +106,5 @@
   "Timpani": -40.8,
   "Tromboni": -41.0
  },
- "seconds_taken": 54.0
+ "seconds_taken": 53.4
 }
