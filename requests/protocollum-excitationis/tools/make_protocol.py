@@ -87,7 +87,7 @@ R_("""  for (const tr of [trunkUp, trunkDown]) {
     lctx.beginPath(); lctx.moveTo(q.x, q.busY); lctx.lineTo(q.x, lerp(q.busY, q.y + g * .48, rp)); lctx.stroke(); }""")
 R_("""  const sr = RF * (.17 + .1 * P), s = .55 + .12 * Math.sin(t * 1.3) + .1 * Math.sin(t * 3.7) + P * .9;""",
    """  if (vis.star <= 0 && vis.tessEdges <= 0) return;
-  const sr = RF * (.17 + .1 * P + .25 * vis.flare) * Math.max(.05, vis.star), s = (.55 + .12 * Math.sin(t * 1.3) + .1 * Math.sin(t * 3.7) + P * .9 + vis.flare * 1.5) * Math.min(1, vis.star * 1.5);""")
+  const sr = RF * (.17 + .1 * P + .25 * vis.flare + .1 * vis.gate + .12 * vis.gateOpen) * Math.max(.05, vis.star), s = (.55 + .12 * Math.sin(t * 1.3) + .1 * Math.sin(t * 3.7) + P * .9 + vis.flare * 1.5) * Math.min(1, vis.star * 1.5);""")
 R_("""  const raw = tessRaw(t).map(""","""  const raw = tessRaw(tessAng).map(""")
 R_("""  for (const e of order) {
     const q = clamp((e.d + 2.6) / 5.2), a = raw[e.i], b = raw[e.j];""","""  for (const e of order) {
@@ -206,6 +206,12 @@ build();""","""let rzT = 0; addEventListener('resize', () => { clearTimeout(rzT)
 
 build(); riteTimes(); riteRestart();""")
 R_("lctx.arc(x + (d - (dots - 1) / 2) * w * .26, yd, kk * 1.3, 0, TAU)", "lctx.arc(x + (d - (dots - 1) / 2) * w * .26, yd, Math.max(kk * 1.3, h * .065), 0, TAU)")
+R_("    let n = 1; if (P > 0) n += P * (.12 + .2 * Math.sin(t * 21 + i * 1.7));",
+   "    let n = 1 + vis.gate * .13 + vis.gateOpen * .22; if (P > 0) n += P * (.12 + .2 * Math.sin(t * 21 + i * 1.7));")
+R_("lctx.strokeStyle = P > .5 && Math.random() < P * .3 ? COL.star : q > .7 ? COL.hot : COL.light;",
+   "lctx.strokeStyle = P > .5 && Math.random() < P * .3 ? COL.star : (q > .7 || vis.gate > .45) ? COL.hot : COL.light;")
+R_("drawCarts(); drawLintel(); drawCounter(); drawVault(); drawEyes(); drawMad();",
+   "drawCarts(); drawLintel(); drawCounter(); drawVault(); drawEyes(); drawDepart(); drawMad();")
 s = s.replace("\n/* =============================== кадр =============================== */",
               open(sys.argv[3]).read() + "\n/* =============================== кадр =============================== */", 1)
 open(dst, 'w').write(s); print('ok')

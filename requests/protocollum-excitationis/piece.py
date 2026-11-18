@@ -145,7 +145,7 @@ def build(ctx):
         if rnum >= 9:
             p.note("crotales", min(ping + 12, 108), tw, 1.0, vel=.35, gain=.1, release=1.0)
         p.note("vc_colleg", m if 36 <= m <= 76 else 48, tw, .1, vel=.5, gain=.2, release=.1)
-        for seg in ((tw, 57.25), (57.6, td)):                                          # вдох перед приказом
+        for seg in ((tw, 57.25), (57.6, td)):  # до ухода; дальше — глиссандо втягивания                                          # вдох перед приказом
             if seg[1] - seg[0] < .2:
                 continue
             g = .2 + .2 * near
@@ -203,24 +203,50 @@ def build(ctx):
     p.note("vln_harm", 88, 57.6, 2.0, vel=.6, gain=.16, release=1.5)
     p.note("afl_sus", 88, 57.65, 1.4, vel=.6, gain=.32, attack=.05, release=1.0)       # вспышка узника (E)
 
-    # ================================================================ X УХОД (59.4–69.6): аккорд распадается снизу вверх
-    for rnum, r in rows.items():
+    # ================================================================ X УХОД (59.4–71): легион втягивается в тессеракт-врата
+    # на каждый ряд (центральная ниша, ближние первыми): тон взлетает глиссандо и обрывается — саркофаг разбирается;
+    # обратный звон в луч (+0,25); низкий провал у ближних; через GATE_LAG свет доходит до врат — пульс литавр
+    GATE_LAG = 1.1
+    deps = sorted(rows.items(), key=lambda kv: kv[1]["depart"])
+    last_td = deps[-1][1]["depart"]
+    for rnum, r in deps:
         m = ROW_PITCH[rnum]
+        a, _b = row_inst(m)
         td = r["depart"]
+        near = 1 - rnum / 12
+        p.note(a, m, td, .5, vel=.6 + .2 * near, gain=.2 + .25 * near, attack=.02, release=.05, bend=12.0)  # втягивание
         ping = m
         while ping < 84:
             ping += 12
         if rnum >= 6:
-            p.note("crotales", min(ping, 108), td - .5, .5, vel=.5, gain=.2, reverse=True)
+            p.note("crotales", min(ping, 108), td - .25, .5, vel=.55, gain=.24, reverse=True)
         else:
             tb_ = m
             while tb_ < 60:
                 tb_ += 12
-            p.note("tubular", min(tb_, 77), td - .6, .6, vel=.5, gain=.22, reverse=True)
-        p.note("vln_harm", min(max(ping - 12, 67), 100), td, .15, vel=.4, gain=.08, release=.2)
+            p.note("tubular", min(tb_, 77), td - .35, .6, vel=.55, gain=.28, reverse=True)
+            low = max(24, m - 12 if m >= 36 else m)
+            p.note("cbsn_sus" if low < 34 else "tba_sus", low, td + .25, .7, vel=.7, gain=.3 + .2 * near, attack=.01,
+                   release=.15, bend=-5.0)                                                  # провал
+            c.fx("bd_soft", td + .25, gain=.15 + .15 * near, bus="perc")
+        p.note("vln_harm", min(max(ping - 12, 67), 100), td + .25, .4, vel=.45, gain=.12, release=.3, bend=7.0)
+        tg_ = td + GATE_LAG                                                                 # пульс врат
+        if tg_ < last_td + GATE_LAG - 1e-6:
+            c.timp(tg_, 0, vel=.5 + .3 * near)
+            c.fx("bd_soft", tg_, gain=.2 + .12 * near, bus="perc")
+            p.note("crotales", CROT[rnum % 6], tg_, .8, vel=.4, gain=.1, release=.8)
     for k in range(18):                                                                  # боковые ряды — раньше
         tt = 59.4 + rng.uniform(0, 3.0)
-        p.note("crotales", rng.choice(CROT), tt - .35, .35, vel=.3, gain=.05, reverse=True)
+        p.note("crotales", rng.choice(CROT), tt - .35, .35, vel=.35, gain=.07, reverse=True)
+    # последний, дальний ряд прошёл врата — второй, меньший удар; врата схлопываются
+    tz = last_td + GATE_LAG
+    for m, inst, g in ((24, "cbsn_sus", .4), (36, "tba_sus", .4), (49, "tbn_sus", .32), (56, "hn_sus", .3),
+                       (62, "hn_sus", .3), (63, "hn_sus", .26), (75, "vln_sus", .22)):
+        p.note(inst, m, tz, 1.0, vel=.85, gain=g, attack=.01, release=1.2)
+    c.timp(tz, 0, vel=.85)
+    c.fx("tamtam", tz, gain=.32, bus="perc")
+    p.note("afl_sus", 76, tz + .05, 1.2, vel=.5, gain=.28, attack=.05, release=1.0)        # узник: E — и тишина
+    p.note("vln_harm", 98, tz, 1.6, vel=.5, gain=.12, release=1.2, bend=-12.0)
 
     # ================================================================ XI ВОЗВРАЩЕНИЕ В СОН (72–86.4)
     star(73.2, scale=1.6, vel=.35, gain=.4, rev=True)

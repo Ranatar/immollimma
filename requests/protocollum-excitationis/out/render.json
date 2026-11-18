@@ -10,32 +10,32 @@
   "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
  ],
  "by_instrument": {
-  "afl_sus@sso": 13,
+  "afl_sus@sso": 14,
   "cb_pizz@plain": 32,
-  "cb_sus@plain": 6,
-  "cb_sus@vsco": 2,
-  "cbsn_sus@sso": 7,
-  "crotales@sso": 55,
-  "hn_sus@plain": 13,
-  "sample@plain": 111,
-  "sample@sso": 2,
-  "tba_sus@plain": 1,
-  "tbn_sus@plain": 10,
-  "timp@plain": 34,
+  "cb_sus@plain": 7,
+  "cb_sus@vsco": 3,
+  "cbsn_sus@sso": 12,
+  "crotales@sso": 67,
+  "hn_sus@plain": 16,
+  "sample@plain": 129,
+  "sample@sso": 3,
+  "tba_sus@plain": 4,
+  "tbn_sus@plain": 11,
+  "timp@plain": 47,
   "timp_roll@plain": 1,
   "tpt_sus@plain": 3,
   "tubular@vsco": 12,
   "vc_colleg@sso": 13,
   "vc_harm@sso": 2,
   "vc_pizz@plain": 40,
-  "vc_sus@plain": 9,
+  "vc_sus@plain": 12,
   "vla_harm@sso": 2,
   "vla_pizz@plain": 37,
-  "vla_sus@plain": 9,
+  "vla_sus@plain": 13,
   "vln_colleg@sso": 99,
-  "vln_harm@sso": 162,
+  "vln_harm@sso": 163,
   "vln_solo@vsco": 4,
-  "vln_sus@plain": 10,
+  "vln_sus@plain": 15,
   "vln_trem@plain": 4
  },
  "substitutions": {
@@ -43,9 +43,9 @@
  },
  "missing": {},
  "out_of_range_rescued": {
-  "cb_sus": 2
+  "cb_sus": 3
  },
- "sfizz_notes": 219,
+ "sfizz_notes": 231,
  "lengthened": 1,
  "window": [
   0.0,
@@ -56,8 +56,8 @@
  "notation": {
   "midi": "/home/claude/immollimma/requests/protocollum-excitationis/out/score.mid",
   "lost": {
-   "raw samples (noises, unpitched percussion)": 113,
-   "notes with a glissando inside": 12,
+   "raw samples (noises, unpitched percussion)": 132,
+   "notes with a glissando inside": 45,
    "notes with detune (out-of-tune doubles)": 37,
    "reversed notes": 32
   },
@@ -73,10 +73,6 @@
    [
     22.0,
     23.1
-   ],
-   [
-    69.4,
-    70.7
    ]
   ],
   "clipped": 0,
@@ -88,14 +84,29 @@
    11.5,
    13.5,
    15.8,
-   54.8,
-   70.0,
    70.5,
+   73.5,
    77.8,
    91.5,
-   92.5
+   92.2
   ],
   "png": "/home/claude/immollimma/requests/protocollum-excitationis/out/report.png"
  },
- "seconds_taken": 27.4
+ "parts_lufs": {
+  "Contrabassoon": -24.4,
+  "Trumpet": -24.5,
+  "Alto flute": -25.2,
+  "Violas": -25.5,
+  "Timpani": -26.4,
+  "Horn": -26.5,
+  "Basses": -27.4,
+  "Violins": -28.8,
+  "Tuba": -29.3,
+  "Cellos": -30.7,
+  "Violin solo": -31.0,
+  "Trombone": -31.1,
+  "Tubular bells": -36.6,
+  "Crotales": -40.9
+ },
+ "seconds_taken": 108.8
 }
