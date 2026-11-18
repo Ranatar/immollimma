@@ -7,8 +7,11 @@
   вписывание глифов стены — cues["cells"].
 Сетка 100 уд/мин, 4/4: такт = 2,4 с = два удара сердца; ключевые метки кратны 0,3 с.
 
-Без голосов: у некронов нет душ. Материал — квинтовая стопка C–G–D–A–E–B–F♯ (холод, совершенство) и узник-звезда
-(альтовая флейта, солирующая скрипка: E F B C — тепло, но неправильно).
+Без голосов: у некронов нет душ. Материал — две квинтовые цепи на полутон друг от друга: C–G–D и D♭–A♭–E♭.
+Каждая — чистые квинты (холод, совершенство), вместе они не складываются ни в какую тональность. Первая редакция
+стояла на одной цепи C–G–D–A–E–B–F♯ — это диатоника (до-лидийский, мажорная пентатоника) и звучала светло, почти
+празднично; заодно убран «блеск»: арфа шестнадцатыми и вибрафон заменены флажолетами и col legno.
+Узник-звезда (альтовая флейта, солирующая скрипка): E F — B B♭, полутоны без разрешения, чужие гробнице звуки.
 Сквозные процессы: стопка собирается и разбирается (рёбра, обереги, легион, имя, приказ, распад, обратный порядок);
 сердце (accelerando, затем ровно); тиканье счётчика (замедляется до остановки — и заново с нуля).
 
@@ -23,11 +26,15 @@ from kit.devices import Composer  # noqa: E402
 from kit.events import Piece  # noqa: E402
 
 LEN = 96.0
-STACK = [48, 55, 62, 69, 76, 83, 90]          # C3 G3 D4 A4 E5 B5 F♯6
-STAR = [(76, .9), (77, .6), (71, .9), (72, 1.8)]  # E5 F5 B4 C5 — узник
-NAME = [(48, "tbn_sus"), (55, "tbn_sus"), (62, "hn_sus"), (69, "hn_sus"), (76, "tpt_sus")]
-# ряд → тон легиона (12 — дальний, просыпается первым и звучит выше всех)
-ROW_PITCH = {12: 78, 11: 71, 10: 64, 9: 57, 8: 50, 7: 43, 6: 36, 5: 48, 4: 43, 3: 36, 2: 31, 1: 36, 0: 24}
+HI_A, HI_B = [79, 86, 84], [80, 87, 85]       # высокие звуки цепей: G5 D6 C6 | A♭5 E♭6 D♭6
+HIGH = [79, 80, 86, 87, 84, 85]               # попеременно: цепь C–G–D, цепь D♭–A♭–E♭
+MID = [60, 67, 74, 61, 68, 75]                # C4 G4 D5 D♭4 A♭4 E♭5
+CROT = [96, 97, 103, 104, 98, 99]             # кроталы: C7 D♭7 G7 A♭7 D7 E♭7
+STAR = [(76, .9), (77, .6), (71, .9), (70, 1.8)]  # E5 F5 B4 B♭4 — узник
+NAME = [(48, "tbn_sus"), (55, "tbn_sus"), (62, "hn_sus"), (68, "hn_sus"), (75, "tpt_sus")]  # C3 G3 D4 → A♭4 E♭5
+# ряд → тон легиона (12 — дальний, просыпается первым и звучит выше всех); цепи чередуются, наверху — полутоновые пары
+ROW_PITCH = {12: 75, 11: 74, 10: 68, 9: 67, 8: 61, 7: 60, 6: 50, 5: 56, 4: 43, 3: 49, 2: 36, 1: 31, 0: 24}
+WALL = [75, 74, 68, 67, 61, 60, 56, 50, 49, 43]  # регистры стены сверху вниз
 
 
 def row_inst(m):
@@ -42,7 +49,7 @@ def row_inst(m):
 
 def build(ctx):
     cues = ctx.cues
-    p = Piece("Protocollum Excitationis", bpm=100, meter=(4, 4), key="C major", seed=11)
+    p = Piece("Protocollum Excitationis", bpm=100, meter=(4, 4), key="C major", seed=11)  # без знаков: язык атональный
     p.meta["length"] = LEN
     c = Composer(p, lib="vsco", seed=11)
     rng = p.rng
@@ -74,43 +81,40 @@ def build(ctx):
                release=.12)
         if k % 3 == 0:
             c.fx("wood_click", tt, gain=.04 + .1 * late, pan=-.2, bus="perc")
-    p.note("crotales", 96, 7.2, 2.5, vel=.55, gain=.3, release=2.5)                     # встал
-    p.note("vibes", 84, 7.2, 3.0, vel=.45, gain=.3, release=2.5)
+    p.note("crotales", 97, 7.2, 2.5, vel=.55, gain=.3, release=2.5)                     # встал
+    p.note("tubular", 60, 7.2, 3.0, vel=.4, gain=.25, release=2.5)
 
     # ================================================================ II СКЛЕП (8.1–15)
     p.note("vln_harm", 88, 8.1, 2.6, vel=.4, gain=.18, attack=.08, release=1.6, pan=.3)     # узник загорелся
     p.note("crotales", 100, 8.1, 2.0, vel=.4, gain=.18, release=2.0)
     star(8.7, vel=.38, gain=.42)
-    for k in range(32):                                                                 # рёбра тессеракта
-        m = STACK[k % 7] + (12 if (k // 7) % 2 else 0)
-        if m > 96:
-            m -= 24
-        p.note("harp", m, 8.4 + .1 * k, .6, vel=.42 + .2 * (k / 31), gain=.34, pan=-.45 + .9 * (k % 7) / 6, release=1.2)
-    p.note("vln_harm", 76, 11.4, 1.5, vel=.35, gain=.14, attack=.3, release=.8, bend=12.0, pan=-.3)   # поле
+    for k in range(32):                                                                 # рёбра тессеракта: сухо
+        if k % 2 == 0:
+            p.note("vln_colleg", MID[(k // 2) % 3], 8.4 + .1 * k, .1, vel=.45 + .2 * (k / 31), gain=.3,
+                   pan=-.45 + .9 * (k % 6) / 5, release=.12)
+        else:
+            p.note("vln_harm", HI_B[(k // 2) % 3], 8.4 + .1 * k, .14, vel=.45, gain=.2, pan=.45 - .9 * (k % 6) / 5,
+                   release=.25)
+    p.note("vln_harm", 74, 11.4, 1.5, vel=.35, gain=.14, attack=.3, release=.8, bend=12.0, pan=-.3)   # поле
     for k in range(24):                                                                 # обереги по кольцу
-        m = STACK[6 - k % 7] + (0 if (k // 7) % 2 else -12)
-        while m > 89:
-            m -= 12
-        while m < 53:
-            m += 12
-        p.note("vibes", m, 12.6 + .1 * k, 1.6, vel=.35, gain=.22, pan=-.6 + 1.2 * k / 23, release=1.6)
+        p.note("vln_harm", HIGH[k % 6], 12.6 + .1 * k, .45, vel=.4, gain=.26, pan=-.6 + 1.2 * k / 23, release=.4)
+        if k % 6 == 0:
+            p.note("crotales", CROT[(k // 6) % 6], 12.6 + .1 * k, 1.2, vel=.3, gain=.12, release=1.2)
     for m, inst in ((48, "vc_harm"), (55, "vla_harm")):
         p.note(inst, m, 9.0, 6.6, vel=.35, gain=.2, attack=2.0, release=1.2)
 
     # ================================================================ III СТЕНА (15–21): глифы вписываются точками
     tmax = max(q["t"] for q in cells)
     for k, q in enumerate(cells):
-        if k % 4 or q["t"] > 21.0:
+        if k % 6 or q["t"] > 21.0:
             continue
-        m = STACK[(nr - 1 - q["r"]) % 7] + 12 * ((nr - 1 - q["r"]) // 7)
-        inst = "vln_pizz" if m >= 67 else "vla_pizz" if m >= 55 else "vc_pizz"
+        m = WALL[min(q["r"], len(WALL) - 1)] - 12
+        inst = "vla_pizz" if m >= 55 else "vc_pizz"
         p.note(inst, m, q["t"], .25, vel=.5, gain=.3, pan=.55 * q["side"], release=.4)
-        if k % 12 == 0:
-            p.note("harp", m + 12, q["t"] + .02, .5, vel=.4, gain=.18, pan=.55 * q["side"], release=1.0)
     for m, inst in ((36, "cb_sus"), (43, "vc_sus")):
         p.note(inst, m, 15.0, 6.4, vel=.4, gain=.32, attack=3.0, release=.6)
-    p.note("vln_harm", 79, 15.0, 2.4, vel=.35, gain=.14, attack=.2, release=.6, bend=7.0, pan=-.3)    # свет бежит по шинам
-    p.note("vln_harm", 79, 15.05, 2.4, vel=.35, gain=.14, attack=.2, release=.6, bend=7.0, pan=.3)
+    p.note("vln_harm", 74, 15.0, 2.4, vel=.35, gain=.14, attack=.2, release=.6, bend=1.0, pan=-.3)    # свет бежит по шинам
+    p.note("vln_harm", 74, 15.05, 2.4, vel=.35, gain=.14, attack=.2, release=.6, bend=1.0, pan=.3, detune=.25)
 
     # ================================================================ IV/VI СЕРДЦЕ ГРОБНИЦЫ (21–57.6)
     for k, tb in enumerate(hearts):
@@ -121,11 +125,10 @@ def build(ctx):
         c.timp(tb, 0, vel=v)
         c.fx("bd_soft", tb, gain=.18 + .15 * v, bus="perc")
         p.note("cb_pizz", 36, tb, .4, vel=v, gain=.5, pan=-.15, release=.4)
-        p.note("vc_pizz", 48, tb + .22, .3, vel=v * .8, gain=.35, pan=.1, release=.3)       # «тук-тук»
-        c.fx("bd_soft", tb + .22, gain=(.18 + .15 * v) * .55, bus="perc")
+        c.fx("bd_soft", tb + .22, gain=(.18 + .15 * v) * .45, bus="perc")                # второй, глухой
 
     # ================================================================ V ЗАЛ (28.8–31.2)
-    for m, inst in ((36, "cb_sus"), (43, "vc_sus"), (50, "vla_sus")):
+    for m, inst in ((36, "cb_sus"), (43, "vc_sus"), (56, "vla_sus")):
         p.note(inst, m, 28.8, 2.6, vel=.55, gain=.3, attack=2.2, release=.5)
     c.fx("gong_scrape", 28.9, gain=.22, bus="perc")
 
@@ -136,11 +139,12 @@ def build(ctx):
         near = 1 - rnum / 12                                                            # ближние громче
         tw, td = r["wake"], r["depart"]
         ping = m
-        while ping < 72:
+        while ping < 79:
             ping += 12
-        p.note("crotales" if ping >= 84 else "vibes", min(ping, 104), tw, 1.2, vel=.5, gain=.18, release=1.4, pan=rng.uniform(-.5, .5))
-        p.note("vibes", min(ping, 89) if ping <= 89 else ping - 12, tw + .08, .8, vel=.35, gain=.12, release=1.0)
-        p.note("vc_colleg", 50 + (rnum % 5) * 2, tw, .1, vel=.5, gain=.2, release=.1)
+        p.note("vln_harm", min(ping, 100), tw, .5, vel=.45, gain=.12, release=.6, pan=rng.uniform(-.5, .5))
+        if rnum >= 9:
+            p.note("crotales", min(ping + 12, 108), tw, 1.0, vel=.35, gain=.1, release=1.0)
+        p.note("vc_colleg", m if 36 <= m <= 76 else 48, tw, .1, vel=.5, gain=.2, release=.1)
         for seg in ((tw, 57.25), (57.6, td)):                                          # вдох перед приказом
             if seg[1] - seg[0] < .2:
                 continue
@@ -152,17 +156,14 @@ def build(ctx):
     for tb in cues["bad_niches"]:                                                      # неисправные спящие
         c.fx("zap", tb, gain=.05, shift=7, pan=rng.uniform(-.7, .7), bus="fx")
         p.note("vln_harm", 95, tb + .1, .12, vel=.3, gain=.05, release=.1, detune=.4)
-    # минимализм: медленное арпеджио стопки, каждый такт на звук длиннее
-    t, n = 40.8, 3
+    # минимализм: медленный узор флажолетов по двум цепям, каждый такт на звук длиннее
+    t, n = 40.8, 2
     while t < 47.9:
         bar_end = t + 2.4
         k = 0
         while t < bar_end - 1e-6 and t < 47.9:
-            m = STACK[1 + k % n]
-            while m > 89:
-                m -= 12
-            p.note("vibes", m, t, .9, vel=.38, gain=.18, pan=.4 - .8 * (k % 2), release=1.0)
-            t += .3
+            p.note("vln_harm", HIGH[k % n], t, .55, vel=.35, gain=.12, pan=.4 - .8 * (k % 2), release=.4)
+            t += .6
             k += 1
         n = min(6, n + 1)
 
@@ -170,23 +171,19 @@ def build(ctx):
     for i, (m, inst) in enumerate(NAME):
         t0 = 48.0 + .9 * i
         p.note(inst, m, t0, 57.25 - t0, vel=.72, gain=.42, attack=.03, release=.12, pan=-.4 + .2 * i)
-        p.note("tubular", [60, 67, 62, 69, 76][i], t0, 3.0, vel=.6, gain=.3, release=2.5)
+        p.note("tubular", [60, 67, 62, 68, 75][i], t0, 3.0, vel=.6, gain=.3, release=2.5)
     c.timp(48.0, 0, vel=.8)
     c.fx("tamtam", 51.6, gain=.3, bus="perc")
 
     # ================================================================ VIII ДАВЛЕНИЕ (52.8–57.3)
     star(52.8, scale=1.0, vel=.62, gain=.55, solo=True, bend=.6)
-    for m in (76, 77, 83, 84):
+    for m in (76, 77, 82, 83):
         p.note("vln_trem", m, 52.9, 4.35, vel=.7, gain=.09, attack=4.2, release=.05, detune=.2)
-    p.note("vln_harm", 88, 53.4, 3.85, vel=.5, gain=.15, attack=3.0, release=.05)
-    p.note("vln_harm", 88, 53.4, 3.85, vel=.5, gain=.15, attack=3.0, release=.05, detune=.35)   # биения
+    p.note("vln_harm", 86, 53.4, 3.85, vel=.5, gain=.15, attack=3.0, release=.05)
+    p.note("vln_harm", 86, 53.4, 3.85, vel=.5, gain=.15, attack=3.0, release=.05, detune=.35)   # биения
     t, k = 54.45, 0
     while t < 57.2:                                                                     # цепь оберегов
-        m = STACK[k % 7] + 24
-        while m > 108:
-            m -= 12
-        while m < 84:
-            m += 12
+        m = CROT[k % 6]
         p.note("crotales", m, t, .4, vel=.4 + .3 * (t - 54.45) / 2.8, gain=.11, pan=-.6 + 1.2 * (k % 7) / 6, release=.4)
         t += .15
         k += 1
@@ -196,29 +193,34 @@ def build(ctx):
 
     # ================================================================ IX ПРИКАЗ (57.6)
     for m, inst, g in ((24, "cbsn_sus", .5), (36, "tba_sus", .5), (36, "cb_sus", .45), (43, "tbn_sus", .45),
-                       (50, "tbn_sus", .45), (57, "hn_sus", .42), (64, "hn_sus", .42), (71, "tpt_sus", .4),
-                       (78, "tpt_sus", .38), (83, "vln_sus", .32), (90, "vln_sus", .3)):
+                       (49, "tbn_sus", .42), (56, "hn_sus", .42), (62, "hn_sus", .42), (63, "hn_sus", .36),
+                       (67, "tpt_sus", .4), (68, "tpt_sus", .36), (74, "vln_sus", .32), (75, "vln_sus", .3)):
         p.note(inst, m, 57.6, 1.6, vel=1.0, gain=g * 1.4, attack=.01, release=1.4)
     c.timp(57.6, 0, vel=1.0)
     c.fx("tamtam", 57.6, gain=.45, bus="perc")
     c.fx("gong_hit", 57.6, gain=.3, bus="perc")
     c.fx("clash", 57.6, gain=.2, bus="perc")
-    p.note("vln_harm", 96, 57.6, 2.0, vel=.6, gain=.16, release=1.5)
-    p.note("afl_sus", 84, 57.65, 1.4, vel=.6, gain=.32, attack=.05, release=1.0)       # вспышка узника
+    p.note("vln_harm", 88, 57.6, 2.0, vel=.6, gain=.16, release=1.5)
+    p.note("afl_sus", 88, 57.65, 1.4, vel=.6, gain=.32, attack=.05, release=1.0)       # вспышка узника (E)
 
     # ================================================================ X УХОД (59.4–69.6): аккорд распадается снизу вверх
     for rnum, r in rows.items():
         m = ROW_PITCH[rnum]
         td = r["depart"]
         ping = m
-        while ping < 79:
+        while ping < 84:
             ping += 12
-        p.note("crotales" if ping >= 84 else "vibes", min(ping, 104), td - .5, .5, vel=.5, gain=.2, reverse=True)
-        p.note("vln_harm", min(max(ping, 67), 100), td, .15, vel=.4, gain=.08, release=.2)
-    sample = sorted(rng.sample(range(40), 0)) if False else None
+        if rnum >= 6:
+            p.note("crotales", min(ping, 108), td - .5, .5, vel=.5, gain=.2, reverse=True)
+        else:
+            tb_ = m
+            while tb_ < 60:
+                tb_ += 12
+            p.note("tubular", min(tb_, 77), td - .6, .6, vel=.5, gain=.22, reverse=True)
+        p.note("vln_harm", min(max(ping - 12, 67), 100), td, .15, vel=.4, gain=.08, release=.2)
     for k in range(18):                                                                  # боковые ряды — раньше
         tt = 59.4 + rng.uniform(0, 3.0)
-        p.note("vibes", rng.choice([77, 81, 83, 86, 88]), tt - .35, .35, vel=.35, gain=.06, reverse=True)
+        p.note("crotales", rng.choice(CROT), tt - .35, .35, vel=.3, gain=.05, reverse=True)
 
     # ================================================================ XI ВОЗВРАЩЕНИЕ В СОН (72–86.4)
     star(73.2, scale=1.6, vel=.35, gain=.4, rev=True)
@@ -227,26 +229,24 @@ def build(ctx):
         if k % 5:
             continue
         tu = 72 + 8.4 * (1 - (q["t"] - 15) / span)
-        m = STACK[(nr - 1 - q["r"]) % 7] + 12 * ((nr - 1 - q["r"]) // 7)
-        p.note("vln_pizz" if m >= 67 else "vla_pizz", m, tu, .2, vel=.38, gain=.18, pan=.55 * q["side"], release=.3)
-    p.note("cbsn_sus", 24, 70.0, 21.0, vel=.4, gain=.2, attack=3.0, release=2.0)
+        m = WALL[min(q["r"], len(WALL) - 1)] - 12
+        p.note("vla_pizz" if m >= 55 else "vc_pizz", m, tu, .2, vel=.38, gain=.18, pan=.55 * q["side"], release=.3)
+    p.note("cbsn_sus", 24, 70.0, 21.0, vel=.45, gain=.3, attack=3.0, release=2.0)
+    for m, inst in ((36, "cb_sus"), (49, "vc_sus")):                                   # холодный низ под угасанием
+        p.note(inst, m, 79.8, 7.0, vel=.4, gain=.22, attack=1.5, release=1.5)
     for m, inst in ((48, "vc_harm"), (55, "vla_harm")):                                  # пустой зал: чистая квинта
         p.note(inst, m, 69.2, 7.0, vel=.35, gain=.2, attack=1.5, release=1.5)
-    c.swell(72.0, inst="vibes", midi_=76, dur=1.8, gain=.22)
+    c.swell(72.0, inst="crotales", midi_=97, dur=1.8, gain=.18)
     for k in range(24):                                                                 # обереги гаснут
-        m = STACK[k % 7] + (0 if (k // 7) % 2 else -12)
-        while m > 89:
-            m -= 12
-        while m < 53:
-            m += 12
-        p.note("vibes", m, 80.4 + .1 * k, 1.0, vel=.28, gain=.15, pan=.6 - 1.2 * k / 23, release=1.2)
-    p.note("vln_harm", 88, 82.2, 1.5, vel=.32, gain=.12, attack=.05, release=.6, bend=-12.0)   # поле
+        p.note("vln_harm", HIGH[(23 - k) % 6], 80.4 + .1 * k, .45, vel=.35, gain=.24, pan=.6 - 1.2 * k / 23, release=.4)
+    p.note("vln_harm", 86, 82.2, 1.5, vel=.32, gain=.12, attack=.05, release=.6, bend=-12.0)   # поле
     for k in range(32):                                                                 # рёбра уходят
-        m = STACK[(31 - k) % 7] + (12 if ((31 - k) // 7) % 2 else 0)
-        if m > 96:
-            m -= 24
-        p.note("harp", m, 83.4 + .094 * k, .5, vel=.4 - .15 * k / 31, gain=.28, pan=.45 - .9 * ((31 - k) % 7) / 6, release=1.0)
-    p.note("vln_harm", 96, 86.4, 3.6, vel=.3, gain=.1, attack=.1, release=.6, pan=.2)    # точка-узник
+        kk = 31 - k
+        if kk % 2 == 0:
+            p.note("vln_colleg", MID[(kk // 2) % 3], 83.4 + .094 * k, .1, vel=.42 - .15 * k / 31, gain=.26, release=.12)
+        else:
+            p.note("vln_harm", HI_B[(kk // 2) % 3], 83.4 + .094 * k, .14, vel=.4, gain=.18, release=.25)
+    p.note("vln_harm", 88, 86.4, 3.6, vel=.3, gain=.1, attack=.1, release=.6, pan=.2)    # точка-узник (E)
 
     # ================================================================ XII НОВЫЙ СОН (86.4–96)
     k, tt = 0, 86.4 + 1 / 3.7
@@ -257,7 +257,7 @@ def build(ctx):
         k += 1
 
     # баланс по замеру --parts (эскиз 0–60 с)
-    p.balance({"Cellos": -10, "Contrabassoon": -10, "Trumpet": -5, "Horn": -1, "Violas": +1, "Tuba": +2,
+    p.balance({"Cellos": -10, "Contrabassoon": -10, "Trumpet": -8, "Horn": -1, "Violas": +1, "Tuba": +2,
                "Violins": +4, "Timpani": +8, "Violin solo": +6, "Basses": +10, "Trombone": +13, "Crotales": +11,
-               "Tubular bells": +15, "Vibraphone": +19})
+               "Tubular bells": +15})
     return p
