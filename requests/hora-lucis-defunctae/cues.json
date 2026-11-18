@@ -1,0 +1,131 @@
+{
+ "version": 1,
+ "duration_s": 367,
+ "fps": null,
+ "video": null,
+ "cues": [
+  {
+   "t": 0,
+   "label": "Veni mecum",
+   "kind": "section",
+   "mood": "зов",
+   "intensity": 0.3,
+   "note": "«Veni mecum hac vespera…» — Финрод зовёт; путь по улицам к западным воротам: шаг, как в храме"
+  },
+  {
+   "t": 20,
+   "label": "Theatrum",
+   "kind": "section",
+   "mood": "ожидание",
+   "intensity": 0.2,
+   "note": "площадь со ступенями лицом к западу; эльфы сходятся в молчании отовсюду — старцы и дети"
+  },
+  {
+   "t": 40,
+   "label": "Occasus",
+   "kind": "section",
+   "mood": "закат",
+   "intensity": 0.35,
+   "note": "солнце садится, как наше: свет золотой, потом рыжий, потом едва видный над вершинами; эльфы смотрят не в завтрашнюю зарю, а в образ древнего конца"
+  },
+  {
+   "t": 80,
+   "label": "Vox una",
+   "kind": "section",
+   "mood": "чистота",
+   "intensity": 0.15,
+   "note": "солнце не больше ногтя над горами — один женский голос, нагой и чистый, как первая вечерняя звезда, без инструмента; к нему — другой, третий…"
+  },
+  {
+   "t": 96,
+   "label": "I Varda, Tintallë",
+   "kind": "section",
+   "mood": "серебро, холодный свет",
+   "intensity": 0.4,
+   "note": "первая часть: высоко, тонко, полно холодного света — о первых звёздах, зажжённых прежде солнца и луны"
+  },
+  {
+   "t": 136,
+   "label": "II Yavanna",
+   "kind": "section",
+   "mood": "золото, утрата",
+   "intensity": 0.55,
+   "note": "вторая часть: ниже и теплее, полнее, но печальнее; Тельперион и Лаурэлин — как имена утраченных брата и сестры"
+  },
+  {
+   "t": 180,
+   "label": "III Nienna",
+   "kind": "section",
+   "mood": "плач и надежда",
+   "intensity": 0.75,
+   "note": "третья часть: плакать и надеяться сразу, как у Ездры — никто не мог отличить голос ликующих от голоса плачущих; слёзы Айдана тяжелее прежних"
+  },
+  {
+   "t": 214,
+   "label": "кульминация",
+   "kind": "accent",
+   "intensity": 0.9,
+   "note": "вершина плача-надежды"
+  },
+  {
+   "t": 228,
+   "end": 232,
+   "label": "silentium magnum",
+   "kind": "silence",
+   "note": "пение иссякает, великое молчание"
+  },
+  {
+   "t": 232,
+   "label": "Litania",
+   "kind": "section",
+   "mood": "поминовение",
+   "intensity": 0.3,
+   "note": "Финрод: «Telperion frater, Laurelin soror, vos memoramur. Varda…, Yavanna…, Nienna…: vos memoramur»"
+  },
+  {
+   "t": 283,
+   "label": "Ilúvatar",
+   "kind": "section",
+   "mood": "обращение",
+   "intensity": 0.45,
+   "note": "голос в более высокий регистр: «Ilúvatar, qui dedit, qui abstulit, qui servat: in manibus tuis sumus»"
+  },
+  {
+   "t": 303.5,
+   "label": "inclinatio",
+   "kind": "accent",
+   "intensity": 0.4,
+   "note": "все склоняют головы разом, как на Gloria Patri"
+  },
+  {
+   "t": 312,
+   "label": "Caelum stellarum",
+   "kind": "section",
+   "mood": "ночь",
+   "intensity": 0.15,
+   "note": "все молчат; небо полно звёзд, как в первую ночь"
+  },
+  {
+   "t": 324,
+   "label": "luna nova",
+   "kind": "accent",
+   "intensity": 0.3,
+   "note": "с востока — тонкий серп новорождённого месяца; впервые в Амане; семя в сердце Айдана шевельнулось"
+  },
+  {
+   "t": 342,
+   "label": "Descensus",
+   "kind": "section",
+   "mood": "полное молчание",
+   "intensity": 0.1,
+   "note": "«Quae vere dolent, vere etiam consolantur… nondum totum est.» Сходят со ступеней молча; молчание не пустое, а полное, как сосуд"
+  },
+  {
+   "t": 361,
+   "end": 367,
+   "label": "silentium plenum",
+   "kind": "silence",
+   "note": "конец"
+  }
+ ]
+}
