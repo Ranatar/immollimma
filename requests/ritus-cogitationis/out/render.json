@@ -33,7 +33,7 @@
   "tbn_stac@vsco": 6,
   "tbn_sus@plain": 39,
   "timp@plain": 35,
-  "timp_roll@plain": 2,
+  "timp_roll@vsco": 2,
   "tpt_sus@plain": 19,
   "tubular@vsco": 14,
   "vc_colleg@sso": 15,
@@ -48,10 +48,14 @@
   "vln_trem@plain": 8,
   "xylo@vsco": 81
  },
- "substitutions": {},
+ "substitutions": {
+  "timp_roll": "plain unavailable → vsco"
+ },
  "missing": {},
- "out_of_range_rescued": {},
- "sfizz_notes": 320,
+ "out_of_range_rescued": {
+  "timp_roll": 2
+ },
+ "sfizz_notes": 322,
  "lengthened": 0,
  "window": [
   0.0,
@@ -88,35 +92,14 @@
    25.2,
    27.5,
    29.2,
-   30.8,
-   65.2,
+   33.5,
+   65.0,
+   80.2,
    84.0,
    95.2,
    100.0
   ],
   "png": "/home/claude/immollimma/requests/ritus-cogitationis/out/report.png"
  },
- "parts_lufs": {
-  "Choir": -18.1,
-  "Horn": -24.6,
-  "Trumpet": -25.2,
-  "Tubular bells": -25.5,
-  "Tuba": -25.6,
-  "Timpani": -26.1,
-  "Harpsichord": -26.3,
-  "Organ": -27.3,
-  "Contrabassoon": -27.9,
-  "Crotales": -28.1,
-  "Harp": -28.2,
-  "Basses": -29.4,
-  "Trombone": -29.4,
-  "Cellos": -32.4,
-  "Violins": -32.8,
-  "Xylophone": -32.8,
-  "Violas": -33.2,
-  "Bassoon": -33.7,
-  "Bass clarinet": -35.0,
-  "English horn": -35.2
- },
- "seconds_taken": 70.0
+ "seconds_taken": 61.1
 }

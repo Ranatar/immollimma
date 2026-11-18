@@ -12,23 +12,4 @@
 - outside the real range of the instrument (matters for live players): {'vla_harm': 2, 'tbn_sus': 2, 'cb_sus': 2, 'afl_sus': 1}
 - more than 5 semitones beyond the recorded range (resampled, may sound artificial): {'vc_harm': 2, 'vla_harm': 2, 'vln_harm': 5}
 
-## Balance (each part alone, LUFS while it plays; the tune and the bass usually within ±3 dB)
-
-| part | LUFS |
-|---|---|
-| Contrabassoon | -24.3 |
-| Trumpet | -24.5 |
-| Alto flute | -24.7 |
-| Violas | -25.6 |
-| Tuba | -26.0 |
-| Horn | -26.6 |
-| Timpani | -26.8 |
-| Basses | -27.7 |
-| Violins | -28.7 |
-| Cellos | -30.8 |
-| Trombone | -30.9 |
-| Violin solo | -31.0 |
-| Tubular bells | -36.0 |
-| Crotales | -38.9 |
-
 ![report](report.png)

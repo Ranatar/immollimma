@@ -4,7 +4,9 @@ written as text: pizz., trem., con sord., col legno, harmonics) and a PDF score 
 What notation cannot carry is listed in the report instead: detune, glissando inside a note, ring
 modulation, reversed notes, raw samples and grain clouds."""
 import math
+import bisect
 import collections
+import re
 import os
 import shutil
 import subprocess
@@ -46,6 +48,29 @@ class _Lazy(dict):
 CLEFS = _Lazy()
 TECH = {"pizz": "pizz.", "trem": "trem.", "mute": "con sord.", "colleg": "col legno", "harm": "harmonics",
         "harmon": "harmon mute", "spic": "spicc.", "roll": "roll"}
+
+
+ABBR = {"Piccolo": "Picc.", "Flute": "Fl.", "Alto flute": "A. fl.", "Oboe": "Ob.", "English horn": "E. hn.",
+        "Clarinet": "Cl.", "Bass clarinet": "B. cl.", "Bassoon": "Bsn.", "Contrabassoon": "Cbsn.", "Horn": "Hn.",
+        "Trumpet": "Tpt.", "Trombone": "Tbn.", "Bass trombone": "B. tbn.", "Tuba": "Tba.", "Timpani": "Timp.",
+        "Tubular bells": "Tub. b.", "Crotales": "Crot.", "Vibraphone": "Vib.", "Glockenspiel": "Glk.",
+        "Xylophone": "Xyl.", "Marimba": "Mar.", "Celesta": "Cel.", "Harp": "Hp.", "Harpsichord": "Hpsd.",
+        "Piano": "Pno.", "Organ": "Org.", "Choir": "Ch.", "Violin solo": "Vln. solo", "Violins": "Vln.",
+        "Violas": "Vla.", "Cellos": "Vc.", "Basses": "Cb."}
+# звенящие инструменты пишутся «до следующего удара» (l.v.), а не всей длиной звона — иначе каждый звон
+# перекрывает следующий и партия расползается на дивизи
+LET_RING = {"Crotales", "Tubular bells", "Vibraphone", "Glockenspiel", "Harp", "Timpani", "Celesta", "Xylophone",
+            "Marimba"}
+
+
+def _abbr(name):
+    for suf in (" RH", " LH"):
+        if name.endswith(suf):
+            return _abbr(name[:-len(suf)]) + suf
+    base, _, num = name.rpartition(" ")
+    if base and num.isdigit():
+        return ABBR.get(base, base[:4] + ".") + " " + num
+    return ABBR.get(name, name[:4] + ".")
 
 
 def _order(name):
@@ -156,6 +181,9 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
         # simultaneous notes of one length → chords; what still overlaps goes to a second staff (divisi)
         grid = math.lcm(*divisors)  # 12 for (4, 3); 24 for (8, 6): 32nds and sextuplets of a fioritura
         groups = collections.defaultdict(list)
+        ring = name in LET_RING
+        if ring:
+            ons = sorted({round(q(e.get("wt", e["t"])) * grid) / grid for e in notes})
         for e in notes:
             m = int(round(e["midi"]))
             if not 21 <= m <= 108 or e.get("notate") is False:  # notate=False: sounds, not written (a 16' double)
@@ -165,6 +193,10 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
             # a note played shorter than written (legato 0.9…0.97, staccato) keeps its written length
             fine = grid  # lengths on the same grid as onsets (a triplet quaver is 8/24, a demisemiquaver 3/24)
             ln = max(1 / fine, math.ceil((q(e.get("wdur", e["dur"])) - shift) * fine - 0.15) / fine)
+            if ring:
+                k_ = bisect.bisect_right(ons, on + 1e-9)
+                if k_ < len(ons):
+                    ln = max(1 / fine, min(ln, ons[k_] - on))
             art = e.get("art") or ("staccato" if e["inst"].endswith(("_stac", "_spic")) else None)
             groups[(on, ln, _tech(e["inst"]), art)].append((m, names.get(id(e))))
         staves = []  # [(end, [items])]
@@ -185,13 +217,14 @@ def to_musicxml(piece, path, divisors=(4, 3), max_staves=4):
                     st[1].append((key, groups[key]))
         # a keyboard hand ('… RH' / '… LH') keeps its layers on one staff as voices (stems up/down), the way
         # keyboard music is written; other parts put an extra layer on an extra staff (divisi)
+        # прочие партии держат по два слоя на нотоносце голосами (штили вверх/вниз), третий слой — новый нотоносец
         voiced = name.endswith((" RH", " LH")) and len(staves) > 1
-        groups = [staves] if voiced else [[st] for st in staves]
+        groups = [staves] if voiced else [staves[i:i + 2] for i in range(0, len(staves), 2)]
         for si, group in enumerate(groups):
             part = stream.Part()
             ins = instrument.Instrument()
             ins.partName = name if len(groups) == 1 else f"{name} {si + 1}"
-            ins.partAbbreviation = ins.partName[:5]
+            ins.partAbbreviation = _abbr(ins.partName)
             part.insert(0, ins)
             part.insert(0, meter.TimeSignature(f"{piece.meter[0]}/{piece.meter[1]}"))
             all_items = [it for _, items in group for it in items]
@@ -400,6 +433,10 @@ def to_pdf(musicxml, pdf):
     # a readable score on A4 portrait, small staves
     src = open(ly, encoding="utf-8").read()
     src = src.replace('\\version', '#(set-global-staff-size 14)\n\\version', 1)
+    src = re.sub(r"#\(set-global-staff-size [0-9.]+\)\n\\paper", "\\\\paper", src)  # musicxml2ly ставит свои 20
+    src = src.replace("\\paper {", "\\paper {\n    indent = 22\\mm\n    short-indent = 12\\mm\n    ragged-bottom = ##t\n"
+                      "    ragged-last-bottom = ##t\n    system-system-spacing.basic-distance = #14", 1)
+    src = src.replace("\\box {", "\\box \\line {")  # метка раздела — одна рамка, а не рамка на каждое слово
     # a "French" score: staves without notes in a system are not printed (big scores stay readable)
     # (a top-level \layout only counts when it stands before \score)
     src = src.replace("\\score {", "\\layout { \\context { \\Staff \\RemoveAllEmptyStaves } }\n\\score {", 1)

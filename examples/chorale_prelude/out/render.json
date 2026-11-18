@@ -36,7 +36,8 @@
   "musicxml": "/home/claude/immollimma/examples/chorale_prelude/out/score.musicxml",
   "pdf": "/home/claude/immollimma/examples/chorale_prelude/out/score.pdf",
   "grid": [
-   4
+   4,
+   3
   ]
  },
  "qa": {
@@ -48,9 +49,9 @@
    7.5,
    11.0,
    13.0,
-   14.0,
    14.5,
    16.5,
+   23.8,
    24.8,
    27.5,
    29.2,
@@ -66,7 +67,7 @@
   "Basses": -31.5,
   "Horn": -32.8,
   "Harpsichord": -37.4,
-  "Organ": -41.6
+  "Organ": -66.1
  },
- "seconds_taken": 21.5
+ "seconds_taken": 27.4
 }

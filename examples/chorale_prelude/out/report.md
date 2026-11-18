@@ -1,11 +1,11 @@
 # Report: Хоральная прелюдия ре минор
 
-- length 50.3 s; level p10/p50/p90 -34.4/-18.9/-14.1 dBFS; peak -1.0 dBFS
+- length 50.3 s; level p10/p50/p90 -34.4/-18.9/-14.2 dBFS; peak -1.0 dBFS
 - gaps ≥ 1 s below −50 dBFS: none
 - clipped samples: 0; isolated clicks at: none
-- centroid median 577 Hz; share above 2 kHz median -21.8 dB
+- centroid median 584 Hz; share above 2 kHz median -21.8 dB
 - flat stretches (diversity < 60 % of the median, 20 s windows): none
-- strongest changes (novelty peaks), s: [7.5, 11.0, 13.0, 14.0, 14.5, 16.5, 24.8, 27.5, 29.2, 40.2]
+- strongest changes (novelty peaks), s: [7.5, 11.0, 13.0, 14.5, 16.5, 23.8, 24.8, 27.5, 29.2, 40.2]
 
 ## Score
 - notes: 453, parts: 8, densest 10 s: 114 notes at 30–… s
@@ -23,6 +23,6 @@
 | Basses | -31.5 |
 | Horn | -32.8 |
 | Harpsichord | -37.4 |
-| Organ | -41.6 |
+| Organ | -66.1 |
 
 ![report](report.png)

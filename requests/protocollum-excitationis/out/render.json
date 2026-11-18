@@ -97,21 +97,5 @@
   ],
   "png": "/home/claude/immollimma/requests/protocollum-excitationis/out/report.png"
  },
- "parts_lufs": {
-  "Contrabassoon": -24.3,
-  "Trumpet": -24.5,
-  "Alto flute": -24.7,
-  "Violas": -25.6,
-  "Tuba": -26.0,
-  "Horn": -26.6,
-  "Timpani": -26.8,
-  "Basses": -27.7,
-  "Violins": -28.7,
-  "Cellos": -30.8,
-  "Trombone": -30.9,
-  "Violin solo": -31.0,
-  "Tubular bells": -36.0,
-  "Crotales": -38.9
- },
- "seconds_taken": 45.0
+ "seconds_taken": 27.4
 }
