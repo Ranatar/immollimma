@@ -5,13 +5,16 @@
   heart_beats (95 ударов сердца Улья), beacons (маяки мира), world_turns (повороты решётки мира), метки событий.
 
 Два мира звука:
-  Мир   — органная пассакалья в ре миноре: остинатный бас-ламенто D C B♭ A | G F E A половинными (1,6 с),
-          такт решётки 3,2 с = такт 4/4, повороты — сильные доли. Клавесин отбивает такт мира (0,8 с) и дробит его
-          по вариациям: четверти → восьмые → шестнадцатые tutti с громким органом; маяк — соборный колокол с арфой.
+  Мир   — низкая органная пассакалья в ре миноре: остинатный бас-ламенто D C B♭ A | G F E A половинными (1,6 с)
+          в педали 16′, мануал в теноре; такт решётки 3,2 с = такт 4/4, повороты — сильные доли. Тонкая органная
+          линия сверху отбивает такт мира (0,8 с) и дробит его по вариациям: четверти → восьмые → шестнадцатые с
+          пленумом; маяк — соборный колокол с низкой арфой. Орган неподвижен (ни вибрато, ни расстройки).
   Улей  — без лада: двойной удар сердца (литавры, большой барабан, контрабасы) точно по ударам анимации,
-          дыхание, хоровые кластеры с расстройкой, жилы-глиссандо низких струнных, рой, споры.
+          дыхание, хоровые кластеры с расстройкой, жилы-глиссандо низких струнных, рой, споры; сверху — визг насекомых
+          (стрекот спиккато/пикколо с кольцевой модуляцией, вой флажолетов), волнами; на упорядочивании рой замолкает.
 Пожирание: последний аккорд мира (орган) рвётся голосами; крошки — щелчки в звуках ре-минорного аккорда.
-Переваривание: Улей играет ту же пассакалью на тон выше, своими тембрами (тубы, хор, валторны), в ритме сердца.
+Переваривание: Улей играет ту же пассакалью в том же регистре, на тон выше, своими тембрами (тубы, хор, валторны) —
+расстроенно и с дыханием, почти попадая, в ритме сердца.
 
     python3 -m kit run requests/devoratio/piece.py --sketch --parts
     python3 -m kit run requests/devoratio/piece.py --parts
@@ -83,28 +86,26 @@ def build(ctx):
         t0 = 1.6 + 1.6 * n
         if t0 >= SILENT - 1e-6:
             break
-        t1 = t0 + 1.6
         bass, up = harm(n)
         v = var_at(t0)
         f, mu = world_fade(t0 + 0.3), mute(t0)
         dt = lambda j: 0.3 * mu * (j - 1)  # noqa: E731
         bend = -0.7 * mu
-        # педаль (бас): тихий орган + контрабасы; в третьей вариации — громкий орган октавой ниже
-        p.note("org_quiet", bass, t0, 1.62, vel=0.55, gain=0.3 * f, pan=WORLD_PAN - 0.1, attack=0.05, release=0.25,
-               detune=dt(0), bend=bend)
-        p.note("cb_sus", bass - 12, t0, 1.55, vel=0.5, gain=(0.12 + 0.1 * (v >= 1)) * f, pan=WORLD_PAN, attack=0.08,
+        # педаль 16′ (громкий орган, прибран) + 8′ (тихий) + контрабасы; орган неподвижен: ни вибрато, ни расстройки
+        p.note("org_loud", bass - 12, t0, 1.62, vel=0.6, gain=(0.16 + 0.06 * v if v < 3 else 0.14) * f, pan=WORLD_PAN - 0.1,
+               attack=0.04, release=0.3, detune=dt(0), bend=bend)
+        p.note("org_quiet", bass, t0, 1.62, vel=0.55, gain=0.24 * f, pan=WORLD_PAN, attack=0.04, release=0.25,
+               detune=dt(1), bend=bend)
+        p.note("cb_sus", bass - 12, t0, 1.55, vel=0.5, gain=(0.1 + 0.06 * (v in (1, 2))) * f, pan=WORLD_PAN, attack=0.08,
                release=0.3, bend=bend)
-        if v == 2:
-            p.note("org_loud", bass - 12, t0, 1.62, vel=0.6, gain=0.22 * f, pan=WORLD_PAN, attack=0.05, release=0.3)
-        # аккорд мануала
+        # мануал — в теноре; в третьей вариации к нему прибавляется громкий орган на октаву выше (пленум)
         for j, m in enumerate(up):
-            p.note("org_loud" if v == 2 else "org_quiet", m, t0, 1.62, vel=0.5, gain=(0.2 if v < 2 else 0.17) * f,
-                   pan=WORLD_PAN + 0.08 * (j - 1), attack=0.05, release=0.25, detune=dt(j), bend=bend)
-        if v in (1, 2):                  # струнные держат аккорд октавой выше
-            for j, m in enumerate(up):
-                p.note("vln_sus" if j else "vla_sus", m + 12 if j else m, t0, 1.6, vel=0.5, gain=0.1 * f,
-                       pan=WORLD_PAN + 0.1 * (j - 1), attack=0.15, release=0.3)
-        # клавесин — такт мира: четверти (каждые 0,8 с) всегда, дробление — по вариации
+            p.note("org_quiet", m - 12, t0, 1.62, vel=0.5, gain=0.2 * f, pan=WORLD_PAN + 0.08 * (j - 1), attack=0.04,
+                   release=0.25, detune=dt(j), bend=bend)
+            if v == 2:
+                p.note("org_loud", m, t0, 1.62, vel=0.55, gain=0.12 * f, pan=WORLD_PAN + 0.08 * (j - 1), attack=0.04,
+                       release=0.25)
+        # такт мира — тонкая органная линия сверху: четверти (каждые 0,8 с) всегда, дробление — по вариации
         fig = [up[0], up[1], up[2], up[0] + 12, up[2], up[1], up[0], up[1]]
         step = {0: 0.8, 1: 0.4, 2: 0.2, 3: 0.8}[v]
         k_ = 0
@@ -112,29 +113,29 @@ def build(ctx):
             tt = round(t0 + k_ * step, 2)
             on_tick = abs(tt / TICK - round(tt / TICK)) < 1e-3
             m = (fig[k_ % 8] if v == 2 else fig[(2 * k_) % 8] if v == 1 else fig[(4 * k_) % 8 + (1 if k_ else 0)]) + 12
-            m = min(m, 89)
-            p.note("hpsd", m, tt, step * 0.9, vel=0.6 if on_tick else 0.45, gain=(0.3 if on_tick else 0.2) * f,
-                   pan=WORLD_PAN + 0.12, release=0.25, detune=0.3 * mu * (k_ % 2 - 0.5), bend=bend)
-            if on_tick and v < 3:
-                p.note("vln_pizz", min(96, bass + 24), tt, 0.3, vel=0.45, gain=0.12 * f, pan=WORLD_PAN, release=0.3)
+            p.note("org_quiet", m, tt, step * 0.85, vel=0.5 if on_tick else 0.4, gain=(0.16 if on_tick else 0.11) * f,
+                   pan=WORLD_PAN + 0.15, attack=0.02, release=0.12, detune=0.3 * mu * (k_ % 2 - 0.5), bend=bend)
             k_ += 1
         n += 1
-    # маяк: колокол собора + арфа аккордом, раз в три такта (поперёк такта 4/4 — гемиола)
+    # маяк: соборный колокол + низкая арфа аккордом, раз в три такта (поперёк такта 4/4 — гемиола)
     for t in beacons:
         if t >= SILENT:
             continue
         bass, up = harm(half_at(t))
         f = world_fade(t) * (1 - 0.6 * mute(t))
-        p.note("tubular", 62, t, 3.0, vel=0.5, gain=0.22 * f, pan=WORLD_PAN + 0.2, release=2.5, detune=0.4 * mute(t))
-        for j, m in enumerate([bass + 12] + list(up)):
-            p.note("harp", m, t + 0.03 * j, 2.0, vel=0.45, gain=0.2 * f, pan=WORLD_PAN, release=1.6)
-    # повороты решётки — сильная доля: во второй и третьей вариациях низкая медь подкрепляет бас
+        p.note("tubular", 62, t, 3.0, vel=0.55, gain=0.24 * f, pan=WORLD_PAN + 0.2, release=2.5, detune=0.4 * mute(t))
+        for j, m in enumerate([bass - 12, bass] + [u - 12 for u in up]):
+            p.note("harp", m, t + 0.03 * j, 2.0, vel=0.5, gain=0.2 * f, pan=WORLD_PAN, release=1.6)
+    # повороты решётки — сильная доля: во второй и третьей вариациях низкая медь подкрепляет педаль
     for ts in turns:
         if 14.4 <= ts < 40.0:
             bass, up = harm(half_at(ts))
             g = 0.1 if ts < 27.2 else 0.16
             p.note("tbn_sus", bass - 12 if bass - 12 >= 40 else bass, ts, 1.5, vel=0.55, gain=g * world_fade(ts),
                    pan=WORLD_PAN - 0.15, attack=0.06, release=0.4)
+            if ts >= 27.2:
+                p.note("tba_sus", bass - 24 if bass - 24 >= 28 else bass - 12, ts, 1.5, vel=0.55, gain=0.14 * world_fade(ts),
+                       pan=WORLD_PAN - 0.1, attack=0.06, release=0.4)
 
     # ------------------------------------------------------------------ спора: прилёт (6–12)
     p.note("vln_harm", 98, 6.0, 6.2, vel=0.4, gain=0.16, pan=SEED_PAN - 0.25, attack=1.2, release=0.5, bend=-12.0)
@@ -206,8 +207,8 @@ def build(ctx):
 
     # ------------------------------------------------------------------ V обхват → VI пожирание: последний аккорд мира
     # последний аккорд мира — ре минор органом (струнные тремоло вторят); голоса рвутся снизу вверх, орган теряет воздух
-    world_voices = [("org_quiet", 50), ("org_quiet", 57), ("org_quiet", 62), ("org_quiet", 65), ("org_quiet", 69),
-                    ("org_quiet", 74), ("org_quiet", 77), ("org_quiet", 81)]
+    world_voices = [("org_loud", 26), ("org_quiet", 38), ("org_quiet", 45), ("org_quiet", 50), ("org_quiet", 53),
+                    ("org_quiet", 57), ("org_quiet", 62), ("org_quiet", 69)]
     brk = [62.6 + 14.4 * j / (len(world_voices) - 1) + rng.uniform(-0.4, 0.4) for j in range(len(world_voices))]
     order_ = sorted(range(len(world_voices)), key=lambda j: world_voices[j][1])     # снизу вверх: от касания к сердцевине
     for rank, j in enumerate(order_):
@@ -215,15 +216,16 @@ def build(ctx):
         tb = min(77.6, brk[rank]) if rank < len(order_) - 1 else world_dark            # верхний — сердцевина: до 78
         ts_ = 50.0 + 0.3 * rank
         pn = WORLD_PAN + 0.05 * (rank - 3)
-        p.note(inst, m, ts_, tb - 0.7 - ts_, vel=0.55, gain=0.2, pan=pn, attack=2.0, release=0.12)
-        p.note(inst, m, tb - 0.75, 0.75, vel=0.6, gain=0.22, pan=WORLD_PAN - 0.2, attack=0.04, release=0.3,
+        g_ = 0.12 if inst == "org_loud" else 0.2
+        p.note(inst, m, ts_, tb - 0.7 - ts_, vel=0.55, gain=g_, pan=pn, attack=2.0, release=0.12)
+        p.note(inst, m, tb - 0.75, 0.75, vel=0.6, gain=g_ * 1.1, pan=WORLD_PAN - 0.2, attack=0.04, release=0.3,
                bend=-5.0 - rank * 0.4, detune=0.4)
-        if m >= 57:
-            s_ = "vla_trem" if m < 67 else "vln_trem"
-            p.note(s_, m + (12 if m >= 67 else 0), ts_, tb - 0.7 - ts_, vel=0.5, gain=0.1, pan=pn, attack=2.5, release=0.12)
-            p.note(s_, m + (12 if m >= 67 else 0), tb - 0.75, 0.75, vel=0.6, gain=0.11, pan=WORLD_PAN - 0.2, attack=0.04,
+        if m >= 45:
+            s_ = "vc_trem" if m < 50 else "vla_trem" if m < 60 else "vln_trem"
+            p.note(s_, m, ts_, tb - 0.7 - ts_, vel=0.5, gain=0.1, pan=pn, attack=2.5, release=0.12)
+            p.note(s_, m, tb - 0.75, 0.75, vel=0.6, gain=0.11, pan=WORLD_PAN - 0.2, attack=0.04,
                    release=0.3, bend=-5.0 - rank * 0.4, detune=0.4)
-    c.buzz(51.0, 11.0, notes=(74, 77, 81), gain=0.2)
+    c.buzz(51.0, 11.0, notes=(86, 89, 93), gain=0.18)
     c.buzz(62.0, 16.0, notes=(73, 80, 86), gain=0.26, rates=(47.0, 59.0, 83.0))
     # крошки порядка: откол — цифровой щелчок в высотах последнего аккорда мира (справа), на каждом толчке к сердцу —
     # отголосок ниже и ближе к середине (перекликивание), на ударе прихода — глоток: звуки мира падают в регистр сердца
@@ -279,18 +281,20 @@ def build(ctx):
             dur = tb_ - ta + 0.35
             g = 0.6 if wave else 1.0
             # бас Улья: тубы, контрафагот, контрабасы, тромбоны — с лёгкой расстройкой
-            p.note("tba_sus", bass - 12 if bass - 12 >= 28 else bass, ta, dur, vel=0.85, gain=0.32 * g, attack=0.06, release=0.4,
-                   detune=0.15)
-            p.note("cb_sus", bass - 12, ta, dur, vel=0.8, gain=0.3 * g, attack=0.06, release=0.4, detune=-0.15)
+            p.note("tba_sus", bass - 12 if bass - 12 >= 28 else bass, ta, dur, vel=0.85, gain=0.32 * g, attack=0.18, release=0.4,
+                   detune=0.3, bend=-0.25)
+            p.note("cb_sus", bass - 12, ta, dur, vel=0.8, gain=0.3 * g, attack=0.18, release=0.4, detune=-0.35, bend=0.3)
             p.note("cbsn_sus", bass - 12 if bass - 12 >= 26 else bass, ta, dur, vel=0.7, gain=0.18 * g, attack=0.06, release=0.4)
-            p.note("tbn_sus", bass, ta, dur, vel=0.85, gain=0.28 * g, attack=0.05, release=0.4, pan=-0.15)
+            p.note("tbn_sus", bass, ta, dur, vel=0.85, gain=0.28 * g, attack=0.15, release=0.4, pan=-0.15, detune=0.25,
+                   bend=-0.2)
             # верхние голоса: хор и валторны вместо мануала органа
             for j, m in enumerate(up):
                 mm = m if 40 <= m <= 81 else m - 12
                 p.note("choir", mm - 12 if mm - 12 >= 48 else mm, ta, dur, vel=0.8, gain=0.3 * g, attack=0.12 if not wave else 0.8,
-                       release=0.5, pan=-0.3 + 0.3 * j, detune=0.25 * (j - 1))
-                p.note("hn_sus", mm - 12 if mm - 12 >= 50 else mm, ta, dur, vel=0.75, gain=0.22 * g, attack=0.08, release=0.4,
-                       pan=0.2 - 0.15 * j)
+                       release=0.5, pan=-0.3 + 0.3 * j, detune=0.35 * (j - 1),
+                       bend=0.3 * (1 if j % 2 else -1))
+                p.note("hn_sus", mm - 12 if mm - 12 >= 50 else mm, ta, dur, vel=0.75, gain=0.22 * g, attack=0.2, release=0.4,
+                       pan=0.2 - 0.15 * j, detune=0.2 * (1 - j), bend=-0.2 * (j - 1))
             p.note("vc_sus", up[0] - 12, ta, dur, vel=0.75, gain=0.22 * g, attack=0.08, release=0.4)
         c.timp(t0, (GROUND[2 * i][0] + 2) % 12, vel=0.75 if wave else 0.95)
         if not wave:
@@ -334,9 +338,75 @@ def build(ctx):
         p.note("vln_harm", m, 104.4 + 0.3 * j, 3.6, vel=0.35, gain=0.15, pan=WORLD_PAN, attack=1.6, release=0.9)
     p.note("org_quiet", 62, 104.6, 3.4, vel=0.3, gain=0.12, pan=WORLD_PAN, attack=1.8, release=1.0)
 
+    # ------------------------------------------------------------------ визг Улья: рой насекомых в высоком регистре
+    # стрекот — цуги коротких флажолетов/пикколо (0,05 с, шаг 0,06–0,09 с) с кольцевой модуляцией и микроглиссандо;
+    # вой — долгие расстроенные флажолеты с биениями (Тень в варпе). Волнами по событиям, не фоном; щелчки крошек не
+    # глушит (импульс стрекота не ложится ближе 0,05 с к щелчку откола); на упорядочивании (81,4–88,6) рой разом замолкает.
+    clicks = sorted(q["t"] for q in crumbs)
+
+    def near_click(t):
+        import bisect
+        i = bisect.bisect_left(clicks, t)
+        return any(abs(clicks[k] - t) < 0.05 for k in (i - 1, i) if 0 <= k < len(clicks))
+
+    def chirp(t, n_p, gain, pan, lo=86, hi=96):
+        # флажолеты для стрекота не годятся (медленная атака сэмпла: 50 мс почти беззвучны) — берём спиккато скрипок
+        # и пикколо (у пикколо отдача громче на ~20 дБ — прибрано)
+        m = rng.randint(lo, hi)
+        sp = rng.uniform(0.06, 0.09)
+        rm = rng.uniform(70, 150)
+        picc = rng.random() < 0.3
+        inst, d_, gf = ("picc_sus", 0.1, 0.12) if picc else ("vln_spic", 0.08, 1.0)
+        for k in range(n_p):
+            tk = t + k * sp
+            if tk >= order_wave - 0.05 and tk < order_release:
+                return
+            if near_click(tk):
+                continue
+            mm = m + rng.choice((0, 0, 1, -1))
+            mm = max(86, min(100, mm)) if picc else min(96, mm)
+            p.note(inst, mm, tk, d_, vel=0.55, gain=15.0 * gf * gain * (0.7 + 0.3 * rng.random()),
+                   pan=max(-1, min(1, pan + rng.uniform(-0.15, 0.15))), attack=0.005, release=0.04,
+                   bend=rng.uniform(-1.5, 2.5), ringmod=rm)
+
+    def swarm(t0, t1, rate0, rate1, gain0, gain1, lo=88, hi=100, pan_c=SEED_PAN, spread=0.5):
+        t = t0
+        while t < t1:
+            x = (t - t0) / max(1e-6, t1 - t0)
+            rate, gain = rate0 + (rate1 - rate0) * x, gain0 + (gain1 - gain0) * x
+            chirp(t, rng.randint(3, 8), gain, pan_c + rng.uniform(-spread, spread), lo, hi)
+            t += rng.expovariate(max(0.05, rate))
+
+    def whine(t0, dur, m, gain, pan):
+        for d_ in (-0.18, 0.18):            # пара с биениями
+            p.note("vln_harm", m, t0, dur, vel=0.45, gain=7.0 * gain, pan=pan + d_, attack=dur * 0.45, release=dur * 0.3,
+                   detune=d_, bend=rng.choice((-1.0, 1.5, 2.0)))
+
+    # рост: вспышки стрекота следом за ударами сердца, гуще к Тени
+    for b_ in main_beats:
+        if 19.0 <= b_ < 40.0 and rng.random() < 0.15 + 0.35 * lin(19, 40, b_):
+            for _ in range(rng.randint(1, 3)):
+                chirp(b_ + rng.uniform(0.15, 0.6), rng.randint(3, 6), 0.12 + 0.06 * lin(19, 40, b_),
+                      SEED_PAN + 0.5 * lin(20, 40, b_) + rng.uniform(-0.3, 0.3))
+    # Тень в варпе: психический вой поверх глохнущего мира
+    for t0, dur, m, g in ((40.6, 5.5, 93, 0.06), (43.2, 6.0, 98, 0.05), (45.8, 5.0, 91, 0.065), (47.6, 4.0, 96, 0.05)):
+        whine(t0, dur, m, g, rng.uniform(-0.6, 0.6))
+    swarm(40.0, 50.0, 1.4, 2.6, 0.08, 0.11, pan_c=-0.1, spread=0.8)
+    # обхват: рой обступает мир кольцом
+    swarm(50.0, 62.0, 1.6, 2.6, 0.07, 0.09, pan_c=0.0, spread=0.95)
+    # пожирание: плотный рой; к гаснущей сердцевине — пик, потом спад до обрыва на волне порядка
+    swarm(62.0, 78.0, 2.6, 5.0, 0.08, 0.11, pan_c=0.0, spread=0.95)
+    whine(70.0, 7.5, 95, 0.05, -0.4)
+    swarm(78.0, order_wave, 4.0, 2.0, 0.1, 0.07, pan_c=0.0, spread=0.9)
+    # отпуск: рой коротко вскидывается и рассыпается
+    swarm(order_release, order_release + 2.6, 6.0, 1.0, 0.13, 0.06, pan_c=0.0, spread=0.95)
+    whine(order_release, 2.4, 97, 0.05, 0.3)
+    # исход: редкий стрекот уходит вместе с тканью
+    swarm(92.0, 102.0, 1.2, 0.3, 0.1, 0.05, pan_c=-0.2, spread=0.7)
+
     # баланс по замеру --parts (эскиз 0–60 с): сердце (литавры, контрабасы) и такт мира — вровень с хором
     p.balance({"Contrabassoon": -9, "Cellos": -2.5, "Violas": +8, "Marimba": +8, "Vibraphone": +12, "Harp": +1,
                "Flute": +2, "Basses": +10, "Timpani": +15, "Tuba": +10, "Organ": +7, "Trombone": +14, "Choir": -3,
                "Xylophone": +22, "Crotales": +20,
-               "Harpsichord": +15, "Tubular bells": +20})
+               "Tubular bells": +20})
     return p
