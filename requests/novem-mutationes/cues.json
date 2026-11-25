@@ -1,0 +1,607 @@
+{
+ "version": 1,
+ "duration_s": 108.8,
+ "video": "novem.html (анимация, цикл 108,8 с)",
+ "cues": [
+  {
+   "t": 0,
+   "end": 2,
+   "label": "I TENEBRAE",
+   "kind": "section",
+   "mood": "тьма; загорается точка света",
+   "intensity": 0.03,
+   "note": "точка 0.4"
+  },
+  {
+   "t": 0.4,
+   "label": "точка света",
+   "kind": "accent",
+   "intensity": 0.2
+  },
+  {
+   "t": 2,
+   "end": 14,
+   "label": "II INITIUM",
+   "kind": "section",
+   "mood": "из точки вырастает кристалл",
+   "intensity": 0.25,
+   "note": "рост 2–14; надпись «In principio erat aenigma» читается 5.6–8.8"
+  },
+  {
+   "t": 3.2,
+   "label": "In principio erat aenigma.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 5.6–8.8"
+  },
+  {
+   "t": 14,
+   "end": 24,
+   "label": "III LEX",
+   "kind": "section",
+   "mood": "закон утверждается: строгая мозаика, первые нити",
+   "intensity": 0.4,
+   "note": "нити 15.2 и 17.6; «Lex una est» (ложь) 17.6–20.4"
+  },
+  {
+   "t": 15.2,
+   "label": "Lex una est.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 17.6–20.4"
+  },
+  {
+   "t": 24,
+   "end": 60.8,
+   "label": "IV MUTATIONES",
+   "kind": "section",
+   "mood": "девять перемен закона, всё чаще (интервалы 7.2 → 1.6)",
+   "intensity": 0.7,
+   "note": "n: 7, 9, 11, 5, 9, 7, 11, 5, 9; девятая — возврат к первому закону"
+  },
+  {
+   "t": 24,
+   "label": "перемена 1 (n=7)",
+   "kind": "hit",
+   "intensity": 0.55,
+   "note": "волна 3.6 с"
+  },
+  {
+   "t": 26.4,
+   "label": "Nihil mutatur.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 29–31"
+  },
+  {
+   "t": 31.2,
+   "label": "перемена 2 (n=9)",
+   "kind": "hit",
+   "intensity": 0.6,
+   "note": "волна 3.6 с"
+  },
+  {
+   "t": 37.6,
+   "label": "перемена 3 (n=11)",
+   "kind": "hit",
+   "intensity": 0.65,
+   "note": "волна 3.6 с"
+  },
+  {
+   "t": 40,
+   "label": "Novem viae, una porta.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 42.6–44.2"
+  },
+  {
+   "t": 43.2,
+   "label": "перемена 4 (n=5)",
+   "kind": "hit",
+   "intensity": 0.7,
+   "note": "волна 3.6 с"
+  },
+  {
+   "t": 48,
+   "label": "перемена 5 (n=9)",
+   "kind": "hit",
+   "intensity": 0.75,
+   "note": "волна 3.4 с"
+  },
+  {
+   "t": 52,
+   "label": "перемена 6 (n=7)",
+   "kind": "hit",
+   "intensity": 0.8,
+   "note": "волна 2.72 с"
+  },
+  {
+   "t": 54.4,
+   "label": "Quid est veritas?",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 57.2–59.6"
+  },
+  {
+   "t": 55.2,
+   "label": "перемена 7 (n=11)",
+   "kind": "hit",
+   "intensity": 0.8500000000000001,
+   "note": "волна 2.04 с"
+  },
+  {
+   "t": 57.6,
+   "label": "перемена 8 (n=5)",
+   "kind": "hit",
+   "intensity": 0.9,
+   "note": "волна 1.36 с"
+  },
+  {
+   "t": 59.2,
+   "label": "перемена 9 (n=9)",
+   "kind": "hit",
+   "intensity": 0.95,
+   "note": "волна 1.36 с"
+  },
+  {
+   "t": 60.8,
+   "end": 66.4,
+   "label": "V REVELATIO",
+   "kind": "section",
+   "mood": "откровение: сдвиги сходятся, мозаика строго девятикратна; девять нитей — нонаграмма; загадка и её разгадка-анаграмма",
+   "intensity": 0.8,
+   "note": "Quid est veritas? → Est vir qui adest (буквы едут 64.8–66.6)"
+  },
+  {
+   "t": 60.8,
+   "label": "сдвиги сходятся",
+   "kind": "swell",
+   "intensity": 0.8
+  },
+  {
+   "t": 61.6,
+   "label": "Quid est veritas?",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 63.8–67.8; анаграмма в 64.8 → Est vir qui adest."
+  },
+  {
+   "t": 64.0,
+   "label": "мозаика девятикратна",
+   "kind": "accent",
+   "intensity": 0.7
+  },
+  {
+   "t": 66.4,
+   "end": 74.4,
+   "label": "VI OCULUS",
+   "kind": "section",
+   "mood": "Око: большое в центре, девять малых в вершинах нонаграммы",
+   "intensity": 0.6,
+   "note": "большое 66.4–76.0; малые 68.0 + 0.4·i"
+  },
+  {
+   "t": 66.4,
+   "label": "Око открывается",
+   "kind": "hit",
+   "intensity": 0.8
+  },
+  {
+   "t": 70.4,
+   "label": "Qui videt, videtur.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 73.2–74.6"
+  },
+  {
+   "t": 74.4,
+   "end": 84,
+   "label": "VII TEMPESTAS",
+   "kind": "section",
+   "mood": "буря: девять каскадов по очереди, всё переворачивается",
+   "intensity": 1.0,
+   "note": "каскады 74.4 + 0.8·j, по 3.2 с"
+  },
+  {
+   "t": 77.6,
+   "label": "Nihil mutatur.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 80.4–81.4"
+  },
+  {
+   "t": 84,
+   "end": 88,
+   "label": "VIII NIHIL MUTATUM",
+   "kind": "section",
+   "mood": "ничего не изменилось: мозаика в точности прежняя",
+   "intensity": 0.35,
+   "note": "«Omnia mutata sunt» (ложь)"
+  },
+  {
+   "t": 84.0,
+   "label": "буря обрывается",
+   "kind": "accent",
+   "intensity": 0.6
+  },
+  {
+   "t": 84.8,
+   "label": "Omnia mutata sunt.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 87.6–88.5"
+  },
+  {
+   "t": 88,
+   "end": 108.8,
+   "label": "IX REDITUS",
+   "kind": "section",
+   "mood": "возврат: симметрия распадается, кристалл сворачивается в точку",
+   "intensity": 0.15,
+   "note": "ромбы счётчика гаснут 88.8 + 0.8·i; последний ромб гаснет 102.4; тьма до 108.8"
+  },
+  {
+   "t": 96,
+   "label": "Omnia mutantur, nihil interit.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "только шифр"
+  },
+  {
+   "t": 102.4,
+   "label": "последний ромб гаснет",
+   "kind": "accent",
+   "intensity": 0.2
+  },
+  {
+   "t": 105.6,
+   "end": 108.8,
+   "label": "тишина до повтора",
+   "kind": "silence",
+   "intensity": 0
+  }
+ ],
+ "loop": true,
+ "mutations": [
+  {
+   "t": 24,
+   "n": 7,
+   "dur": 3.6,
+   "index": 1
+  },
+  {
+   "t": 31.2,
+   "n": 9,
+   "dur": 3.6,
+   "index": 2
+  },
+  {
+   "t": 37.6,
+   "n": 11,
+   "dur": 3.6,
+   "index": 3
+  },
+  {
+   "t": 43.2,
+   "n": 5,
+   "dur": 3.6,
+   "index": 4
+  },
+  {
+   "t": 48,
+   "n": 9,
+   "dur": 3.4,
+   "index": 5
+  },
+  {
+   "t": 52,
+   "n": 7,
+   "dur": 2.72,
+   "index": 6
+  },
+  {
+   "t": 55.2,
+   "n": 11,
+   "dur": 2.04,
+   "index": 7
+  },
+  {
+   "t": 57.6,
+   "n": 5,
+   "dur": 1.36,
+   "index": 8
+  },
+  {
+   "t": 59.2,
+   "n": 9,
+   "dur": 1.36,
+   "index": 9
+  }
+ ],
+ "cascades": [
+  {
+   "t": 33.6,
+   "family": 3,
+   "dur": 3.2
+  },
+  {
+   "t": 45.6,
+   "family": 6,
+   "dur": 2.4
+  },
+  {
+   "t": 53.6,
+   "family": 1,
+   "dur": 1.6
+  },
+  {
+   "t": 74.4,
+   "family": 0,
+   "dur": 3.2
+  },
+  {
+   "t": 75.2,
+   "family": 1,
+   "dur": 3.2
+  },
+  {
+   "t": 76,
+   "family": 2,
+   "dur": 3.2
+  },
+  {
+   "t": 76.8,
+   "family": 3,
+   "dur": 3.2
+  },
+  {
+   "t": 77.6,
+   "family": 4,
+   "dur": 3.2
+  },
+  {
+   "t": 78.4,
+   "family": 5,
+   "dur": 3.2
+  },
+  {
+   "t": 79.2,
+   "family": 6,
+   "dur": 3.2
+  },
+  {
+   "t": 80,
+   "family": 7,
+   "dur": 3.2
+  },
+  {
+   "t": 80.8,
+   "family": 8,
+   "dur": 3.2
+  }
+ ],
+ "captions": [
+  {
+   "t": 3.2,
+   "text": "In principio erat aenigma.",
+   "until": 10.6,
+   "legible": [
+    5.6,
+    8.8
+   ],
+   "anagram": null,
+   "anagram_at": null
+  },
+  {
+   "t": 15.2,
+   "text": "Lex una est.",
+   "until": 22.2,
+   "legible": [
+    17.6,
+    20.4
+   ],
+   "anagram": null,
+   "anagram_at": null
+  },
+  {
+   "t": 26.4,
+   "text": "Nihil mutatur.",
+   "until": 32.8,
+   "legible": [
+    29,
+    31
+   ],
+   "anagram": null,
+   "anagram_at": null
+  },
+  {
+   "t": 40,
+   "text": "Novem viae, una porta.",
+   "until": 46,
+   "legible": [
+    42.6,
+    44.2
+   ],
+   "anagram": null,
+   "anagram_at": null
+  },
+  {
+   "t": 54.4,
+   "text": "Quid est veritas?",
+   "until": 61.4,
+   "legible": [
+    57.2,
+    59.6
+   ],
+   "anagram": null,
+   "anagram_at": null
+  },
+  {
+   "t": 61.6,
+   "text": "Quid est veritas?",
+   "until": 69.6,
+   "legible": [
+    63.8,
+    67.8
+   ],
+   "anagram": "Est vir qui adest.",
+   "anagram_at": 64.8
+  },
+  {
+   "t": 70.4,
+   "text": "Qui videt, videtur.",
+   "until": 76.4,
+   "legible": [
+    73.2,
+    74.6
+   ],
+   "anagram": null,
+   "anagram_at": null
+  },
+  {
+   "t": 77.6,
+   "text": "Nihil mutatur.",
+   "until": 83.2,
+   "legible": [
+    80.4,
+    81.4
+   ],
+   "anagram": null,
+   "anagram_at": null
+  },
+  {
+   "t": 84.8,
+   "text": "Omnia mutata sunt.",
+   "until": 90.3,
+   "legible": [
+    87.6,
+    88.5
+   ],
+   "anagram": null,
+   "anagram_at": null
+  },
+  {
+   "t": 96,
+   "text": "Omnia mutantur, nihil interit.",
+   "until": 101.8,
+   "legible": null,
+   "anagram": null,
+   "anagram_at": null
+  }
+ ],
+ "eyes": [
+  {
+   "t": 66.4,
+   "big": true,
+   "until": 76
+  },
+  {
+   "t": 68,
+   "big": false,
+   "until": 75.2
+  },
+  {
+   "t": 68.4,
+   "big": false,
+   "until": 75.2
+  },
+  {
+   "t": 68.8,
+   "big": false,
+   "until": 75.2
+  },
+  {
+   "t": 69.2,
+   "big": false,
+   "until": 75.2
+  },
+  {
+   "t": 69.6,
+   "big": false,
+   "until": 75.2
+  },
+  {
+   "t": 70,
+   "big": false,
+   "until": 75.2
+  },
+  {
+   "t": 70.4,
+   "big": false,
+   "until": 75.2
+  },
+  {
+   "t": 70.8,
+   "big": false,
+   "until": 75.2
+  },
+  {
+   "t": 71.2,
+   "big": false,
+   "until": 75.2
+  }
+ ],
+ "threads": [
+  {
+   "t": 15.2,
+   "until": 23.6,
+   "family": 2
+  },
+  {
+   "t": 17.6,
+   "until": 23.6,
+   "family": 6
+  },
+  {
+   "t": 62.4,
+   "until": 87.2,
+   "family": 0
+  },
+  {
+   "t": 62.6,
+   "until": 87.2,
+   "family": 1
+  },
+  {
+   "t": 62.8,
+   "until": 87.2,
+   "family": 2
+  },
+  {
+   "t": 63,
+   "until": 87.2,
+   "family": 3
+  },
+  {
+   "t": 63.2,
+   "until": 87.2,
+   "family": 4
+  },
+  {
+   "t": 63.4,
+   "until": 87.2,
+   "family": 5
+  },
+  {
+   "t": 63.6,
+   "until": 87.2,
+   "family": 6
+  },
+  {
+   "t": 63.8,
+   "until": 87.2,
+   "family": 7
+  },
+  {
+   "t": 64,
+   "until": 87.2,
+   "family": 8
+  }
+ ],
+ "grid": {
+  "bpm": 75,
+  "meter": "4/4",
+  "beat_s": 0.8,
+  "note": "перемены, стадии, каскады и очи — на долях 0,8 с; надписи — на шестнадцатых 0,2 с"
+ }
+}

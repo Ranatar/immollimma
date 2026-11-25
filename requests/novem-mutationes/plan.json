@@ -1,0 +1,429 @@
+{
+ "title": "Novem Mutationes",
+ "styles": [
+  "baroque",
+  "expressionist_horror",
+  "minimalism"
+ ],
+ "seconds": 108.8,
+ "tempo_bpm": 75,
+ "meter": "4/4",
+ "key": "D, лад Мессиана № 3: D E F F♯ G♯ A B♭ C C♯",
+ "language": "modal",
+ "library": "plain",
+ "library_notes": [
+  "choir, hpsd, vc_colleg, vln_harm есть только в Sonatina — для них Sonatina (не для рекламы)."
+ ],
+ "defaults": [
+  "sync.video_file",
+  "themes"
+ ],
+ "sections": [
+  {
+   "t0": 0,
+   "t1": 2,
+   "label": "I TENEBRAE",
+   "mood": "тьма; загорается точка света",
+   "intensity": 0.03,
+   "note": "точка 0.4",
+   "leader": "vln_harm (один флажолет — точка)",
+   "texture": "одиночный тон",
+   "register": "high",
+   "pulse": "none",
+   "dynamic": "ppp"
+  },
+  {
+   "t0": 2,
+   "t1": 14,
+   "label": "II INITIUM",
+   "mood": "из точки вырастает кристалл",
+   "intensity": 0.25,
+   "note": "рост 2–14; надпись «In principio erat aenigma» читается 5.6–8.8",
+   "leader": "org_quiet + vln_harm: девять звуков темы встают в аккорд",
+   "texture": "аддитивный аккорд",
+   "register": "wide",
+   "pulse": "none",
+   "dynamic": "p"
+  },
+  {
+   "t0": 14,
+   "t1": 24,
+   "label": "III LEX",
+   "mood": "закон утверждается: строгая мозаика, первые нити",
+   "intensity": 0.4,
+   "note": "нити 15.2 и 17.6; «Lex una est» (ложь) 17.6–20.4",
+   "leader": "org_quiet: строгий канон на теме (dux — comes в октаву)",
+   "texture": "двухголосный канон",
+   "register": "mid",
+   "pulse": "steady",
+   "dynamic": "mp"
+  },
+  {
+   "t0": 24,
+   "t1": 60.8,
+   "label": "IV MUTATIONES",
+   "mood": "девять перемен закона, всё чаще (интервалы 7.2 → 1.6)",
+   "intensity": 0.7,
+   "note": "n: 7, 9, 11, 5, 9, 7, 11, 5, 9; девятая — возврат к первому закону",
+   "leader": "harp / струнные legato: деление такта на n + орган: канон per tonos",
+   "texture": "моторика n-олей + канон",
+   "register": "wide",
+   "pulse": "accelerating",
+   "dynamic": "mf→f"
+  },
+  {
+   "t0": 60.8,
+   "t1": 66.4,
+   "label": "V REVELATIO",
+   "mood": "откровение: сдвиги сходятся, мозаика строго девятикратна; девять нитей — нонаграмма; загадка и её разгадка-анаграмма",
+   "intensity": 0.8,
+   "note": "Quid est veritas? → Est vir qui adest (буквы едут 64.8–66.6)",
+   "leader": "choir: вопрос-тема; струнные съезжают глиссандо в ответ",
+   "texture": "хор + скользящий кластер",
+   "register": "mid-high",
+   "pulse": "none",
+   "dynamic": "f"
+  },
+  {
+   "t0": 66.4,
+   "t1": 74.4,
+   "label": "VI OCULUS",
+   "mood": "Око: большое в центре, девять малых в вершинах нонаграммы",
+   "intensity": 0.6,
+   "note": "большое 66.4–76.0; малые 68.0 + 0.4·i",
+   "leader": "choir + org: хорал-разгадка; девять флажолетов-очей",
+   "texture": "хорал → редкие уколы",
+   "register": "low+high",
+   "pulse": "slow",
+   "dynamic": "mf→p"
+  },
+  {
+   "t0": 74.4,
+   "t1": 84,
+   "label": "VII TEMPESTAS",
+   "mood": "буря: девять каскадов по очереди, всё переворачивается",
+   "intensity": 1.0,
+   "note": "каскады 74.4 + 0.8·j, по 3.2 с",
+   "leader": "tutti: стретта из 9 вступлений темы (медь, орган, струнные)",
+   "texture": "девятиголосная стретта",
+   "register": "wide",
+   "pulse": "driving",
+   "dynamic": "ff"
+  },
+  {
+   "t0": 84,
+   "t1": 88,
+   "label": "VIII NIHIL MUTATUM",
+   "mood": "ничего не изменилось: мозаика в точности прежняя",
+   "intensity": 0.35,
+   "note": "«Omnia mutata sunt» (ложь)",
+   "leader": "org_quiet: дословный повтор начала закона",
+   "texture": "двухголосный канон",
+   "register": "mid",
+   "pulse": "steady",
+   "dynamic": "mp"
+  },
+  {
+   "t0": 88,
+   "t1": 108.8,
+   "label": "IX REDITUS",
+   "mood": "возврат: симметрия распадается, кристалл сворачивается в точку",
+   "intensity": 0.15,
+   "note": "ромбы счётчика гаснут 88.8 + 0.8·i; последний ромб гаснет 102.4; тьма до 108.8",
+   "leader": "org_quiet: тема ракоходом; аккорд теряет звуки",
+   "texture": "убывающий аккорд + ракоход",
+   "register": "wide→high",
+   "pulse": "slowing",
+   "dynamic": "p→ppp"
+  }
+ ],
+ "hits": [
+  {
+   "t": 0.4,
+   "label": "точка света",
+   "kind": "accent",
+   "intensity": 0.2,
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 3.2,
+   "label": "In principio erat aenigma.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 5.6–8.8",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 15.2,
+   "label": "Lex una est.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 17.6–20.4",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 24,
+   "label": "перемена 1 (n=7)",
+   "kind": "hit",
+   "intensity": 0.55,
+   "note": "волна 3.6 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 26.4,
+   "label": "Nihil mutatur.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 29–31",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 31.2,
+   "label": "перемена 2 (n=9)",
+   "kind": "hit",
+   "intensity": 0.6,
+   "note": "волна 3.6 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 37.6,
+   "label": "перемена 3 (n=11)",
+   "kind": "hit",
+   "intensity": 0.65,
+   "note": "волна 3.6 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 40,
+   "label": "Novem viae, una porta.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 42.6–44.2",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 43.2,
+   "label": "перемена 4 (n=5)",
+   "kind": "hit",
+   "intensity": 0.7,
+   "note": "волна 3.6 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 48,
+   "label": "перемена 5 (n=9)",
+   "kind": "hit",
+   "intensity": 0.75,
+   "note": "волна 3.4 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 52,
+   "label": "перемена 6 (n=7)",
+   "kind": "hit",
+   "intensity": 0.8,
+   "note": "волна 2.72 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 54.4,
+   "label": "Quid est veritas?",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 57.2–59.6",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 55.2,
+   "label": "перемена 7 (n=11)",
+   "kind": "hit",
+   "intensity": 0.8500000000000001,
+   "note": "волна 2.04 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 57.6,
+   "label": "перемена 8 (n=5)",
+   "kind": "hit",
+   "intensity": 0.9,
+   "note": "волна 1.36 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 59.2,
+   "label": "перемена 9 (n=9)",
+   "kind": "hit",
+   "intensity": 0.95,
+   "note": "волна 1.36 с",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 60.8,
+   "label": "сдвиги сходятся",
+   "kind": "swell",
+   "intensity": 0.8,
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 61.6,
+   "label": "Quid est veritas?",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 63.8–67.8; анаграмма в 64.8 → Est vir qui adest.",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 64.0,
+   "label": "мозаика девятикратна",
+   "kind": "accent",
+   "intensity": 0.7,
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 66.4,
+   "label": "Око открывается",
+   "kind": "hit",
+   "intensity": 0.8,
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 70.4,
+   "label": "Qui videt, videtur.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 73.2–74.6",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 77.6,
+   "label": "Nihil mutatur.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 80.4–81.4",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 84.0,
+   "label": "буря обрывается",
+   "kind": "accent",
+   "intensity": 0.6,
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 84.8,
+   "label": "Omnia mutata sunt.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "читается 87.6–88.5",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 96,
+   "label": "Omnia mutantur, nihil interit.",
+   "kind": "document",
+   "intensity": 0.4,
+   "note": "только шифр",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 102.4,
+   "label": "последний ромб гаснет",
+   "kind": "accent",
+   "intensity": 0.2,
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 105.6,
+   "end": 108.8,
+   "label": "тишина до повтора",
+   "kind": "silence",
+   "intensity": 0,
+   "mood": "",
+   "characters": []
+  }
+ ],
+ "silences": [
+  {
+   "t": 105.6,
+   "dur": 3.2,
+   "note": "тишина до повтора цикла"
+  }
+ ],
+ "themes": [],
+ "characters": [
+  {
+   "name": "Загадка",
+   "description": "тема из девяти звуков лада: D A B♭ F♯ F C♯ E G♯ C — каждый звук по разу, кончается увеличенным трезвучием без разрешения",
+   "evolution": "звуки встают в аккорд → канон закона → каноны per tonos → вопрос хора → анаграмма-ответ → стретта из 9 вступлений → ракоход"
+  },
+  {
+   "name": "Разгадка",
+   "description": "те же девять звуков в другом порядке — хорал с каденцией на D: A G♯ F♯ E F B♭ C C♯ D",
+   "evolution": "звучит один раз — когда буквы надписи складываются в ответ"
+  },
+  {
+   "name": "Смысл",
+   "description": "чистый унисон хора на основном тоне — пока надпись читается латиницей",
+   "evolution": "от надписи к надписи всё короче; на последней правдивой строке — лишь на миг"
+  }
+ ],
+ "avoid": [
+  "параллельные квинты и октавы",
+  "весёлая диатоника и квинтовые стопки; музыкальная шкатулка (арфа 16-ми с вибрафоном и колокольчиками); лёгкая «парящая» гармония; трейлерная эпика; хоррор только тремоло+кластером"
+ ],
+ "devices": [
+  "line",
+  "arpeggio(hpsd)",
+  "ostinato (шагающий бас)",
+  "chorale (струнные/орган)",
+  "melody"
+ ],
+ "ending": "fade",
+ "deliver": [
+  "mp3",
+  "midi",
+  "pdf",
+  "report"
+ ],
+ "sketch": {
+  "sketch_first": true,
+  "sketch_seconds": 60,
+  "ask_before_full": false
+ },
+ "processes": [
+  "Кристалл: девять звуков темы встают в аккорд по одному (II) — и уходят в обратном порядке под гаснущие ромбы счётчика (IX): ракоход всей формы",
+  "Per tonos по большим терциям: каждая перемена закона переносит канон на +4 полутона; лад № 3 при таком переносе переходит сам в себя — через три перемены звукоряд в точности прежний, девятая перемена возвращает исходную высоту (как девятый закон возвращает первый)",
+  "Деление такта: бегущая фигура делит полутакт (1,6 с) на n — по числу семейств мозаики текущего закона (7, 9, 11, 5…)",
+  "Смысл: пока надпись читается латиницей, хор держит чистый унисон основного тона; окна от надписи к надписи сокращаются, на последней строке — лишь миг"
+ ],
+ "leitmotifs": {
+  "Загадка": "D A B♭ F♯ F C♯ E G♯ C — каждый звук лада по разу, в конце увеличенное трезвучие E–G♯–C без разрешения",
+  "Разгадка": "анаграмма загадки: A G♯ F♯ E F B♭ C C♯ D — хорал с каденцией C♯→D",
+  "Смысл": "унисон хора на основном тоне в окнах читаемости"
+ }
+}

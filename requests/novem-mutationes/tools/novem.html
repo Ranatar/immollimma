@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Novem Mutationes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;height:100%;background:#04020b;overflow:hidden}
+  canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+  #vig{position:fixed;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at center,rgba(0,0,0,0) 42%,rgba(4,0,14,.55) 78%,rgba(2,0,8,.92) 100%)}
+  #ui{position:fixed;left:0;right:0;bottom:0;display:flex;flex-direction:column;opacity:0;transition:opacity .6s;
+    font:15px Cinzel,Georgia,serif;z-index:5}
+  #ui.show{opacity:1}
+  #btns{display:flex;gap:8px;justify-content:flex-end;align-items:center;padding:8px 14px 10px}
+  #ui button{background:rgba(8,4,22,.78);color:#8fe9ff;border:1px solid rgba(120,200,255,.45);font:inherit;padding:4px 11px;cursor:pointer}
+  #ui button:hover{background:rgba(40,16,70,.9);color:#ffd36e;border-color:rgba(255,200,110,.6)}
+  #ui span{color:rgba(150,210,255,.55);margin-left:4px;letter-spacing:.06em}
+  #tl{position:relative;height:4px;background:rgba(120,200,255,.15)}
+  #tlFill{height:100%;width:0;background:linear-gradient(90deg,#3fd8ff,#ff4fd8,#ffd36e)}
+  #tl i{position:absolute;top:-3px;width:1px;height:10px;background:rgba(255,220,140,.7)}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="vig"></div>
+<div id="ui">
+  <div id="btns">
+    <button data-a="restart" title="R">Сначала</button>
+    <button data-a="loop" id="bLoop" title="L">Повтор: вкл</button>
+    <button data-a="pause" title="P, пробел">Пауза</button>
+    <button data-a="fs" title="F">Во весь экран</button>
+    <span>R · L · P · F</span>
+  </div>
+  <div id="tl"><div id="tlFill"></div></div>
+</div>
+<script>
+'use strict';
+/* Novem Mutationes — обряд Изменяющего Пути на квазикристалле де Брёйна.
+   Цикл 108,8 с (68 тактов по 1,6 с при 150 уд/мин); все события — на постоянных отметках (кратных 0,1 с, большинство — 0,8 с).
+   Часы обряда идут по настоящему времени (без ограничения шага кадра), всё «случайное» — из сеянного генератора:
+   при каждом прогоне — тот же обряд. Сюжет: из точки вырастает кристалл; закон утверждается; девять перемен закона
+   всё чаще; откровение — все сдвиги сходятся, мозаика становится строго девятикратной, девять нитей складываются в
+   нонаграмму, открывается Око; буря девяти каскадов переворачивает всё — и всё оказывается прежним; кристалл
+   сворачивается в точку. Конец сходится с началом. */
+const TAU = Math.PI * 2;
+const clamp = (x, a = 0, b = 1) => x < a ? a : x > b ? b : x;
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeIO = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+const lin = (a, b, x) => clamp((x - a) / (b - a));
+const sm = (a, b, x) => { const u = lin(a, b, x); return u * u * (3 - 2 * u); };
+function mulberry(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let q = Math.imul(seed ^ seed >>> 15, 1 | seed);
+  q = q + Math.imul(q ^ q >>> 7, 61 | q) ^ q; return ((q ^ q >>> 14) >>> 0) / 4294967296; }; }
+const R0 = mulberry(9999);                                    // структура обряда — всегда одна и та же
+const srnd = (a, b) => a + R0() * (b - a);
+function mk(w, h) { const c = document.createElement('canvas'); c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(h)); return c; }
+
+const disp = document.getElementById('c'), dctx = disp.getContext('2d');
+const bloomC = mk(1, 1), bctx = bloomC.getContext('2d');
+let W, H, DPR, CX, CY, A, RAD, neb;
+const RITE_LEN = 108.8, BEAT = 1.6;
+let rt = 0;                                                   // часы обряда
+
+/* ---------- законы и девять перемен ---------- */
+const LAW0 = { n: 9, fill: 1, arcs: 0, hue: 0 };
+const MUT = [   // [время, закон]; интервалы сжимаются на 0,8 с: 7.2, 6.4, 5.6 … 1.6
+  [24.0, { n: 7, fill: .8, arcs: .5, hue: 40 }],
+  [31.2, { n: 9, fill: .25, arcs: 1, hue: 0 }],
+  [37.6, { n: 11, fill: .3, arcs: 1, hue: 260 }],
+  [43.2, { n: 5, fill: .9, arcs: .4, hue: 200 }],
+  [48.0, { n: 9, fill: 1, arcs: .35, hue: 150 }],
+  [52.0, { n: 7, fill: .3, arcs: 1, hue: 300 }],
+  [55.2, { n: 11, fill: .8, arcs: .6, hue: 80 }],
+  [57.6, { n: 5, fill: .3, arcs: 1, hue: 220 }],
+  [59.2, LAW0]                                                // девятая — возврат к первому закону
+];
+const MUT_END = 60.8;
+MUT.forEach(([t0, L], i) => {
+  const next = i + 1 < MUT.length ? MUT[i + 1][0] : MUT_END;
+  L.dur = Math.min(3.6, (next - t0) * .85);
+  const ang = srnd(0, TAU), r = i === 8 ? 0 : srnd(.1, .34);
+  L.ox = Math.cos(ang) * r; L.oy = Math.sin(ang) * r;     // в долях min(W,H)
+});
+
+/* ---------- фазоны ---------- */
+const NMAX = 11, GAL = .3;                                    // GAL — общий сдвиг в откровении: мозаика строго девятикратна
+const gam0 = Array.from({ length: NMAX }, () => srnd(-.5, .5));
+const gW = Array.from({ length: NMAX }, () => srnd(.03, .07)), gP = Array.from({ length: NMAX }, () => srnd(0, TAU));
+const gCasc = new Float64Array(NMAX), gam = new Float64Array(NMAX);
+let cascades = [];
+const CASCADES = [   // [время, семейство, направление, длительность]
+  [33.6, 3, 1, 3.2], [45.6, 6, -1, 2.4], [53.6, 1, 1, 1.6],
+  ...Array.from({ length: 9 }, (_, j) => [74.4 + j * .8, j, 1, 3.2])      // буря: каждое семейство — ровно на период
+];
+function updGamma() {
+  const al = sm(60.8, 64.0, rt) * (1 - sm(88.0, 92.0, rt));
+  for (let j = 0; j < NMAX; j++) gam[j] = lerp(gam0[j] + .24 * Math.sin(rt * gW[j] + gP[j]), GAL, al) + gCasc[j];
+}
+function updCascades() {
+  for (const c of cascades) gCasc[c.j] = c.base + c.dir * easeIO(clamp((rt - c.t0) / c.dur));
+  cascades = cascades.filter(c => { if (rt - c.t0 >= c.dur) { gCasc[c.j] = c.base + c.dir; return false; } return true; });
+}
+
+/* ---------- мозаика де Брёйна ---------- */
+const CAP = 70000;
+function makeTiling(n) {
+  const E = Array.from({ length: n }, (_, j) => [Math.cos(TAU * j / n - Math.PI / 2), Math.sin(TAU * j / n - Math.PI / 2)]);
+  const pairs = [];
+  const ang = (x, y) => Math.atan2(y, x), norm = x => { while (x > Math.PI) x -= TAU; while (x <= -Math.PI) x += TAU; return x; };
+  for (let r = 0; r < n; r++) for (let s = r + 1; s < n; s++) {
+    const er = E[r], es = E[s], d = s - r, cosv = er[0] * es[0] + er[1] * es[1];
+    const arcs = cosv > 0
+      ? [[0, 0, ang(er[0], er[1]), norm(ang(es[0], es[1]) - ang(er[0], er[1]))],
+         [1, 1, ang(-er[0], -er[1]), norm(ang(-es[0], -es[1]) - ang(-er[0], -er[1]))]]
+      : [[1, 0, ang(-er[0], -er[1]), norm(ang(es[0], es[1]) - ang(-er[0], -er[1]))],
+         [0, 1, ang(er[0], er[1]), norm(ang(-es[0], -es[1]) - ang(er[0], er[1]))]];
+    pairs.push({ r, s, type: Math.min(d, n - d), det: er[0] * es[1] - er[1] * es[0], arcs });
+  }
+  return { n, E, pairs, cnt: 0, X: new Float32Array(CAP), Y: new Float32Array(CAP), P: new Uint16Array(CAP),
+    KR: new Int16Array(CAP), KS: new Int16Array(CAP), KEY: new Float64Array(CAP), prev: new Map(), flash: new Map() };
+}
+const tilings = {};
+const tilingFor = n => tilings[n] || (tilings[n] = makeTiling(n));
+function build(T, a, rad, detect) {
+  const { n, E, pairs } = T, pR = rad / (a * n / 2) + 2;
+  let c = 0;
+  for (let pi = 0; pi < pairs.length; pi++) {
+    const { r, s, det } = pairs[pi], er = E[r], es = E[s], gr = gam[r], gs = gam[s];
+    const k0r = Math.floor(-pR - gr), k1r = Math.ceil(pR - gr), k0s = Math.floor(-pR - gs), k1s = Math.ceil(pR - gs);
+    for (let kr = k0r; kr <= k1r; kr++) {
+      const cr = kr + gr;
+      for (let ks = k0s; ks <= k1s; ks++) {
+        const cs = ks + gs, px = (cr * es[1] - cs * er[1]) / det, py = (er[0] * cs - es[0] * cr) / det;
+        if (px * px + py * py > pR * pR) continue;
+        let bx = 0, by = 0;
+        for (let j = 0; j < n; j++) {
+          const K = j === r ? kr : j === s ? ks : Math.ceil(px * E[j][0] + py * E[j][1] - gam[j]);
+          bx += K * E[j][0]; by += K * E[j][1];
+        }
+        bx *= a; by *= a;
+        const mx = bx + (er[0] + es[0]) * a / 2, my = by + (er[1] + es[1]) * a / 2;
+        if (mx * mx + my * my > rad * rad || c >= CAP) continue;
+        const key = (pi * 4096 + (kr + 2048)) * 4096 + (ks + 2048);
+        T.X[c] = bx; T.Y[c] = by; T.P[c] = pi; T.KR[c] = kr; T.KS[c] = ks; T.KEY[c] = key;
+        if (detect) {
+          const h = Math.round(bx / a * 7) * 131 + Math.round(by / a * 7), p = T.prev.get(key);
+          if (p !== undefined && p !== h) T.flash.set(key, rt);
+          T.prev.set(key, h);
+        }
+        c++;
+      }
+    }
+  }
+  T.cnt = c;
+  if (T.prev.size > 3 * c + 5000) T.prev.clear();
+}
+
+/* ---------- краски ---------- */
+const BASEHUE = [196, 172, 300, 44, 262, 220];
+const LEV = 10;
+function tileColor(type, lev, hueRot, alpha) {
+  const f = lev / (LEV - 1), h = BASEHUE[(type - 1) % BASEHUE.length] + hueRot + (f - .5) * 80;
+  const needle = type === 4, L = needle ? 34 + 14 * f : 9 + 4 * type + 13 * f * f;
+  return `hsla(${h.toFixed(1)},${needle ? 95 : 72}%,${L.toFixed(1)}%,${alpha})`;
+}
+const buckets = Array.from({ length: 6 * LEV }, () => []);
+const tileCenter = (T, i, a) => { const pr = T.pairs[T.P[i]], er = T.E[pr.r], es = T.E[pr.s];
+  return [T.X[i] + (er[0] + es[0]) * a / 2, T.Y[i] + (er[1] + es[1]) * a / 2]; };
+function quadPath(x, T, i, a) {
+  const pr = T.pairs[T.P[i]], er = T.E[pr.r], es = T.E[pr.s], bx = T.X[i], by = T.Y[i];
+  x.moveTo(bx, by); x.lineTo(bx + er[0] * a, by + er[1] * a); x.lineTo(bx + (er[0] + es[0]) * a, by + (er[1] + es[1]) * a);
+  x.lineTo(bx + es[0] * a, by + es[1] * a); x.closePath();
+}
+
+/* reveal — радиус, внутри которого кристалл уже есть (рост из точки / сворачивание) */
+function drawTiling(x, T, L, a, alphaMul, reveal) {
+  const { pairs, E, cnt } = T, vis = new Uint8Array(cnt), BAND = a * 3, front = [];
+  let nv = 0;
+  for (let i = 0; i < cnt; i++) {
+    const [cx, cy] = tileCenter(T, i, a), d = Math.sqrt(cx * cx + cy * cy), q = (reveal - d) / BAND;
+    if (q >= 1) { vis[i] = 1; nv++; } else if (q > 0) front.push([i, q * q * (3 - 2 * q)]);
+  }
+  drawFront(x, T, L, a, alphaMul, front);
+  if (!nv) return;
+  if (L.fill > .01) {
+    for (const b of buckets) b.length = 0;
+    const ph = rt * .25;
+    for (let i = 0; i < cnt; i++) {
+      if (!vis[i]) continue;
+      const pr = pairs[T.P[i]], cx = T.X[i], cy = T.Y[i];
+      const v = Math.sin((cx * .0021 + cy * .0013) / DPR + ph) * .5 + Math.sin((cx * -.0009 + cy * .0024) / DPR - ph * .7) * .5;
+      buckets[(pr.type - 1) * LEV + clamp(Math.floor((v * .5 + .5) * LEV), 0, LEV - 1)].push(i);
+    }
+    for (let bi = 0; bi < buckets.length; bi++) {
+      const b = buckets[bi]; if (!b.length) continue;
+      x.beginPath(); for (const i of b) quadPath(x, T, i, a);
+      x.fillStyle = tileColor(Math.floor(bi / LEV) + 1, bi % LEV, L.hue, (.85 * L.fill * alphaMul).toFixed(3)); x.fill();
+    }
+  }
+  x.beginPath(); for (let i = 0; i < cnt; i++) if (vis[i]) quadPath(x, T, i, a);
+  x.lineWidth = Math.max(1, .9 * DPR); x.strokeStyle = `rgba(120,210,255,${(.2 + .16 * L.fill) * alphaMul})`; x.stroke();
+  if (L.arcs > .01) {
+    x.beginPath(); const ra = a / 2;
+    for (let i = 0; i < cnt; i++) {
+      if (!vis[i]) continue;
+      const pr = pairs[T.P[i]], er = E[pr.r], es = E[pr.s], bx = T.X[i], by = T.Y[i];
+      for (const [cu, cv, a0, sw] of pr.arcs) {
+        const vx0 = bx + (cu * er[0] + cv * es[0]) * a, vy0 = by + (cu * er[1] + cv * es[1]) * a;
+        x.moveTo(vx0 + Math.cos(a0) * ra, vy0 + Math.sin(a0) * ra); x.arc(vx0, vy0, ra, a0, a0 + sw, sw < 0);
+      }
+    }
+    x.save(); x.globalCompositeOperation = 'lighter'; x.lineCap = 'round';
+    x.lineWidth = Math.max(2, 2.6 * DPR); x.strokeStyle = `hsla(${44 + L.hue * .15},100%,58%,${.5 * L.arcs * alphaMul})`; x.stroke();
+    x.lineWidth = Math.max(1, .9 * DPR); x.strokeStyle = `hsla(${50 + L.hue * .15},100%,86%,${.8 * L.arcs * alphaMul})`; x.stroke();
+    x.restore();
+  }
+  x.save(); x.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < cnt; i++) {
+    if (!vis[i]) continue;
+    const [cx, cy] = tileCenter(T, i, a), d = Math.sqrt(cx * cx + cy * cy);
+    const ft = T.flash.get(T.KEY[i]);
+    let q = 0, hh = 185;
+    if (ft !== undefined) { const age = rt - ft; if (age > .7 || age < 0) T.flash.delete(T.KEY[i]); else { q = 1 - age / .7; hh = T.pairs[T.P[i]].type === 4 ? 46 : 185 + 60 * Math.sin(T.KEY[i]); } }
+    if (q <= 0) continue;
+    x.beginPath(); quadPath(x, T, i, a);
+    x.fillStyle = `hsla(${hh},100%,70%,${.28 * q * q * alphaMul})`; x.fill();
+    x.lineWidth = 1.3 * DPR; x.strokeStyle = `hsla(${hh},100%,85%,${.9 * q * alphaMul})`; x.stroke();
+  }
+  x.restore();
+}
+
+/* фронт роста: ромбы проступают из света — сперва светящийся контур, затем стекло */
+function drawFront(x, T, L, a, alphaMul, front) {
+  if (!front.length) return;
+  for (const [i, q] of front) {
+    const pr = T.pairs[T.P[i]];
+    x.beginPath(); quadPath(x, T, i, a);
+    if (L.fill > .01) { x.fillStyle = tileColor(pr.type, 5, L.hue, (.85 * L.fill * alphaMul * q).toFixed(3)); x.fill(); }
+    x.save(); x.globalCompositeOperation = 'lighter';
+    const glow = Math.sin(Math.PI * q);    // свет сильнее всего посередине полосы проявления
+    x.fillStyle = `rgba(255,200,250,${(.22 * glow * alphaMul).toFixed(3)})`; x.fill();
+    x.lineWidth = Math.max(1, .9 * DPR); x.strokeStyle = `rgba(200,235,255,${((.15 + .5 * glow) * q * alphaMul).toFixed(3)})`; x.stroke();
+    x.restore();
+  }
+}
+
+/* ---------- нити судьбы ---------- */
+let threads = [];
+function threadPts(T, j, k, a) {
+  const e = T.E[j], dx = -e[1], dy = e[0], pts = [];
+  for (let i = 0; i < T.cnt; i++) {
+    const pr = T.pairs[T.P[i]];
+    if (!((pr.r === j && T.KR[i] === k) || (pr.s === j && T.KS[i] === k))) continue;
+    const [cx, cy] = tileCenter(T, i, a); pts.push([cx * dx + cy * dy, cx, cy, i]);
+  }
+  pts.sort((p, q) => p[0] - q[0]); return pts;
+}
+function drawThreads(x, T, a, reveal) {
+  x.save(); x.globalCompositeOperation = 'lighter'; x.lineJoin = 'round'; x.lineCap = 'round';
+  for (const th of threads) {
+    if (th.n !== T.n) continue;
+    const age = rt - th.t0, env = sm(0, 1.6, age) * (1 - sm(th.t1 - th.t0 - 1.6, th.t1 - th.t0, age));
+    if (env <= 0 || age < 0) continue;
+    const k = th.k ?? Math.round(th.c - gam[th.j]);
+    const pts = threadPts(T, th.j, k, a).filter(p => p[1] * p[1] + p[2] * p[2] <= reveal * reveal);
+    if (pts.length < 2) continue;
+    if (th.c !== undefined) {   // в откровении: лента ромбов и сама прямая — девять прямых складываются в нонаграмму
+      x.beginPath(); for (const p of pts) quadPath(x, T, p[3], a);
+      x.fillStyle = `hsla(${th.hue},100%,60%,${.16 * env})`; x.fill();
+      const e = T.E[th.j], d = T.n / 2 * a * (k + gam[th.j]), L = Math.sqrt(Math.max(0, reveal * reveal - d * d));
+      if (L > 0) {
+        x.beginPath(); x.moveTo(e[0] * d - e[1] * L, e[1] * d + e[0] * L); x.lineTo(e[0] * d + e[1] * L, e[1] * d - e[0] * L);
+        x.strokeStyle = `hsla(${th.hue},100%,70%,${.3 * env})`; x.lineWidth = 9 * DPR; x.stroke();
+        x.strokeStyle = `hsla(${th.hue},100%,86%,${.9 * env})`; x.lineWidth = 1.8 * DPR; x.stroke();
+      }
+      continue;
+    }
+    x.beginPath(); x.moveTo(pts[0][1], pts[0][2]); for (const p of pts) x.lineTo(p[1], p[2]);
+    x.strokeStyle = `hsla(${th.hue},100%,62%,${.24 * env * th.w})`; x.lineWidth = 7 * DPR; x.stroke();
+    x.strokeStyle = `hsla(${th.hue},100%,74%,${.8 * env * th.w})`; x.lineWidth = 1.7 * DPR; x.stroke();
+    const N = pts.length;
+    for (let m = 0; m < 3; m++) {
+      const f = ((rt * th.speed + th.off + m / 3) % 1) * (N - 1), i0 = Math.floor(f), q = f - i0;
+      const px = lerp(pts[i0][1], pts[Math.min(N - 1, i0 + 1)][1], q), py = lerp(pts[i0][2], pts[Math.min(N - 1, i0 + 1)][2], q);
+      const g = x.createRadialGradient(px, py, 0, px, py, 14 * DPR);
+      g.addColorStop(0, `hsla(${th.hue},100%,88%,${env})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+      x.fillStyle = g; x.beginPath(); x.arc(px, py, 14 * DPR, 0, TAU); x.fill();
+    }
+  }
+  x.restore();
+}
+
+/* ---------- очи ---------- */
+let eyes = [];
+function drawEyes(x, rot) {
+  const gx = Math.cos(rt * .23) * W * .35, gy = Math.sin(rt * .31) * H * .3;
+  for (const e of eyes) {
+    const age = rt - e.t0; if (age < 0 || rt > e.t1) continue;
+    let o = sm(0, 1.0, age) * (1 - sm(e.t1 - e.t0 - .7, e.t1 - e.t0, age));
+    const bp = (age % e.blink) / e.blink; if (age > 1.3 && bp > .93) o *= Math.abs(bp - .965) / .035;
+    if (o <= .01) continue;
+    const s = e.s * A, h = s * .62 * o, ex = e.x(), ey = e.y();
+    x.save(); x.translate(ex, ey);
+    x.beginPath(); x.moveTo(-s, 0); x.quadraticCurveTo(0, -h * 1.6, s, 0); x.quadraticCurveTo(0, h * 1.6, -s, 0); x.closePath();
+    x.fillStyle = 'rgba(6,2,18,.9)'; x.fill();
+    x.save(); x.clip();
+    let dx = (e.big ? gx : -ex * .5 + gx * .3) - (e.big ? ex : 0), dy = (e.big ? gy : -ey * .5 + gy * .3) - (e.big ? ey : 0);
+    const dl = Math.hypot(dx, dy) || 1, look = Math.min(1, dl / (s * 6)) * s * .32;
+    dx = dx / dl * look; dy = dy / dl * look * .6;
+    const ir = s * .5, g = x.createRadialGradient(dx, dy, 0, dx, dy, ir);
+    g.addColorStop(0, '#fff3c0'); g.addColorStop(.35, '#ffc54a'); g.addColorStop(.7, '#1fc6d8'); g.addColorStop(1, '#2a0b55');
+    x.fillStyle = g; x.beginPath(); x.arc(dx, dy, ir, 0, TAU); x.fill();
+    x.strokeStyle = 'rgba(40,10,70,.8)'; x.lineWidth = Math.max(1, .9 * DPR);
+    for (const k of [.62, .82]) {
+      x.beginPath();
+      for (let m = 0; m <= 9; m++) { const q = m / 9 * TAU + rt * (e.big ? .3 : -.5); const px = dx + Math.cos(q) * ir * k, py = dy + Math.sin(q) * ir * k; m ? x.lineTo(px, py) : x.moveTo(px, py); }
+      x.stroke();
+    }
+    x.fillStyle = '#05010c'; x.beginPath(); x.ellipse(dx, dy, ir * .14, ir * .62, 0, 0, TAU); x.fill();
+    x.restore();
+    x.globalCompositeOperation = 'lighter';
+    x.beginPath(); x.moveTo(-s, 0); x.quadraticCurveTo(0, -h * 1.6, s, 0); x.quadraticCurveTo(0, h * 1.6, -s, 0); x.closePath();
+    x.strokeStyle = `rgba(255,80,220,${.75 * o})`; x.lineWidth = (e.big ? 2.6 : 1.4) * DPR; x.stroke();
+    x.restore();
+  }
+}
+
+/* ---------- туманность ---------- */
+function makeNebula() {
+  const S = Math.ceil(Math.hypot(W, H) / 3); neb = mk(S, S); const x = neb.getContext('2d'), rr = mulberry(77);
+  x.fillStyle = '#04020b'; x.fillRect(0, 0, S, S);
+  const cols = ['rgba(90,30,170,', 'rgba(20,80,200,', 'rgba(200,30,170,', 'rgba(10,140,160,', 'rgba(60,20,120,'];
+  for (let i = 0; i < 70; i++) {
+    const cx = rr() * S, cy = rr() * S, r = (.06 + rr() * .24) * S, g = x.createRadialGradient(cx, cy, 0, cx, cy, r), c = cols[(rr() * cols.length) | 0];
+    g.addColorStop(0, c + (.05 + rr() * .11) + ')'); g.addColorStop(1, c + '0)'); x.fillStyle = g; x.fillRect(0, 0, S, S);
+  }
+}
+
+/* ---------- подписи: собственное письмо обряда ----------
+   Каждая латинская буква имеет свой знак шифра — из штрихов девяти направлений (тех же, что рёбра мозаики).
+   Надпись появляется шифром, буквы вразнобой проходят через греческое начертание к латинице, держатся и уходят обратно.
+   Время латиницы от надписи к надписи сокращается: обряд учит своей азбуке, а последнюю, единственную правдивую строку
+   говорит только шифром. Подписи лгут картинке; «Quid est veritas?» переставляет буквы в свой ответ. */
+const GREEK = { A: 'Α', B: 'Β', C: 'Κ', D: 'Δ', E: 'Ε', F: 'Φ', G: 'Γ', H: 'Η', I: 'Ι', K: 'Κ', L: 'Λ', M: 'Μ', N: 'Ν', O: 'Ω',
+  P: 'Π', Q: 'Θ', R: 'Ρ', S: 'Σ', T: 'Τ', U: 'Υ', V: 'Υ', X: 'Ξ', Y: 'Ψ', Z: 'Ζ' };
+const glyphCache = {};
+const DIR9 = Array.from({ length: 9 }, (_, k) => (10 + 20 * k) * Math.PI / 180);   // направления рёбер мозаики (n = 9)
+function cipherGlyph(ch) {               // знак шифра: стебель с ветвями или ломаная — только направлениями рёбер мозаики
+  if (glyphCache[ch]) return glyphCache[ch];
+  const r = mulberry(ch.charCodeAt(0) * 7919 + 101), segs = [], pickDir = (noVert) => { let k; do { k = (r() * 9) | 0; } while (noVert && k === 4); return DIR9[k]; };
+  if (r() < .62) {
+    const sx = (r() - .5) * .2; segs.push([sx, -.6, sx, .6]);
+    for (let b = 0, nb = 1 + (r() * 2.4 | 0); b < nb; b++) {
+      const ty = -.55 + r() * 1.1, a = pickDir(true), L = .38 + r() * .38, sg = r() < .5 ? -1 : 1;
+      segs.push([sx, ty, sx + Math.cos(a) * L * sg, ty + Math.sin(a) * L * sg]);
+    }
+  } else {
+    let x = (r() - .5) * .3, y = -.5;
+    for (let k = 0, n = 3 + (r() < .4 ? 1 : 0); k < n; k++) {
+      const a = pickDir(false), L = .5 + r() * .45; let sg = Math.sin(a) * (r() < .5 ? -1 : 1) >= 0 ? 1 : -1;
+      if (y > .3) sg = Math.sin(a) > 0 ? -1 : 1;
+      const nx = x + Math.cos(a) * L * sg, ny = y + Math.sin(a) * L * sg; segs.push([x, y, nx, ny]); x = nx; y = ny;
+    }
+  }
+  const dot = r() < .3 ? [(r() - .5) * .4, r() < .5 ? -1 : 1] : null;
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+  for (const [a, b, c, d] of segs) { x0 = Math.min(x0, a, c); x1 = Math.max(x1, a, c); y0 = Math.min(y0, b, d); y1 = Math.max(y1, b, d); }
+  const sc = 1 / Math.max(y1 - y0, (x1 - x0) / .8, .3), mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+  const g = { segs: segs.map(([a, b, c, d]) => [(a - mx) * sc, (b - my) * sc, (c - mx) * sc, (d - my) * sc]), dot };
+  return (glyphCache[ch] = g);
+}
+/* изменчивость знака: истинная форма держится лишь мигами, в остальное время знак без конца перестраивается —
+   поворачивается на шаги в 20°, отражается, гнёт штрихи, а иногда на миг прикидывается знаком другой буквы.
+   Все превращения остаются в девяти направлениях мозаики. */
+const ALPHA = 'ABCDEFGHILMNOPQRSTUVX';
+const padSegs = (segs, n = 4) => { const out = segs.slice(0, n); while (out.length < n) { const l = out[out.length - 1]; out.push([l[2], l[3], l[2], l[3]]); } return out; };
+const vCache = new Map();
+function glyphVariant(ch, seed, v) {
+  const key = ch + seed + ':' + v; let g = vCache.get(key); if (g) return g;
+  if (vCache.size > 6000) vCache.clear();
+  const r = mulberry(((seed * 977 + v * 131 + ch.charCodeAt(0) * 31) | 0) + 7);
+  const base = r() < .22 ? cipherGlyph(ALPHA[(r() * ALPHA.length) | 0]) : cipherGlyph(ch);     // иногда — личина чужой буквы
+  const rot = (((r() * 5) | 0) - 2) * Math.PI / 9, mir = r() < .3 ? -1 : 1, cr = Math.cos(rot), sr = Math.sin(rot);
+  const segs = padSegs(base.segs).map(([a, b, c, d]) => {
+    if (r() < .45) { const bt = (r() < .5 ? -1 : 1) * Math.PI / 9, dx = c - a, dy = d - b;         // изгиб штриха на 20°
+      c = a + dx * Math.cos(bt) - dy * Math.sin(bt); d = b + dx * Math.sin(bt) + dy * Math.cos(bt); }
+    const tr = (px, py) => { px *= mir; return [px * cr - py * sr, px * sr + py * cr]; };
+    const [p1, q1] = tr(a, b), [p2, q2] = tr(c, d); return [p1, q1, p2, q2];
+  });
+  g = { segs, dot: r() < .5 ? base.dot : null };
+  vCache.set(key, g); return g;
+}
+function blendGlyph(g1, g2, q) {
+  const A1 = padSegs(g1.segs), A2 = padSegs(g2.segs);
+  return { segs: A1.map((s1, k) => s1.map((v, m) => lerp(v, A2[k][m], q))), dot: q < .5 ? g1.dot : g2.dot };
+}
+const trap = (a, b, x, ramp = .22) => sm(a - ramp, a, x) * (1 - sm(b, b + ramp, x));
+function stableness(c, i, age) {   // 1 — истинная форма; окна короткие
+  const tin = c.order3[i] * IN + .25;
+  let s = trap(tin, tin + .45, age);
+  if (c.latin > 0) {
+    const up = c.resolve + c.order[i] * RES, down = c.latinTo + c.order2[i] * OUT;
+    s = Math.max(s, trap(up - .4, up + STEP, age), trap(down, down + STEP + .45, age));
+  } else {
+    s = Math.max(s, trap(c.dur - FADE - 1.3, c.dur - FADE - .7, age));                  // правда мелькает целиком лишь раз
+    s = Math.max(s, trap(1.4 + c.order[i] * 2.2, 1.4 + c.order[i] * 2.2 + .35, age));  // и по букве — вразнобой
+  }
+  return s;
+}
+function liveGlyph(c, ci, i, ch, age) {
+  const g0 = cipherGlyph(ch), st = stableness(c, i, age);
+  if (st >= .999) return g0;
+  const P = .42 + c.order2[i] * .2, u = age / P + c.order[i] * 3, v = Math.floor(u), f = easeIO(u - v);
+  const gm = blendGlyph(glyphVariant(ch, ci * 53 + i, v), glyphVariant(ch, ci * 53 + i, v + 1), f);
+  return st <= .001 ? gm : blendGlyph(gm, g0, st);
+}
+
+const CAPTIONS = [   // hold — сколько держится чистый шифр, latin — сколько держится латиница (0 — не проясняется вовсе)
+  { t0: 3.2, s: 'In principio erat aenigma.', hold: .6, latin: 3.2 },
+  { t0: 15.2, s: 'Lex una est.', hold: .6, latin: 2.8 },                         // ложь: впереди девять законов
+  { t0: 26.4, s: 'Nihil mutatur.', hold: .8, latin: 2.0 },                       // ложь: под волнами перемен
+  { t0: 40.0, s: 'Novem viae, una porta.', hold: .8, latin: 1.6 },
+  { t0: 54.4, s: 'Quid est veritas?', hold: 1.0, latin: 2.4 },                   // загадка
+  { t0: 61.6, s: 'Quid est veritas?', hold: .4, latin: 4.0, anagram: { to: 'Est vir qui adest.', at: 1.0, dur: 1.8 } },  // и её разгадка
+  { t0: 70.4, s: 'Qui videt, videtur.', hold: 1.0, latin: 1.4 },
+  { t0: 77.6, s: 'Nihil mutatur.', hold: 1.0, latin: 1.0 },                      // ложь: в разгар бури
+  { t0: 84.8, s: 'Omnia mutata sunt.', hold: 1.0, latin: .9 },                   // ложь: всё в точности прежнее
+  { t0: 96.0, s: 'Omnia mutantur, nihil interit.', hold: 4.6, latin: 0 }         // правда — только шифром
+];
+const IN = .6, RES = .7, STEP = .5, OUT = .7, FADE = .6;
+for (const c of CAPTIONS) {
+  c.resolve = IN + c.hold;                                 // начало прояснения (от t0)
+  c.latinFrom = c.resolve + RES + STEP;                    // с этого мига читается вся строка
+  c.latinTo = c.latinFrom + c.latin;
+  c.dur = c.latin > 0 ? c.latinTo + OUT + STEP + FADE : IN + c.hold + FADE;
+  c.order = [...c.s].map(() => R0()); c.order2 = [...c.s].map(() => R0()); c.order3 = [...c.s].map(() => R0());
+}
+let caps = [];
+// раскладка строки по одинаковым ячейкам: у шифра, греческого и латиницы — одно место
+function layout(str, cw) {
+  const out = []; let w = 0;
+  for (const ch of str.toUpperCase()) { const adv = ch === ' ' ? cw * .55 : /[.,?!]/.test(ch) ? cw * .45 : cw; out.push({ ch, x: w + adv / 2 }); w += adv; }
+  for (const o of out) o.x -= w / 2;
+  return out;
+}
+function drawCipher(x, g, px, py, fs, a) {
+  if (a <= .01) return;
+  const k = fs * .74;
+  x.save(); x.globalAlpha = a; x.lineCap = 'round'; x.lineJoin = 'round';
+  x.shadowColor = 'rgba(255,60,210,.9)'; x.shadowBlur = 12 * DPR; x.strokeStyle = '#f6e7c2'; x.lineWidth = Math.max(1.5, fs * .085);
+  x.beginPath(); for (const [a1, b1, c1, d1] of g.segs) { x.moveTo(px + a1 * k, py + b1 * k); x.lineTo(px + c1 * k, py + d1 * k); } x.stroke();
+  if (g.dot) { const dx = px + g.dot[0] * k, dy = py + g.dot[1] * k * .72, r = fs * .07;
+    x.fillStyle = '#ffd36e'; x.beginPath(); x.moveTo(dx, dy - r * 1.6); x.lineTo(dx + r * .6, dy); x.lineTo(dx, dy + r * 1.6); x.lineTo(dx - r * .6, dy); x.closePath(); x.fill(); }
+  x.restore();
+}
+function drawLetter(x, ch, m, px, py, fs, glyph) {   // m: 0 — шифр, 1 — греческий, 2 — латиница
+  if (/[.,?!]/.test(ch)) { const a = clamp(m - 1); if (a > .01) { x.globalAlpha *= a; x.font = `600 ${Math.round(fs)}px Cinzel, Georgia, serif`;
+    x.fillStyle = '#f6e7c2'; x.fillText(ch, px, py); } return; }
+  const base = x.globalAlpha;
+  drawCipher(x, glyph || cipherGlyph(ch), px, py, fs, clamp(1 - m) * base);
+  const wg = clamp(1 - Math.abs(m - 1)), wl = clamp(m - 1);
+  x.shadowColor = 'rgba(255,60,210,.85)'; x.shadowBlur = 14 * DPR;
+  if (wg > .01) { x.globalAlpha = wg * base; x.font = `600 ${Math.round(fs * .92)}px Georgia, "DejaVu Serif", serif`; x.fillStyle = '#bfefff'; x.fillText(GREEK[ch] || ch, px, py); }
+  if (wl > .01) { x.globalAlpha = wl * base; x.font = `600 ${Math.round(fs)}px Cinzel, Georgia, serif`; x.fillStyle = '#f6e7c2'; x.fillText(ch, px, py); }
+  x.globalAlpha = 1; x.shadowBlur = 0;
+}
+function letterMorph(c, i, age) {             // форма буквы в миг age
+  if (c.latin <= 0) return 0;
+  const up = c.resolve + c.order[i] * RES, down = c.latinTo + c.order2[i] * OUT;
+  return 2 * sm(up, up + STEP, age) * (1 - sm(down, down + STEP, age));
+}
+function drawCaptions(x) {
+  const fs = Math.round(H * .044), cw = fs * .8, py = H * .9;
+  x.save(); x.textAlign = 'center'; x.textBaseline = 'middle';
+  let band = 0; for (const c of caps) { const age = rt - c.t0; if (age >= 0 && age <= c.dur) band = Math.max(band, sm(0, .5, age) * (1 - sm(c.dur - .5, c.dur, age))); }
+  if (band > 0) {   // тёмная полоса под надписью — чтобы читалась поверх пёстрой мозаики
+    const g = x.createLinearGradient(0, py - fs * 1.9, 0, py + fs * 1.7);
+    g.addColorStop(0, 'rgba(4,2,11,0)'); g.addColorStop(.35, `rgba(4,2,11,${.72 * band})`); g.addColorStop(.7, `rgba(4,2,11,${.72 * band})`); g.addColorStop(1, 'rgba(4,2,11,0)');
+    x.fillStyle = g; x.fillRect(0, py - fs * 1.9, W, fs * 3.6);
+  }
+  for (const c of caps) {
+    const age = rt - c.t0; if (age < 0 || age > c.dur) continue;
+    const src = layout(c.s, cw), ci = CAPTIONS.indexOf(c);
+    let dst = null, mv = null;
+    if (c.anagram) {   // буквы переезжают на места ответа (знаки препинания гаснут и появляются заново)
+      dst = layout(c.anagram.to, cw);
+      if (!c.map) {
+        const used = new Set(); c.map = [];
+        src.forEach((o, i) => { if (!/[A-Z]/.test(o.ch)) { c.map[i] = -1; return; }
+          let best = -1, bd = 1e9; dst.forEach((q, j) => { if (q.ch === o.ch && !used.has(j)) { const d = Math.abs(q.x - o.x); if (d < bd) { bd = d; best = j; } } });
+          used.add(best); c.map[i] = best; });
+      }
+      mv = age - (c.latinFrom + c.anagram.at);
+    }
+    const env = c.latin > 0 ? 1 - sm(c.dur - FADE, c.dur, age) : (1 - sm(c.dur - FADE, c.dur, age));
+    src.forEach((o, i) => {
+      if (o.ch === ' ') return;
+      const tin = c.order3[i] * IN, ain = sm(tin, tin + .25, age) * env;
+      if (ain <= .01) return;
+      let m = letterMorph(c, i, age), px = CX + o.x, yy = py;
+      if (mv !== null && mv > 0) {
+        const j = c.map[i];
+        if (j < 0) { m = Math.min(m, 2 * (1 - sm(0, .3, mv))); }
+        else {
+          const q = easeIO(clamp((mv - c.order[i] * .5) / (c.anagram.dur - .5)));
+          const tx = CX + dst[j].x; px = lerp(px, tx, q); yy = py - Math.sin(Math.PI * q) * fs * (1.2 + .8 * ((i % 2) ? 1 : -1));
+        }
+      }
+      const gl = m < 1 && /[A-Z]/.test(o.ch) ? liveGlyph(c, ci, i, o.ch, age) : null;
+      x.save(); x.globalAlpha = ain; drawLetter(x, o.ch, m, px, yy, fs, gl); x.restore();
+    });
+    if (mv !== null && mv > 0) {   // знаки препинания ответа
+      dst.forEach(q => { if (!/[.,?!]/.test(q.ch)) return;
+        const a = sm(c.anagram.dur - .4, c.anagram.dur, mv) * env * (1 - sm(c.latinTo, c.latinTo + STEP, age));
+        if (a > .01) { x.save(); x.globalAlpha = a; x.font = `600 ${fs}px Cinzel, Georgia, serif`; x.fillStyle = '#f6e7c2'; x.fillText(q.ch, CX + q.x, py); x.restore(); } });
+    }
+  }
+  x.restore();
+}
+
+/* ---------- счётчик перемен: девять ромбов вверху ---------- */
+function drawCounter(x, mutDone, dark) {
+  const n = 9, sz = H * .022, gap = sz * 2.6, x0 = CX - gap * (n - 1) / 2, y0 = H * .055;
+  const vis = sm(13.6, 15.2, rt) * (1 - sm(100.0, 101.6, rt));
+  if (vis <= 0) return;
+  x.save(); x.globalAlpha = vis;
+  for (let i = 0; i < n; i++) {
+    const cx = x0 + i * gap, lit = i < mutDone && i >= dark, ft = MUT[i][0], fl = Math.max(0, 1 - Math.abs(rt - ft) / .6) * (rt >= ft ? 1 : 0);
+    x.beginPath(); x.moveTo(cx, y0 - sz); x.lineTo(cx + sz * .42, y0); x.lineTo(cx, y0 + sz); x.lineTo(cx - sz * .42, y0); x.closePath();
+    x.lineWidth = DPR; x.strokeStyle = 'rgba(140,220,255,.6)'; x.stroke();
+    if (lit) { x.fillStyle = `rgba(255,${200 + 55 * fl | 0},${110 + 140 * fl | 0},${.75 + .25 * fl})`; x.fill(); }
+    if (fl > 0) { x.save(); x.globalCompositeOperation = 'lighter'; const g = x.createRadialGradient(cx, y0, 0, cx, y0, sz * 3);
+      g.addColorStop(0, `rgba(255,120,230,${fl})`); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(cx - sz * 3, y0 - sz * 3, sz * 6, sz * 6); x.restore(); }
+  }
+  const st = stageAt(rt);
+  x.font = `500 ${Math.round(H * .021)}px Cinzel, Georgia, serif`; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.fillStyle = 'rgba(160,220,255,.7)'; x.fillText(st[1] + ' · ' + st[2], CX, y0 + sz * 2.6);
+  x.restore();
+}
+
+/* ---------- стадии и метки ---------- */
+const STAGES = [[0, 'I', 'TENEBRAE'], [2.0, 'II', 'INITIUM'], [14.0, 'III', 'LEX'], [24.0, 'IV', 'MUTATIONES'],
+  [60.8, 'V', 'REVELATIO'], [66.4, 'VI', 'OCULUS'], [74.4, 'VII', 'TEMPESTAS'], [84.0, 'VIII', 'NIHIL MUTATUM'], [88.0, 'IX', 'REDITUS']];
+const stageAt = x => { let r = STAGES[0]; for (const s of STAGES) if (x >= s[0]) r = s; return r; };
+const THREADS = [   // [начало, конец, семейство, k или c (через смещение), оттенок]
+  { t0: 15.2, t1: 23.6, n: 9, j: 2, k: 1, hue: 44, w: 1, speed: .09, off: 0 },
+  { t0: 17.6, t1: 23.6, n: 9, j: 6, k: -2, hue: 185, w: 1, speed: .07, off: .4 },
+  ...Array.from({ length: 9 }, (_, j) => ({ t0: 62.4 + j * .2, t1: 87.2, n: 9, j, c: 2 + GAL, hue: 44, w: 1, speed: .06, off: j / 9 }))
+];
+function nonagonVertex(i) {          // вершины нонагона, который складывают девять нитей (в координатах мозаики)
+  const n = 9, d = A * n / 2 * (2 + GAL) / Math.cos(Math.PI / n), ang = TAU * (i + .5) / n - Math.PI / 2;
+  return [Math.cos(ang) * d, Math.sin(ang) * d];
+}
+const EYES = [
+  { t0: 66.4, t1: 76.0, big: true, s: 4.2, blink: 4.1, x: () => 0, y: () => 0 },
+  ...Array.from({ length: 9 }, (_, i) => ({ t0: 68.0 + i * .4, t1: 75.2, big: false, s: 1.15, blink: 2.3 + (i % 3) * .7,
+    x: () => nonagonVertex(i)[0], y: () => nonagonVertex(i)[1] }))
+];
+
+/* ---------- журнал событий (для музыки): время — по расписанию ---------- */
+const EVLOG = []; let lastStage = null, cueIdx = 0;
+const ev = (type, data = {}) => EVLOG.push({ type, ...data, t: +(data.t ?? rt).toFixed(4) });
+const CUES = [
+  ...STAGES.map(s => [s[0], () => ev('stage', { t: s[0], num: s[1], name: s[2] })]),
+  ...CAPTIONS.map(c => [c.t0, () => { caps.push(c); delete c.map;
+    ev('caption', { t: c.t0, text: c.s, until: +(c.t0 + c.dur).toFixed(2),
+      legible: c.latin > 0 ? [+(c.t0 + c.latinFrom).toFixed(2), +(c.t0 + c.latinTo).toFixed(2)] : null,
+      ...(c.anagram ? { anagram: c.anagram.to, anagram_at: +(c.t0 + c.latinFrom + c.anagram.at).toFixed(2) } : {}) }); }]),
+  ...MUT.map(([t0, L], i) => [t0, () => ev('mutation', { t: t0, index: i + 1, n: L.n, dur: +L.dur.toFixed(3) })]),
+  ...CASCADES.map(([t0, j, dir, dur]) => [t0, () => { cascades.push({ j, t0, dur, dir, base: gCasc[j] }); ev('cascade', { t: t0, family: j, dur }); }]),
+  ...EYES.map(e => [e.t0, () => ev('eye', { t: e.t0, big: e.big, until: e.t1 })]),
+  ...THREADS.map(th => [th.t0, () => ev('thread', { t: th.t0, until: th.t1, family: th.j })]),
+  [0.4, () => ev('point', { t: 0.4, note: 'точка света' })],
+  [2.0, () => ev('growth', { t: 2.0, until: 14.0, note: 'кристалл растёт из точки' })],
+  [60.8, () => ev('align', { t: 60.8, until: 64.0, note: 'все сдвиги сходятся: мозаика становится строго девятикратной' })],
+  [88.0, () => ev('unalign', { t: 88.0, until: 92.0 })],
+  [88.8, () => ev('shrink', { t: 88.8, until: 100.0, note: 'кристалл сворачивается' })],
+  [102.4, () => ev('vanish', { t: 102.4, note: 'последний ромб гаснет в точку' })]
+].sort((a, b) => a[0] - b[0]);
+
+/* ---------- рост и сворачивание ---------- */
+function revealAt(x) {
+  if (x < 2.0) return 0;
+  if (x < 14.0) return RAD * Math.pow(lin(2.0, 14.0, x), 1.7) + A * 3.5 * sm(2.0, 3.6, x);
+  if (x < 88.8) return RAD * 3;
+  if (x < 100.0) return RAD * Math.pow(1 - lin(88.8, 100.0, x), 1.7) + A * 3.5;
+  if (x < 102.4) return A * 3.5 * (1 - sm(100.0, 102.4, x));
+  return 0;
+}
+
+/* ---------- кадр ---------- */
+let t = 0, last = performance.now(), paused = false, loopOn = true;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+  W = disp.width = Math.floor(innerWidth * DPR); H = disp.height = Math.floor(innerHeight * DPR);
+  bloomC.width = Math.ceil(W / 4); bloomC.height = Math.ceil(H / 4);
+  CX = W / 2; CY = H / 2; A = Math.max(16 * DPR, Math.min(W, H) / 24); RAD = Math.hypot(W, H) / 2 + A * 2;
+  makeNebula(); for (const k in tilings) { tilings[k].prev.clear(); tilings[k].flash.clear(); }
+}
+function riteRestart() {
+  rt = 0; cueIdx = 0; caps = []; cascades = []; gCasc.fill(0); lastStage = null;
+  threads = THREADS; eyes = EYES;
+  for (const k in tilings) { tilings[k].prev.clear(); tilings[k].flash.clear(); }
+}
+const tlFill = document.getElementById('tlFill');
+(() => { const tl = document.getElementById('tl');
+  for (const [at, num, name] of STAGES) { const i = document.createElement('i'); i.style.left = (at / RITE_LEN * 100) + '%'; i.title = num + ' · ' + name; tl.appendChild(i); } })();
+
+function step(rdt) {
+  rt += rdt; t = rt;
+  if (rt >= RITE_LEN) { if (loopOn) { const over = rt - RITE_LEN; riteRestart(); rt = t = over; ev('restart', { t: 0 }); } else rt = t = RITE_LEN; }
+  while (cueIdx < CUES.length && CUES[cueIdx][0] <= rt) CUES[cueIdx++][1]();
+  updCascades(); updGamma();
+  tlFill.style.width = (rt / RITE_LEN * 100).toFixed(2) + '%';
+}
+function currentLaw() {      // закон, действующий на rt, и волна перемены, если идёт
+  let L = LAW0, tr = null;
+  for (let i = 0; i < MUT.length; i++) {
+    const [t0, M] = MUT[i];
+    if (rt >= t0 + M.dur) L = M;
+    else if (rt >= t0) { tr = { M, q: easeIO((rt - t0) / M.dur) }; break; }
+  }
+  return { L, tr };
+}
+function render() {
+  const x = dctx, rot = rt * .006;
+  x.setTransform(1, 0, 0, 1, 0, 0); x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1;
+  x.fillStyle = '#04020b'; x.fillRect(0, 0, W, H);
+  const nebA = sm(0, 2.4, rt) * (1 - sm(102.4, 106.4, rt));
+  if (nebA > 0) { x.save(); x.translate(CX, CY); x.rotate(-rt * .004); x.globalAlpha = .9 * nebA;
+    x.drawImage(neb, -neb.width * 1.6, -neb.height * 1.6, neb.width * 3.2, neb.height * 3.2); x.restore(); }
+  x.globalAlpha = 1;
+  const reveal = revealAt(rt);
+  x.save(); x.translate(CX, CY); x.rotate(rot);
+  // точка света: из неё всё выходит и в неё всё возвращается
+  const pt = sm(0.4, 1.6, rt) * (1 - sm(3.6, 6.0, rt)) + sm(99.2, 101.6, rt) * (1 - sm(102.4, 105.6, rt));
+  if (pt > 0) { const r = A * (1.2 + 1.5 * pt), g = x.createRadialGradient(0, 0, 0, 0, 0, r);
+    g.addColorStop(0, `rgba(255,250,235,${pt})`); g.addColorStop(.25, `rgba(255,90,220,${.7 * pt})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+    x.save(); x.globalCompositeOperation = 'lighter'; x.fillStyle = g; x.beginPath(); x.arc(0, 0, r, 0, TAU); x.fill(); x.restore(); }
+  if (reveal > 0) {
+    const { L, tr } = currentLaw(), T = tilingFor(L.n);
+    build(T, A, RAD, true);
+    drawTiling(x, T, L, A, 1, reveal);
+    drawThreads(x, T, A, reveal);
+    if (tr) {
+      const M = tr.M, T2 = tilingFor(M.n), ox = M.ox * Math.min(W, H), oy = M.oy * Math.min(W, H);
+      const rr = tr.q * (RAD + Math.hypot(ox, oy)) + 1;
+      build(T2, A, RAD, M.n === L.n);
+      x.save(); x.beginPath(); x.arc(ox, oy, rr, 0, TAU); x.clip();
+      x.fillStyle = 'rgba(4,2,11,.94)'; x.fillRect(-RAD, -RAD, RAD * 2, RAD * 2);
+      drawTiling(x, T2, M, A, 1, reveal); drawThreads(x, T2, A, reveal);
+      x.restore();
+      x.save(); x.globalCompositeOperation = 'lighter';
+      for (const [w, c] of [[26, 'rgba(255,60,210,.18)'], [10, 'rgba(80,230,255,.45)'], [2.5, 'rgba(255,240,255,.9)']]) {
+        x.beginPath(); x.arc(ox, oy, rr, 0, TAU); x.lineWidth = w * DPR; x.strokeStyle = c; x.stroke();
+      }
+      x.restore();
+    }
+    drawEyes(x, rot);
+  }
+  // последний ромб гаснет вспышкой
+  const van = Math.max(0, 1 - Math.abs(rt - 102.4) / .5);
+  if (van > 0) { const g = x.createRadialGradient(0, 0, 0, 0, 0, A * 4); g.addColorStop(0, `rgba(255,240,255,${van})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+    x.save(); x.globalCompositeOperation = 'lighter'; x.fillStyle = g; x.beginPath(); x.arc(0, 0, A * 4, 0, TAU); x.fill(); x.restore(); }
+  x.restore();
+  // свечение
+  bctx.clearRect(0, 0, bloomC.width, bloomC.height); bctx.filter = `blur(${Math.max(2, 3 * DPR)}px)`;
+  bctx.drawImage(disp, 0, 0, bloomC.width, bloomC.height); bctx.filter = 'none';
+  x.globalCompositeOperation = 'lighter'; x.globalAlpha = .45; x.drawImage(bloomC, 0, 0, W, H);
+  x.globalAlpha = 1; x.globalCompositeOperation = 'source-over';
+  // счётчик и подписи — поверх
+  const done = MUT.filter(m => rt >= m[0]).length, dark = rt < 88.8 ? 0 : Math.min(9, Math.floor((rt - 88.8) / .8) + 1);
+  drawCounter(x, done, dark);
+  drawCaptions(x);
+}
+function frame(now) {
+  requestAnimationFrame(frame);
+  const rdt = (now - last) / 1000; last = now;   // часы обряда — по настоящему времени, без ограничения шага
+  if (paused) return;
+  step(rdt); render();
+}
+window.__ritus = { step, render, EVLOG: () => EVLOG, RITE_LEN, BEAT, STAGES,
+  state: () => ({ rt, reveal: revealAt(rt) / RAD, law: currentLaw().L.n }), mtAt: x => x, beatTime: n => n * BEAT };
+
+/* ---------- управление ---------- */
+const ui = document.getElementById('ui'); let uiTimer = 0;
+function showUI() { ui.classList.add('show'); clearTimeout(uiTimer); uiTimer = setTimeout(() => ui.classList.remove('show'), 2800); }
+addEventListener('mousemove', showUI); addEventListener('touchstart', showUI, { passive: true });
+function act(a) {
+  if (a === 'restart') { riteRestart(); paused = false; }
+  else if (a === 'loop') { loopOn = !loopOn; document.getElementById('bLoop').textContent = 'Повтор: ' + (loopOn ? 'вкл' : 'выкл'); }
+  else if (a === 'pause') paused = !paused;
+  else if (a === 'fs') { const d = document; (d.fullscreenElement ? d.exitFullscreen() : d.documentElement.requestFullscreen?.())?.catch?.(() => {}); }
+}
+ui.addEventListener('click', e => { const b = e.target.closest('button'); if (b) act(b.dataset.a); });
+addEventListener('keydown', e => {
+  const m = { ' ': 'pause', p: 'pause', 'з': 'pause', r: 'restart', 'к': 'restart', l: 'loop', 'д': 'loop', f: 'fs', 'а': 'fs' }[e.key.toLowerCase()];
+  if (m) { e.preventDefault(); act(m); }
+});
+let rzT = 0; addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(resize, 150); });
+resize(); riteRestart(); updGamma();
+const fontsReady = Promise.race([document.fonts.load('600 20px Cinzel').catch(() => {}), new Promise(r => setTimeout(r, 2000))]);
+fontsReady.then(() => requestAnimationFrame(n => { last = n; requestAnimationFrame(frame); }));
+</script>
+</body>
+</html>

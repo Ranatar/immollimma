@@ -1,0 +1,102 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso",
+  "vsco"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "cb_sus@plain": 21,
+  "cbsn_sus@sso": 1,
+  "choir@sso": 78,
+  "crotales@sso": 1,
+  "harp@plain": 212,
+  "hn_sus@plain": 9,
+  "org_loud@plain": 25,
+  "org_quiet@plain": 232,
+  "sample@plain": 52,
+  "sample@sso": 2,
+  "tba_sus@plain": 1,
+  "tbn_sus@plain": 27,
+  "timp@plain": 18,
+  "timp_roll@vsco": 2,
+  "tpt_sus@plain": 9,
+  "vc_harm@sso": 2,
+  "vc_sus@plain": 19,
+  "vla_harm@sso": 2,
+  "vla_pizz@plain": 96,
+  "vla_sus@plain": 120,
+  "vln_harm@sso": 28,
+  "vln_sus@plain": 113
+ },
+ "substitutions": {
+  "timp_roll": "plain unavailable → vsco"
+ },
+ "missing": {},
+ "out_of_range_rescued": {
+  "timp_roll": 2
+ },
+ "sfizz_notes": 107,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  108.8
+ ],
+ "seconds": 108.8,
+ "mp3": "/home/claude/immollimma/requests/novem-mutationes/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/novem-mutationes/out/score.mid",
+  "lost": {
+   "raw samples (noises, unpitched percussion)": 54,
+   "notes with a glissando inside": 8
+  },
+  "musicxml": "/home/claude/immollimma/requests/novem-mutationes/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/novem-mutationes/out/score.pdf",
+  "grid": [
+   4,
+   3
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   14.8,
+   18.0,
+   24.2,
+   31.2,
+   48.0,
+   61.2,
+   72.5,
+   74.5,
+   75.0,
+   85.2,
+   88.0,
+   100.5
+  ],
+  "png": "/home/claude/immollimma/requests/novem-mutationes/out/report.png"
+ },
+ "parts_lufs": {
+  "Choir": -23.8,
+  "Basses": -25.1,
+  "Timpani": -26.9,
+  "Organ": -27.9,
+  "Violins": -27.9,
+  "Trumpet": -29.1,
+  "Horn": -29.6,
+  "Contrabassoon": -30.0,
+  "Cellos": -30.5,
+  "Trombone": -31.0,
+  "Harp": -31.8,
+  "Tuba": -33.2,
+  "Violas": -34.0,
+  "Crotales": -50.3
+ },
+ "seconds_taken": 46.3
+}
