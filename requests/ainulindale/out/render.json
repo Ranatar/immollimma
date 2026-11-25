@@ -1,0 +1,116 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso",
+  "vsco"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "bsn_sus@plain": 104,
+  "cb_sus@plain": 98,
+  "cb_trem@plain": 10,
+  "cbsn_sus@sso": 28,
+  "choir@sso": 76,
+  "cl_sus@plain": 175,
+  "fl_sus@plain": 171,
+  "harp@plain": 234,
+  "hn_sus@plain": 114,
+  "ob_sus@plain": 70,
+  "org_loud@plain": 2,
+  "picc_sus@vsco": 46,
+  "sample@sso": 4,
+  "tba_sus@plain": 86,
+  "tbn_sus@plain": 102,
+  "timp@plain": 4,
+  "timp_roll@vsco": 3,
+  "tpt_sus@plain": 97,
+  "vc_pizz@plain": 8,
+  "vc_sus@plain": 133,
+  "vc_trem@plain": 10,
+  "vla_sus@plain": 202,
+  "vla_trem@plain": 10,
+  "vln_harm@sso": 4,
+  "vln_solo@vsco": 8,
+  "vln_sus@plain": 224
+ },
+ "substitutions": {
+  "timp_roll": "plain unavailable → vsco"
+ },
+ "missing": {},
+ "out_of_range_rescued": {
+  "timp_roll": 3
+ },
+ "sfizz_notes": 149,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  224.0
+ ],
+ "seconds": 224.0,
+ "mp3": "/home/claude/immollimma/requests/ainulindale/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/ainulindale/out/score.mid",
+  "lost": {
+   "notes with a glissando inside": 30,
+   "raw samples (noises, unpitched percussion)": 4
+  },
+  "musicxml": "/home/claude/immollimma/requests/ainulindale/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/ainulindale/out/score.pdf",
+  "grid": [
+   4,
+   3
+  ]
+ },
+ "qa": {
+  "gaps": [
+   [
+    182.0,
+    184.0
+   ]
+  ],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   6.8,
+   9.8,
+   11.0,
+   14.8,
+   33.5,
+   36.5,
+   49.2,
+   52.2,
+   184.2,
+   190.5,
+   199.5,
+   208.0
+  ],
+  "png": "/home/claude/immollimma/requests/ainulindale/out/report.png"
+ },
+ "parts_lufs": {
+  "Choir": -19.7,
+  "Trumpet": -20.4,
+  "Violins": -20.9,
+  "Horn": -21.6,
+  "Harp": -24.3,
+  "Trombone": -24.4,
+  "Cellos": -25.5,
+  "Violas": -25.6,
+  "Flute": -26.3,
+  "Tuba": -26.6,
+  "Contrabassoon": -27.0,
+  "Organ": -28.4,
+  "Timpani": -28.6,
+  "Basses": -28.7,
+  "Violin solo": -28.9,
+  "Oboe": -29.4,
+  "Clarinet": -29.6,
+  "Piccolo": -30.0,
+  "Bassoon": -32.1
+ },
+ "seconds_taken": 83.5
+}
