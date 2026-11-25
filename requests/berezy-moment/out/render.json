@@ -7,28 +7,29 @@
   "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising"
  ],
  "by_instrument": {
-  "piano@sso": 911
+  "piano@sso": 1405
  },
  "substitutions": {},
  "missing": {},
  "out_of_range_rescued": {},
- "sfizz_notes": 798,
+ "sfizz_notes": 1146,
  "lengthened": 0,
  "window": [
   0.0,
-  264.51000000000005
+  287.01
  ],
- "seconds": 264.51000000000005,
+ "seconds": 287.01,
  "mp3": "/home/claude/immollimma/requests/berezy-moment/out/audio.mp3",
  "notation": {
   "midi": "/home/claude/immollimma/requests/berezy-moment/out/score.mid",
   "lost": {
-   "notes with detune (out-of-tune doubles)": 35
+   "notes with detune (out-of-tune doubles)": 65
   },
   "musicxml": "/home/claude/immollimma/requests/berezy-moment/out/score.musicxml",
   "pdf": "/home/claude/immollimma/requests/berezy-moment/out/score.pdf",
   "grid": [
-   8
+   8,
+   3
   ]
  },
  "qa": {
@@ -37,25 +38,25 @@
   "clicks": [],
   "flat": [],
   "bounds": [
+   8.8,
+   16.8,
    33.2,
    49.8,
-   79.8,
-   95.2,
-   111.8,
-   116.0,
-   165.8,
-   188.0,
-   200.8,
-   205.0,
-   211.2,
-   241.0
+   103.5,
+   125.2,
+   128.5,
+   132.5,
+   149.0,
+   182.2,
+   194.5,
+   265.8
   ],
   "png": "/home/claude/immollimma/requests/berezy-moment/out/report.png"
  },
  "parts_lufs": {
-  "Piano RH": -35.3,
-  "Piano LH": -37.7,
-  "Piano (из динамика)": -37.9
+  "Piano RH": -30.8,
+  "Piano LH": -33.7,
+  "Piano (из динамика)": -35.9
  },
- "seconds_taken": 99.4
+ "seconds_taken": 138.9
 }
