@@ -1,0 +1,129 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso",
+  "vsco"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "bsn_stac@vsco": 49,
+  "bsn_sus@plain": 8,
+  "cb_pizz@plain": 27,
+  "cb_sus@plain": 26,
+  "cbsn_sus@sso": 9,
+  "cl_leg@sso": 5,
+  "cl_stac@vsco": 3,
+  "cl_sus@plain": 73,
+  "fl_stac@vsco": 69,
+  "fl_sus@plain": 91,
+  "harp@plain": 100,
+  "hn_stac@vsco": 3,
+  "hn_sus@plain": 33,
+  "hpsd@sso": 96,
+  "ob_sus@plain": 24,
+  "org_loud@plain": 14,
+  "org_quiet@plain": 76,
+  "picc_sus@vsco": 6,
+  "sample@plain": 1,
+  "sample@sso": 4,
+  "tba_sus@plain": 10,
+  "tbn_sus@plain": 1,
+  "timp@plain": 5,
+  "timp_roll@vsco": 1,
+  "tpt_sus@plain": 1,
+  "vc_pizz@plain": 10,
+  "vc_spic@vsco": 80,
+  "vc_sus@plain": 27,
+  "vc_trem@plain": 2,
+  "vla_harm@sso": 4,
+  "vla_pizz@plain": 78,
+  "vla_sus@plain": 5,
+  "vla_trem@plain": 2,
+  "vln_harm@sso": 10,
+  "vln_pizz@plain": 54,
+  "vln_solo@vsco": 38,
+  "vln_spic@sso": 18,
+  "vln_spic@vsco": 62,
+  "vln_sus@plain": 77,
+  "vln_trem@plain": 4,
+  "xylo@vsco": 18
+ },
+ "substitutions": {
+  "vln_spic": "vsco unavailable → sso",
+  "timp_roll": "plain unavailable → vsco"
+ },
+ "missing": {},
+ "out_of_range_rescued": {
+  "vln_spic": 18,
+  "timp_roll": 1
+ },
+ "sfizz_notes": 333,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  109.4
+ ],
+ "seconds": 109.4,
+ "mp3": "/home/claude/immollimma/requests/ludus-de-casu/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/ludus-de-casu/out/score.mid",
+  "lost": {
+   "notes with a glissando inside": 7,
+   "raw samples (noises, unpitched percussion)": 5
+  },
+  "musicxml": "/home/claude/immollimma/requests/ludus-de-casu/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/ludus-de-casu/out/score.pdf",
+  "grid": [
+   4,
+   3
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   5.0,
+   35.2,
+   36.2,
+   37.8,
+   43.8,
+   47.5,
+   48.5,
+   50.8,
+   51.5,
+   52.2,
+   57.8,
+   92.5
+  ],
+  "png": "/home/claude/immollimma/requests/ludus-de-casu/out/report.png"
+ },
+ "parts_lufs": {
+  "Flute": -25.3,
+  "Horn": -25.6,
+  "Violin solo": -26.4,
+  "Bassoon": -26.8,
+  "Violins": -26.9,
+  "Trumpet": -28.0,
+  "Clarinet": -29.0,
+  "Harp": -29.9,
+  "Piccolo": -30.3,
+  "Timpani": -30.3,
+  "Organ": -31.3,
+  "Basses": -31.5,
+  "Oboe": -31.5,
+  "Cellos": -32.0,
+  "Contrabassoon": -32.2,
+  "Tuba": -33.0,
+  "Xylophone": -33.3,
+  "Harpsichord": -34.7,
+  "Violas": -35.9,
+  "Trombone": -39.4
+ },
+ "seconds_taken": 50.3
+}

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ludus de Casu</title>
+<style>
+  html,body{margin:0;height:100%;background:#050307;overflow:hidden}
+  canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+  #vig{position:fixed;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at 50% 46%,rgba(0,0,0,0) 45%,rgba(0,0,0,.55) 80%,rgba(0,0,0,.92) 100%)}
+  #ui{position:fixed;left:0;right:0;bottom:0;display:flex;flex-direction:column;opacity:0;transition:opacity .6s;
+    font:15px Georgia,"Times New Roman",serif;z-index:5}
+  #ui.show{opacity:1}
+  #btns{display:flex;gap:8px;justify-content:flex-end;align-items:center;padding:8px 14px 10px}
+  #ui button{background:rgba(12,8,16,.78);color:#e8c36a;border:1px solid rgba(232,195,106,.5);font:inherit;padding:4px 11px;cursor:pointer}
+  #ui button:hover{background:rgba(60,20,40,.85);color:#fff0c8}
+  #ui span{color:rgba(232,195,106,.6);margin-left:4px;font-size:13px}
+  #tl{position:relative;height:4px;background:rgba(232,195,106,.16)}
+  #tlFill{height:100%;width:0;background:#e8c36a}
+  #tl i{position:absolute;top:-3px;width:1px;height:10px;background:rgba(255,230,170,.7)}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="vig"></div>
+<div id="ui">
+  <div id="btns">
+    <button data-a="restart" title="R">Сначала</button>
+    <button data-a="loop" id="bLoop" title="L">Повтор: вкл</button>
+    <button data-a="pause" title="P, пробел">Пауза</button>
+    <button data-a="fs" title="F">Во весь экран</button>
+    <span>R · L · P · F</span>
+  </div>
+  <div id="tl"><div id="tlFill"></div></div>
+</div>
+<script>
+'use strict';
+/* Ludus de Casu — «Пьеса о Падении»: маска, какую играла бы труппа арлекинов. Сцена — ромбическая шахматка фона
+   «Saltatio Larvarum». 45 тактов по 2,4 с (75 уд/мин, такт на три), 108 с, по кругу. Все события — на сетке тактов
+   и долей; часы — настоящие; разброс берётся из хеша плитки и засеянного генератора — прогон воспроизводим.
+   I Aurea aetas — согласие: трое танцуют зеркально, каждое па возвращает узор к себе.
+   II Luxuria — входит Одиночка: где проходит, узор переходит в её цвета; па перестают возвращаться.
+   III Casus — всё стягивается в вихрь к середине; вспышка; тьма.
+   IV Ruina — пепел: редкие серые осколки падают; через руины идёт Шут Смерти.
+   V Risus — смеётся Бог: узор собирается заново из середины — в траурной изнанке; по швам бегут нити Паутины.
+   VI Larva — танцоры обводят маску, и её половины сходятся: одна смеётся, другая плачет; занавес.
+   Слов нет: маска безмолвна. Письмо — след танца: знаки своей письменности вытанцовываются на поле
+   (согласие — двое зеркально, искажённый — Одиночка, обломки — Шут Смерти, смех — трое).
+   Маска собирается половинами через всё представление: тень контура (I), смеющаяся половина Одиночки (II),
+   плачущая половина в пепле (IV), обводка и схождение (VI). */
+
+const TAU = Math.PI * 2;
+const clamp = (x, a = 0, b = 1) => x < a ? a : x > b ? b : x;
+const lerp = (a, b, t) => a + (b - a) * t;
+const sm = (a, b, x) => { const u = clamp((x - a) / (b - a)); return u * u * (3 - 2 * u); };
+const easeIO = t => { t = clamp(t); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+function mulberry32(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const hex2rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const h01 = (n, k) => { let x = (n ^ (k * 0x9E3779B1)) >>> 0; x = Math.imul(x ^ x >>> 16, 0x45d9f3b) >>> 0; x = Math.imul(x ^ x >>> 16, 0x45d9f3b) >>> 0; return ((x ^ x >>> 16) >>> 0) / 4294967296; };
+
+const BEAT = .8, BAR = 2.4, NBARS = 45, LEN = NBARS * BAR;   // 108 с
+const B = n => +(n * BAR).toFixed(4);
+
+/* ---------- цвета ---------- */
+const COL = Object.fromEntries(Object.entries({
+  a: '#b3122e', b: '#d9a02a', c: '#e6dcc4', d: '#203f7a', dark: '#120c16', void: '#060408',
+  bone: '#efe5cf', ink: '#0a070c', tear: '#d1163a', gold: '#e8b84a', night: '#3a1440', rim: '#d9a02a',
+  s1: '#b25fe0', s2: '#ff4fa8', s3: '#ffd0f4', sd: '#2a0f2a', ash1: '#7a736c', ash2: '#34302f',
+  g_gold: '#ffe08a', g_pink: '#ff8ad8', g_bone: '#f2ead8', g_ivory: '#fff4dc', tearD: '#6e1424'
+}).map(([k, v]) => [k, hex2rgb(v)]));
+const DANCER_COL = [hex2rgb('#ffd27a'), hex2rgb('#b07cff'), hex2rgb('#f2ead8')];
+const SOL_COL = hex2rgb('#ff5fc0'), JEST_COL = hex2rgb('#f4eadc');
+const DARKS = new Set(['dark', 'ink', 'void', 'sd', 'ash2']);
+
+/* ---------- холст и решётка (центр плитки = p·(w,h) + q·(−w,h)) ---------- */
+const cv = document.getElementById('c'), cx = cv.getContext('2d');
+let W, H, DPR, TW, TH, CX, CY, tiles = [], grid = new Map();
+const key = (p, q) => p * 4096 + q;
+function newTile(p, q) {
+  const hs = ((p * 73856093) ^ (q * 19349663)) >>> 0;
+  return { p, q, hs, h1: h01(hs, 1), h2: h01(hs, 2), h3: h01(hs, 3), h4: h01(hs, 4), phi: 0, phi0: 0, phi1: 0, f0: -9, fdur: .7, axis: 0,
+    faces: ['void', 'void'], show: ['night', 'night'], dx: 0, dy: 0, vx: 0, vy: 0, s: 0, vs: 0, tint: 0, tc: [0, 0, 0],
+    prx: 0, pry: 0, prot: 0, mx: 0, my: 0, rot: 0, sc: 1, glow: 0 };
+}
+function build(fresh) {
+  DPR = Math.min(devicePixelRatio || 1, 1.5);
+  W = cv.width = Math.floor(innerWidth * DPR); H = cv.height = Math.floor(innerHeight * DPR); CX = W / 2; CY = H * .48;
+  TW = Math.max(9, Math.round(Math.min(W, H) / 58)); TH = Math.round(TW * 1.55);
+  const old = fresh ? new Map() : grid; tiles = []; grid = new Map();
+  const mX = 8 * TW, mY = 8 * TH;
+  for (let s = -40; s <= Math.ceil(H / TH) + 40; s++) for (let d = -60; d <= Math.ceil(W / TW) + 60; d++) {
+    if ((s + d) & 1) continue;
+    const p = (s + d) / 2, q = (s - d) / 2, x = (p - q) * TW, y = (p + q) * TH;
+    if (x < -mX || x > W + mX || y < -mY || y > H + mY) continue;
+    const T = old.get(key(p, q)) || newTile(p, q);
+    T.x = x; T.y = y; tiles.push(T); grid.set(key(p, q), T);
+    const m = maskAt(x, y), mL = maskAt(CX + (x - CX) / 1.3, y);
+    T.rim = m === 'rim'; T.inL = x < CX && mL !== 'night';
+    T.inR = x > CX && m !== 'night'; T.rCol = { ink: 'ash2', bone: 'ash1', tear: 'tearD', rim: 'ash1', gold: 'ash1' }[m] || 'ash2';
+  }
+}
+function contentColor(T, mode) {
+  const { p, q } = T, even = ((p + q) & 1) === 0;
+  switch (mode) {
+    case 'norm': return even ? ((p & 1) ? 'b' : 'a') : 'dark';
+    case 'inv': return even ? 'dark' : ((p & 1) ? 'd' : 'c');
+    case 'slaa': return even ? (T.h1 < .5 ? 's1' : T.h1 < .85 ? 's2' : 's3') : 'sd';
+    case 'ash': return T.h2 < .55 ? 'ash1' : 'ash2';
+    case 'mask': return maskAt(T.x, T.y);
+    case 'maskL': {   // смеющаяся половина Одиночки: растянута и в её цветах
+      const m = maskAt(CX + (T.x - CX) / 1.3, T.y);
+      return { bone: 's3', ink: 'sd', gold: 's2', tear: 's2', rim: 's1' }[m] || contentColor(T, 'slaa');
+    }
+    default: return mode.startsWith('g_') ? mode : 'void';
+  }
+}
+const faceHalfW = vv => vv < 0 ? .74 * Math.sqrt(clamp(1 - Math.pow((vv + .02) / .98, 2))) : .74 * Math.sqrt(clamp(1 - vv * vv)) * (1 - .34 * vv);
+const MASK_S = () => H * .44;
+function maskAt(x, y) {
+  const S = MASK_S(), u = (x - CX) / S, v = (y - CY) / S;
+  const halfW = faceHalfW(v);
+  if (v < -1 || v > .98 || Math.abs(u) > halfW + .07) return 'night';
+  if (Math.abs(u) > halfW) return 'rim';
+  const left = u < 0, skin = left ? 'bone' : 'ink', feat = left ? 'ink' : 'bone';
+  if (Math.abs(u) / .1 + Math.abs(v + .62) / .14 < 1) return 'gold';
+  for (const sx of [-1, 1]) {
+    const ex = u - sx * .27, ey = v + .14, a = -sx * .3, xr = ex * Math.cos(a) - ey * Math.sin(a), yr = ex * Math.sin(a) + ey * Math.cos(a);
+    if (Math.abs(xr) < .2 && Math.abs(yr) < .095 * (1 - Math.pow(xr / .2, 2))) return feat;
+    const by = sx < 0 ? -.33 - .07 * (1 - Math.pow(ex / .2, 2)) : -.3 + .06 * (ex / .2);
+    if (Math.abs(ex) < .21 && Math.abs(v - by) < .04) return feat;
+  }
+  if (!left && (Math.abs(u - .3) / .05 + Math.abs(v - .1) / .085 < 1 || Math.abs(u - .31) / .035 + Math.abs(v - .27) / .06 < 1)) return 'tear';
+  if (Math.abs(u) < .3) { const c = left ? -.13 : .11, my = .44 + c * Math.pow(u / .3, 2); if (Math.abs(v - my) < .055) return feat; }
+  if (left && Math.abs(u + .33) / .04 + Math.abs(v - .16) / .06 < 1) return 'tear';
+  return skin;
+}
+
+/* ---------- часы ---------- */
+let rt = 0, last = performance.now(), paused = false, loopOn = true;
+let rng = mulberry32(0xA11E9);
+const tau = t => t + BEAT / TAU * .85 * Math.sin(TAU * t / BEAT);
+
+/* ---------- состояние представления (функции времени) ---------- */
+const seduce = () => sm(24, 43.2, rt);
+const vortexV = () => rt < 43.2 ? 0 : rt < 55.2 ? Math.pow((rt - 43.2) / 12, 1.6) : 1;
+const phase = () => rt < 55.2 ? 'live' : rt < 57.6 ? 'dark' : rt < 72 ? 'ruina' : 'risus';
+const vortex = (x, y) => {                                         // стягивание к середине по спирали
+  const v = vortexV(); if (v <= 0) return [x, y];
+  const dx = x - CX, dy = y - CY, r = Math.hypot(dx, dy), a = Math.atan2(dy, dx);
+  const R0 = Math.min(W, H) * .5, a2 = a + v * v * 7 * (1 + 1.5 / (r / R0 + .25)), r2 = r * Math.pow(1 - v, 1.4);
+  return [CX + Math.cos(a2) * r2, CY + Math.sin(a2) * r2];
+};
+
+/* ---------- танцоры ---------- */
+function harmPos(i, t) {
+  const s = tau(t) * .21, x0 = CX + W * .34 * Math.sin(s) * Math.cos(.31 * s), y0 = CY + H * .3 * Math.sin(1.37 * s + .7);
+  return i === 0 ? [x0, y0] : i === 1 ? [2 * CX - x0, y0] : [2 * CX - x0, 2 * CY - y0];
+}
+function solPos(t) {
+  const e = sm(24, 38.4, t), x = lerp(-.12 * W, CX, e) + W * .14 * Math.sin(.9 * t) * (1 - .6 * e), y = CY + H * .28 * Math.sin(.63 * t) * (1 - sm(24, 43.2, t) * .8);
+  return [x, y];
+}
+const jx = t => {                  // путь Шута Смерти по x: входит, пишет обломки знака, уходит направо
+  const K = [[59.2, -.08], [62.4, .16], [67.2, .44], [71.5, 1.08]];
+  if (t <= K[0][0]) return K[0][1] * W;
+  for (let k = 1; k < K.length; k++) if (t <= K[k][0]) return lerp(K[k - 1][1], K[k][1], (t - K[k - 1][0]) / (K[k][0] - K[k - 1][0])) * W;
+  return K[3][1] * W;
+};
+function dancerState(i, t) {      // [x, y, вес, цвет] — свой путь, а во время письма — перо
+  const b = baseDancer(i, t);
+  for (const J of jobs) {
+    const tr = J.tracks.find(k => k.d === i); if (!tr) continue;
+    const w = sm(J.t0 - .6, J.t0, t) * (1 - sm(J.t1, J.t1 + .6, t)); if (w <= 0) continue;
+    const [px, py] = penAt(tr, clamp((t - J.t0) / (J.t1 - J.t0)));
+    const base = b || [px, py, 0, i === 3 ? SOL_COL : i === 4 ? JEST_COL : DANCER_COL[i]];
+    return [lerp(base[0], px, w), lerp(base[1], py, w), Math.max(base[2], w), base[3]];
+  }
+  return b;
+}
+function baseDancer(i, t) {
+  if (i < 3) {
+    if (t < 4.8) return null;
+    if (t < 55.2) {
+      let [x, y] = harmPos(i, t); const sd = sm(24, 43.2, t);
+      if (sd > 0) { const [sx, sy] = solPos(t), ro = H * .15 * (1 - .5 * sd), a = 1.7 * t + i * 2.094; x = lerp(x, sx + ro * Math.cos(a), sm(0, .8, sd)); y = lerp(y, sy + ro * Math.sin(a), sm(0, .8, sd)); }
+      [x, y] = vortex(x, y);
+      return [x, y, sm(4.8, 7.2, t), DANCER_COL[i]];
+    }
+    if (t < 74.4 || t > 97.2) return null;
+    const [hx, hy] = harmPos(i, t), r = sm(74.4, 79.2, t);
+    return [lerp(CX, hx, r), lerp(CY, hy, r), sm(74.4, 75.6, t) * (1 - sm(96, 97.2, t)), DANCER_COL[i]];
+  }
+  if (i === 3) { if (t < 24 || t >= 55.2) return null; const [x, y] = vortex(...solPos(t)); return [x, y, sm(24, 25.2, t), SOL_COL]; }
+  if (i === 4) { if (t < 59.2 || t > 71.5) return null; return [jx(t), H * .56 + H * .05 * Math.sin(TAU * t / (BEAT * 2)), sm(59.2, 60.4, t) * (1 - sm(70.5, 71.5, t)), JEST_COL]; }
+  return null;
+}
+const DANCERS = [0, 1, 2, 3, 4];
+let dancers = [];
+
+/* ---------- па ---------- */
+let waves = [], glides = [], spins = [], laughs = [], threads = [];
+function flipTile(T, mode, t0, axis, dur = .7) {
+  const k = Math.round(T.phi1 / Math.PI);
+  if (T.show[k & 1] === mode) return;
+  T.faces[(k + 1) & 1] = contentColor(T, mode); T.show[(k + 1) & 1] = mode;
+  T.phi0 = T.phi; T.phi1 = (k + 1) * Math.PI; T.f0 = t0; T.fdur = dur; T.axis = axis;
+}
+function startWave(kind, mode, o = {}) {
+  waves.push({ kind, mode, t0: rt, speed: o.speed || W * .55, ang: o.ang ?? 0, ox: o.ox ?? CX, oy: o.oy ?? CY, axis: o.axis ?? 0,
+    dur: o.dur || .7, maxR: o.maxR || Infinity, only: o.only || null, done: new Set() });
+}
+function waveDist(w, T) {
+  if (w.kind === 'line') { const ca = Math.cos(w.ang), sa = Math.sin(w.ang); return (T.x * ca + T.y * sa) - Math.min(0, W * ca, H * sa, W * ca + H * sa); }
+  if (w.kind === 'open') return Math.abs(T.x - CX);
+  if (w.kind === 'close') return Math.max(0, W / 2 - Math.abs(T.x - CX));
+  if (w.kind === 'contour') {           // от обведённого контура — внутрь лица и наружу
+    const S = MASK_S(), u = (T.x - CX) / S, v = (T.y - CY) / S, hw = v < -1 || v > .98 ? 0 : faceHalfW(v);
+    return (Math.abs(Math.abs(u) - hw - .035) + Math.max(0, -1 - v) + Math.max(0, v - .98)) * S;
+  }
+  const dx = T.x - w.ox, dy = T.y - w.oy, r = Math.hypot(dx, dy);
+  return w.kind === 'spiral' ? r + (Math.atan2(dy, dx) + Math.PI) / TAU * TW * 14 : r;
+}
+function updWaves() {
+  for (const w of waves) {
+    const front = (rt - w.t0) * w.speed;
+    for (const T of tiles) {
+      if (w.done.has(T)) continue;
+      if (w.only && !w.only(T)) { w.done.add(T); continue; }
+      const d = waveDist(w, T);
+      if (d > w.maxR) { w.done.add(T); continue; }
+      if (d <= front) { w.done.add(T); flipTile(T, w.mode, w.t0 + d / w.speed, w.axis, w.dur); }
+    }
+    if (w.done.size >= tiles.length) w.end = true;
+  }
+  waves = waves.filter(w => !w.end);
+}
+function startGlide(o = {}) {
+  const dir = rng() < .5 ? 1 : 2, sign = rng() < .5 ? -1 : 1, width = 2 + (rng() * 3 | 0) * 2;
+  const T0 = pickTile(), c0 = dir === 1 ? T0.q : T0.p;
+  glides.push({ dir, sign, a: c0 - width / 2, b: c0 + width / 2, t0: rt, dur: BAR * .9, step: o.broken ? 1 : 2, broken: !!o.broken });
+}
+function startSpin(o = {}) {
+  const T0 = pickTile();
+  spins.push({ pc: T0.p, qc: T0.q, cx: T0.x, cy: T0.y, k: 3 + (rng() * 3 | 0), t0: rt, dur: BAR * .85, dir: rng() < .5 ? -1 : 1,
+    turn: o.excess ? 1.5 : 1, excess: !!o.excess });
+}
+function pickTile() { for (let i = 0; i < 40; i++) { const T = tiles[(rng() * tiles.length) | 0]; if (T.x > W * .12 && T.x < W * .88 && T.y > H * .12 && T.y < H * .85) return T; } return tiles[0]; }
+function startLaugh(x, y, n = 3, amp = .55, col) { for (let i = 0; i < n; i++) laughs.push({ x, y, t0: rt + i * BEAT / 3, speed: W * .7, amp: amp - i * amp * .18, col }); }
+function addThread() { threads.push({ T0: pickTile(), dir: rng() < .5 ? 1 : 2, t0: rt, dur: 1.6 }); }
+
+/* ---------- письмо — след танца: знаки своей письменности ---------- */
+const arcPts = (cx_, cy_, r, a0, a1, n = 28) => Array.from({ length: n + 1 }, (_, k) => { const a = (a0 + (a1 - a0) * k / n) * Math.PI / 180; return [cx_ + r * Math.cos(a), cy_ + r * Math.sin(a)]; });
+const mirrorS = st => st.map(([x, y]) => [-x, y]);
+const ORDO_R = [arcPts(.15, 0, .75, -100, 100), arcPts(.15, 0, .38, -70, 70), [[0, -1.15], [.12, -1.02], [.3, -.84]], [[0, 1.15], [.14, 1.02], [.32, .86]]];
+const ORDO_L = ORDO_R.map(mirrorS);
+const skewS = st => st.map(([x, y]) => [x * 1.35 + .3 * y, y * 1.1]);
+const spiralS = Array.from({ length: 49 }, (_, k) => { const th = k / 48 * 3 * Math.PI, r = .06 + .16 * th / Math.PI; return [.2 + r * Math.cos(th), 1.05 + .7 * r * Math.sin(th)]; });
+const GLYPHS = {
+  ordo: { at: () => [CX, CY], sc: () => H * .3, tracks: [[0, ORDO_L], [1, ORDO_R]] },                 // согласие: двое зеркально
+  lux: { at: () => [CX - W * .08, CY], sc: () => H * .3, tracks: [[3, [...ORDO_R, ...ORDO_L.map(skewS), spiralS]]] },
+  ruin: { at: () => [W * .3, H * .48], sc: () => H * .24, tracks: [[4, [...ORDO_L, ...ORDO_R]]], dashed: true },
+  risus: { at: () => [CX, CY - H * .02], sc: () => H * .3, tracks: [[0, [arcPts(0, -.25, .45, 25, 155)]], [1, [arcPts(0, -.25, .75, 25, 155)]], [2, [arcPts(0, -.25, 1.05, 25, 155)]]] }
+};
+let jobs = [], hints = [];
+function makeTrack(d, strokes, gx, gy, S, dashed, seed) {
+  const r = mulberry32(seed), pts = [], step = TW * .45; let sAcc = 0, last = null;
+  strokes.forEach((st, si) => {
+    const jx_ = dashed ? (r() - .5) * .12 : 0, jy_ = dashed ? (r() - .5) * .12 : 0;
+    const P = st.map(([x, y]) => [gx + (x + jx_) * S, gy + (y + jy_) * S]);
+    for (let k = 0; k < P.length; k++) {
+      const [x, y] = P[k];
+      if (last) {
+        const L = Math.hypot(x - last[0], y - last[1]), n = Math.max(1, Math.ceil(L / step)), trace = k > 0;
+        for (let j = 1; j <= n; j++) {
+          sAcc += L / n; const xx = lerp(last[0], x, j / n), yy = lerp(last[1], y, j / n);
+          pts.push({ x: xx, y: yy, s: sAcc, tr: trace && !(dashed && Math.floor(sAcc / (TW * 3)) % 3 === 2), done: false });
+        }
+      } else pts.push({ x, y, s: 0, tr: false, done: false });
+      last = [x, y];
+    }
+  });
+  return { d, pts, L: sAcc || 1 };
+}
+function penAt(tr, u) {
+  const s = u * tr.L, P = tr.pts; let lo = 0, hi = P.length - 1;
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (P[m].s < s) lo = m; else hi = m; }
+  const a = P[lo], b = P[hi], f = b.s > a.s ? (s - a.s) / (b.s - a.s) : 0;
+  return [lerp(a.x, b.x, f), lerp(a.y, b.y, f)];
+}
+function writeGlyph(name, t0, t1, rel, mode, base) {
+  const G = GLYPHS[name], [gx, gy] = G.at(), S = G.sc();
+  jobs.push({ name, t0, t1, rel, mode, base, tiles: [], seen: new Set(), released: false,
+    tracks: G.tracks.map(([d, st], k) => makeTrack(d, st, gx, gy, S, G.dashed, 1000 + k)) });
+}
+function writeMask(t0, t1) {                // обвести контур (двое, зеркально) и черты (третий)
+  const S = MASK_S(), cont = [], feats = [];
+  for (let k = 0; k <= 40; k++) { const v = -1 + 1.98 * k / 40; cont.push([faceHalfW(v) + .035, v]); }
+  for (const sx of [-1, 1]) {
+    const eye = arcPts(0, 0, 1, 0, 360, 30).map(([c, d]) => { const xr = c * .2, yr = d * .095 * (1 - c * c) ** .5; const a = -sx * .3; return [sx * .27 + xr * Math.cos(a) + yr * Math.sin(a), -.14 - xr * Math.sin(a) + yr * Math.cos(a)]; });
+    feats.push(eye);
+  }
+  feats.push(Array.from({ length: 21 }, (_, k) => { const u = -.3 + .6 * k / 20, c = u < 0 ? -.13 : .11; return [u, .44 + c * (u / .3) ** 2]; }));
+  const sc = ([u, v]) => [u * S / (H * .3), v * S / (H * .3)];
+  const G = { tracks: [[0, [mirrorS(cont)]], [1, [cont]], [2, feats]] };
+  jobs.push({ name: 'mask', t0, t1, rel: Infinity, mode: 'mask', base: null, tiles: [], seen: new Set(), released: false,
+    tracks: G.tracks.map(([d, st], k) => makeTrack(d, st.map(x => x.map(sc)), CX, CY, H * .3, false, 2000 + k)) });
+}
+function updJobs() {
+  for (const J of jobs) {
+    if (rt >= J.t0 - .01 && rt <= J.t1 + .05) {
+      const u = clamp((rt - J.t0) / (J.t1 - J.t0));
+      for (const tr of J.tracks) {
+        const sNow = u * tr.L;
+        for (const P of tr.pts) {
+          if (P.done || P.s > sNow) continue; P.done = true; if (!P.tr) continue;
+          const pc = Math.round((P.x / TW + P.y / TH) / 2), qc = Math.round((P.y / TH - P.x / TW) / 2), R = TW * 1.05;
+          for (let dp = -2; dp <= 2; dp++) for (let dq = -2; dq <= 2; dq++) {
+            const T = grid.get(key(pc + dp, qc + dq)); if (!T || J.seen.has(T)) continue;
+            if (Math.hypot(T.x - P.x, T.y - P.y) > R) continue;
+            J.seen.add(T); J.tiles.push(T); T.gl = true; T.gRel = Infinity;
+            flipTile(T, J.mode, rt, 1, .35); T.vs += 1.2;
+          }
+        }
+      }
+    }
+    if (!J.released && rt >= J.rel) {
+      J.released = true; const n = J.tiles.length || 1;
+      J.tiles.forEach((T, k) => { const t0 = J.rel + k / n * .8; T.gRel = t0; if (J.base) flipTile(T, J.base, t0, 0, .5); });
+    }
+  }
+  jobs = jobs.filter(J => rt < Math.max(J.t1 + 1, J.rel === Infinity ? J.t1 + 1 : J.rel + 3));
+}
+const maskHint = () => hints.push(rt);
+
+/* ---------- подписи ---------- */
+let caps = [];
+const cap = (s, kind, dur) => caps.push({ s, kind, born: rt, dur });
+
+/* ---------- сценарий: [время, действие, пометка] ---------- */
+const ACTS = [[0, '', 'PROLOGUS'], [B(2), 'I', 'AUREA AETAS'], [B(10), 'II', 'LUXURIA'], [B(18), 'III', 'CASUS'],
+  [B(24), 'IV', 'RUINA'], [B(30), 'V', 'RISUS'], [B(38), 'VI', 'LARVA'], [B(42), '', 'EXODIUM']];
+const actAt = x => { let r = ACTS[0]; for (const a of ACTS) if (x >= a[0]) r = a; return r; };
+const dancerAt = i => { const s = dancerState(i, rt); return s ? s : [CX, CY]; };
+const LEAD = .6;
+const CUES = [
+  [0.6, () => golds.push({ t: rt, dur: 4.4 }), 'пролог: золотой ромб'],
+  [B(2), () => startWave('open', 'norm', { speed: (W / 2) / BAR, axis: 0, dur: .8 }), 'занавес открывается'],
+  [B(3), () => startGlide(), 'I: скольжение'],
+  [B(4), () => { startSpin(); maskHint(); }, 'I: поворот; тень маски'],
+  [B(5) - LEAD, () => writeGlyph('ordo', B(5), B(7), B(7) + .8, 'g_gold', 'norm'), 'I: знак согласия — двое зеркально (письмо B5–B7)'],
+  [B(7), () => maskHint(), 'I: тень маски'],
+  [B(8), () => startWave('line', 'inv', { ang: 0, speed: W / BAR, axis: 0 }), 'I: волна — изнанка'],
+  [B(9), () => { startWave('line', 'norm', { ang: Math.PI, speed: W / BAR, axis: 0 }); maskHint(); }, 'I: волна — лицо; тень маски'],
+  [B(10), () => {}, 'II: входит Одиночка'],
+  [B(11), () => startSpin({ excess: true }), 'II: поворот с перебором'],
+  [B(12), () => startGlide({ broken: true }), 'II: скольжение не возвращается'],
+  [B(13) - LEAD, () => writeGlyph('lux', B(13), B(15), B(15) + .6, 'g_pink', 'slaa'), 'II: Одиночка вытанцовывает искажённый знак (B13–B15)'],
+  [B(14), () => startLaugh(...dancerAt(3), 5, .7, SOL_COL), 'II: смех Одиночки'],
+  [B(15) + 1.2, () => startGlide({ broken: true }), 'II: скольжение не возвращается'],
+  [B(16), () => { const [x, y] = dancerAt(3); startWave('ring', 'slaa', { ox: x, oy: y, speed: W / (BAR * 1.5), axis: 1, dur: .5 }); }, 'II: всё в её цветах'],
+  [B(17), () => { const [x, y] = dancerAt(3); startWave('ring', 'maskL', { ox: x, oy: y, speed: W / BAR, axis: 1, dur: .5, only: T => T.inL }); startSpin({ excess: true }); }, 'II: её маска — смеющаяся половина'],
+  [B(18), () => {}, 'III: вихрь'],
+  [B(22), () => {}, 'III: за такт до вспышки'],
+  [B(23), () => { flashT = rt; }, 'III: вспышка — тьма'],
+  [B(24), () => enterRuina(), 'IV: пепел'],
+  [B(24) + 1.6, () => {}, 'IV: входит Шут Смерти'],
+  [B(26) - LEAD, () => writeGlyph('ruin', B(26), B(28), B(29), 'g_bone', 'ash'), 'IV: Шут — обломки знака (B26–B28)'],
+  [B(28), () => {}, 'IV: Шут уходит — проступает плачущая половина'],
+  [B(30), () => enterRisus(), 'V: смеётся Бог — сборка из середины'],
+  [B(33), () => startLaugh(CX, CY, 3, .6), 'V: смех'],
+  [B(34) - LEAD, () => writeGlyph('risus', B(34), B(36), B(36) + .6, 'g_ivory', 'inv'), 'V: знак смеха — трое (B34–B36)'],
+  [B(37), () => startGlide(), 'V: скольжение'],
+  [B(38) - LEAD, () => writeMask(B(38), B(40)), 'VI: танцоры обводят маску (B38–B40)'],
+  [B(40), () => startWave('contour', 'mask', { speed: (W / 2) / BAR, axis: 0, dur: .6 }), 'VI: половины сходятся'],
+  [B(41), () => startLaugh(CX, CY, 3, .45), 'VI: маска смеётся'],
+  [B(42), () => startWave('close', 'night', { speed: (W / 2) / BAR, axis: 0, dur: .8 }), 'занавес закрывается'],
+  [B(43), () => golds.push({ t: rt, dur: 3.8 }), 'последний золотой ромб'],
+].sort((a, b) => a[0] - b[0]);
+let flashT = -99, golds = [];
+function enterRuina() {
+  waves = []; glides = []; spins = []; laughs = [];
+  for (const T of tiles) {
+    T.prx = T.pry = T.prot = 0; T.dx = T.dy = T.vx = T.vy = 0; T.s = T.vs = 0; T.tint = 0;
+    const a = contentColor(T, 'ash'); T.faces = [a, a]; T.show = ['ash', 'ash']; T.phi = T.phi0 = T.phi1 = 0;
+    T.alive = T.h3 < .22; T.rsx = (T.h1 - .5) * TW * 6; T.rsy = (T.h2 - .5) * TH * 4; T.rr = T.h4 * TAU; T.gl = false;
+    if (T.inR) { T.faces = [T.rCol, T.rCol]; T.show = ['ghost', 'ghost']; }   // плачущая половина, проступит за Шутом
+  }
+}
+function enterRisus() {
+  startWave('ring', 'inv', { ox: CX, oy: CY, speed: W / (BAR * 2), axis: 1, dur: .6 });
+  startLaugh(CX, CY, 3, .7);
+}
+const ruinPos = (T, t) => [T.x + T.rsx, T.y + T.rsy + (Math.min(t, B(30)) - B(24)) * TH * .35 * (.4 + T.h2)];
+const assembly = T => sm(0, 1, (rt - B(30) - Math.hypot(T.x - CX, T.y - CY) / (W / (BAR * 2))) / 1.6);
+
+/* ---------- журнал событий (для музыки) ---------- */
+const EVLOG = []; let cueT = null, lastAct = null;
+const ev = (type, data = {}) => EVLOG.push({ type, ...data, t: +(data.t ?? cueT ?? rt).toFixed(4) });
+let cueIdx = 0, lastBar = -1, lastBeat = -1;
+
+/* ---------- обновление ---------- */
+function riteUpdate() {
+  if (rt >= LEN) { if (loopOn) { const over = rt - LEN; restart(); rt = over; ev('restart', { t: 0 }); } else rt = LEN; }
+  while (cueIdx < CUES.length && CUES[cueIdx][0] <= rt) {
+    cueT = CUES[cueIdx][0]; const nc = caps.length; CUES[cueIdx][1]();
+    ev('cue', { label: CUES[cueIdx][2] }); void nc; cueIdx++; cueT = null;
+  }
+  const a = actAt(rt); if (a !== lastAct) { lastAct = a; ev('act', { t: a[0], num: a[1], name: a[2] }); }
+  const bar = Math.floor(rt / BAR + 1e-9); if (bar !== lastBar) { lastBar = bar; onBar(bar); }
+  const beat = Math.floor(rt / BEAT + 1e-9); if (beat !== lastBeat) { lastBeat = beat; onBeat(beat); }
+  tlFill.style.width = (rt / LEN * 100).toFixed(2) + '%';
+}
+function onBar(n) {                 // прыжок одного из танцоров на сильной доле
+  for (const D of dancers) if (D.i === n % 3 || (D.i === 3 && n % 2 === 0)) D.leap = rt;
+}
+function onBeat(n) {
+  if (rt > B(33) && rt < B(38) && n % 2 === 0) addThread();
+  else if (rt > B(3) && rt < B(18) && n % 3 === 1 && rng() < .5) addThread();
+}
+function update(dt) {
+  updWaves(); updJobs();
+  for (const T of tiles) {
+    if (T.phi !== T.phi1) { const u = (rt - T.f0) / T.fdur; T.phi = u >= 1 ? T.phi1 : u <= 0 ? T.phi0 : lerp(T.phi0, T.phi1, easeIO(u)); }
+    T.mx = 0; T.my = 0; T.rot = 0; T.sc = 1; T.glow = 0;
+  }
+  for (const g of glides) {
+    const u = easeIO((rt - g.t0) / g.dur), ex = g.dir === 1 ? TW : -TW, ey = TH, k = g.sign * g.step;
+    const finished = rt - g.t0 >= g.dur;
+    for (const T of tiles) {
+      const c = g.dir === 1 ? T.q : T.p; if (c < g.a || c >= g.b) continue;
+      if (finished) { if (g.broken) { T.prx += k * ex; T.pry += k * ey; } } else { T.mx += k * ex * u; T.my += k * ey * u; }
+    }
+    if (finished) g.end = true;
+  }
+  glides = glides.filter(g => !g.end);
+  for (const s of spins) {
+    const finished = rt - s.t0 >= s.dur, u = easeIO((rt - s.t0) / s.dur), a = s.dir * Math.PI * s.turn * u, ca = Math.cos(a), sa = Math.sin(a);
+    for (let dp = -s.k; dp <= s.k; dp++) for (let dq = -s.k; dq <= s.k; dq++) {
+      const T = grid.get(key(s.pc + dp, s.qc + dq)); if (!T) continue;
+      if (finished) { if (s.excess) T.prot += s.dir * Math.PI * .5; continue; }
+      const rx = T.x - s.cx, ry = T.y - s.cy; T.mx += s.cx + rx * ca - ry * sa - T.x; T.my += s.cy + rx * sa + ry * ca - T.y; T.rot += a;
+      T.sc *= 1 + .12 * Math.sin(Math.PI * u); T.glow = Math.max(T.glow, Math.sin(Math.PI * u));
+    }
+    if (finished) s.end = true;
+  }
+  spins = spins.filter(s => !s.end);
+  for (const L of laughs) {
+    const age = rt - L.t0; if (age < 0) continue; const front = age * L.speed, wdt = TW * 3;
+    for (const T of tiles) { const d = Math.hypot(T.x - L.x, T.y - L.y) - front; if (Math.abs(d) < wdt) { const b = L.amp * Math.cos(d / wdt * Math.PI / 2) * Math.exp(-age * .8); T.sc *= 1 + b; T.glow = Math.max(T.glow, b * 1.4); } }
+  }
+  laughs = laughs.filter(L => rt - L.t0 < 2.6);
+  for (const h of hints) { const a = Math.sin(Math.PI * clamp((rt - h) / .9)); if (a > 0) for (const T of tiles) if (T.rim) T.glow = Math.max(T.glow, 1.7 * a); }
+  hints = hints.filter(h => rt - h < 1);
+  // поле домино
+  const prev = dancers; dancers = [];
+  for (const i of DANCERS) {
+    const st = dancerState(i, rt); if (!st || st[2] <= .01) continue;
+    const st2 = dancerState(i, rt + .02) || st, vx = (st2[0] - st[0]) / .02, vy = (st2[1] - st[1]) / .02, sp = Math.min(Math.hypot(vx, vy), W * 2);
+    const old = prev.find(d => d.i === i);
+    const D = { i, x: st[0], y: st[1], w: st[2], col: st[3], sp, leap: old ? old.leap : -9 };
+    const la = rt - D.leap; D.boost = la < .7 ? 1 + 1.6 * Math.sin(Math.PI * la / .7) : 1;
+    dancers.push(D);
+    const R = TW * 3.4 * D.boost * (i === 3 ? 1.3 : 1), pc = Math.round((D.x / TW + D.y / TH) / 2), qc = Math.round((D.y / TH - D.x / TW) / 2), n = Math.ceil(R / TW) + 2;
+    const ph = phase();
+    for (let dp = -n; dp <= n; dp++) for (let dq = -n; dq <= n; dq++) {
+      const T = grid.get(key(pc + dp, qc + dq)); if (!T) continue;
+      const ddx = T.x - D.x, ddy = T.y - D.y, dist = Math.hypot(ddx, ddy); if (dist > R) continue;
+      const f = 1 - dist / R, push = f * f * dt * D.w;
+      if (ph === 'ruina') { T.tint = Math.min(1, T.tint + push * 26); T.tc = D.col; T.vs += push * 3; continue; }
+      T.vs += push * (9 + sp / TW * 1.2) * D.boost;
+      T.vx += (vx * .9 + ddx / (dist + 1) * sp * .6) * push * 1.2; T.vy += (vy * .9 + ddy / (dist + 1) * sp * .6) * push * 1.2;
+      T.tint = Math.min(1, T.tint + push * 7); T.tc = D.col;
+      if (i === 3 && f > .35) flipTile(T, 'slaa', rt, 1, .45);       // где прошла Одиночка — её цвета
+    }
+  }
+  for (const T of tiles) {
+    T.vx += (-26 * T.dx - 7 * T.vx) * dt; T.vy += (-26 * T.dy - 7 * T.vy) * dt; T.dx += T.vx * dt; T.dy += T.vy * dt;
+    T.vs += (-18 * T.s - 6 * T.vs) * dt; T.s = Math.max(0, T.s + T.vs * dt); T.tint *= Math.exp(-dt * 1.4);
+  }
+  threads = threads.filter(th => rt - th.t0 < th.dur);
+}
+
+/* ---------- рисование ---------- */
+function shade(rgb, k, tint, tc) {
+  let r = rgb[0], g = rgb[1], b = rgb[2];
+  if (tint > .01) { r = lerp(r, tc[0], tint * .55); g = lerp(g, tc[1], tint * .55); b = lerp(b, tc[2], tint * .55); }
+  return `rgb(${Math.min(255, r * k) | 0},${Math.min(255, g * k) | 0},${Math.min(255, b * k) | 0})`;
+}
+function render() {
+  cx.globalAlpha = 1; cx.globalCompositeOperation = 'source-over';
+  cx.fillStyle = '#060408'; cx.fillRect(0, 0, W, H);
+  const ph = phase(), sd = seduce(), vv = vortexV();
+  // свечение вихря
+  if (vv > 0 && ph === 'live') {
+    const g = cx.createRadialGradient(CX, CY, 0, CX, CY, Math.min(W, H) * .6);
+    g.addColorStop(0, `rgba(255,120,210,${.5 * vv})`); g.addColorStop(.4, `rgba(140,40,150,${.25 * vv})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+    cx.fillStyle = g; cx.fillRect(0, 0, W, H);
+  }
+  if (ph !== 'dark') drawTiles(ph, sd, vv);
+  // нити Паутины
+  cx.save(); cx.globalCompositeOperation = 'lighter';
+  for (const th of threads) {
+    const u = (rt - th.t0) / th.dur, ex = th.dir === 1 ? TW : -TW, ey = TH, head = lerp(-30, 30, u), ox = th.T0.x, oy = th.T0.y - TH;
+    for (let j = 0; j < 14; j++) {
+      const k0 = head - j * .7, x0 = ox + ex * k0, y0 = oy + ey * k0;
+      cx.strokeStyle = `rgba(255,236,190,${(1 - j / 14) * .6 * Math.sin(Math.PI * u)})`; cx.lineWidth = DPR * (2.4 - j * .1);
+      cx.beginPath(); cx.moveTo(x0, y0); cx.lineTo(x0 + ex * .7, y0 + ey * .7); cx.stroke();
+    }
+  }
+  for (const D of dancers) {
+    const r = TW * 4 * D.boost * (D.i === 3 ? 1.4 : D.i === 4 ? 2 : 1), g = cx.createRadialGradient(D.x, D.y, 0, D.x, D.y, r), c = D.col;
+    g.addColorStop(0, `rgba(${c[0]},${c[1]},${c[2]},${(D.i === 3 ? .2 : D.i === 4 ? .22 : .1) * D.boost * D.w})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+    cx.fillStyle = g; cx.beginPath(); cx.arc(D.x, D.y, r, 0, TAU); cx.fill();
+  }
+  // вспышка Падения
+  const fa = rt - flashT;
+  if (fa >= 0 && fa < 2.4) { cx.fillStyle = `rgba(255,${200 - 60 * clamp(fa)},245,${Math.pow(1 - fa / 2.4, 2.2)})`; cx.fillRect(0, 0, W, H); }
+  // последний ромб
+  for (const G of golds) {
+    const ga = rt - G.t; if (ga < 0 || ga > G.dur) continue;
+    const a = sm(0, .6, ga) * (1 - sm(G.dur - 1.2, G.dur, ga)), s = TW * 1.6;
+    cx.fillStyle = `rgba(232,184,74,${a})`; cx.shadowColor = 'rgba(255,210,120,.9)'; cx.shadowBlur = 30 * DPR;
+    cx.beginPath(); cx.moveTo(CX, CY - s * 1.55); cx.lineTo(CX + s, CY); cx.lineTo(CX, CY + s * 1.55); cx.lineTo(CX - s, CY); cx.closePath(); cx.fill(); cx.shadowBlur = 0;
+  }
+  cx.restore();
+}
+function drawTiles(ph, sd, vv) {
+  cx.lineJoin = 'round';
+  const Rs = Math.min(W, H) * .32, lw = Math.max(1, DPR * .9);
+  for (const T of tiles) {
+    let X = T.x + T.mx + T.dx + T.prx, Y = T.y + T.my + T.dy + T.pry, rot = T.rot + T.prot, sc = T.sc, alpha = 1;
+    if (ph === 'live' && vv > 0) { [X, Y] = vortex(X, Y); rot += vv * vv * 6 * (T.h1 - .5); sc *= 1 - .5 * vv; }
+    else if (ph === 'ruina') {
+      if (T.gl) {                                  // обломки знака: стоят, пока пишутся, потом осыпаются
+        X = T.x + T.dx; Y = T.y + T.dy + Math.max(0, rt - T.gRel) * TH * .9; alpha = 1 - sm(T.gRel, T.gRel + 2.5, rt); if (alpha <= 0) continue;
+      } else if (T.inR) {                          // плачущая половина проступает за прошедшим Шутом
+        alpha = .62 * sm(T.x - TW * 4, T.x + TW * 4, jx(rt)); if (alpha <= .01) continue;
+        X = T.x + Math.sin(rt * .7 + T.h1 * 6) * TW * .08; Y = T.y; sc *= .92;
+      } else { if (!T.alive) continue; const [rx, ry] = ruinPos(T, rt); X = rx + T.dx; Y = ry + T.dy; rot = T.rr + (rt - B(24)) * .25 * (T.h1 - .5); sc *= .8; }
+    } else if (ph === 'risus') {
+      const a = assembly(T), fixed = T.inR, alive = T.alive || fixed; if (a <= 0 && !alive) continue;
+      const [sx, sy] = fixed ? [T.x, T.y] : T.alive ? ruinPos(T, rt) : [CX + (T.h1 - .5) * TW * 2, CY + (T.h2 - .5) * TH * 2];
+      const e = easeIO(a); X = lerp(sx, X, e); Y = lerp(sy, Y, e); rot = lerp(fixed ? 0 : T.alive ? T.rr : T.h4 * TAU * 2, rot, e); sc *= lerp(fixed ? .92 : T.alive ? .8 : .2, 1, e);
+      if (!alive) alpha = clamp(a * 3); else if (fixed) alpha = lerp(.62, 1, e);
+    }
+    if (X < -TW * 3 || X > W + TW * 3 || Y < -TH * 3 || Y > H + TH * 3) continue;
+    const c = Math.cos(T.phi), face = T.faces[Math.round(T.phi / Math.PI) & 1], rgb = COL[face] || COL.dark;
+    let L = .34;
+    for (const D of dancers) { const d2 = ((X - D.x) ** 2 + (Y - D.y) ** 2) / (Rs * Rs); L += .62 * D.w * Math.exp(-d2 * 2.2); }
+    if (ph === 'ruina') L = .45 + 1.0 * T.tint;
+    L += .07 * Math.sin((X + Y) / (TW * 9) - rt * .9);
+    const ac = Math.abs(c); L *= .32 + .68 * ac; if (ac < .45) L += .3 * (1 - ac / .45);
+    L *= 1 + .7 * T.glow;
+    if (face[0] === 's' && face !== 'sd') L *= 1 + .45 * sd;                 // её цвета пересыщаются
+    if (face[0] === 'g' && face[1] === '_') L = Math.max(L, 1) * (1 + .12 * Math.sin(rt * 5 + T.h1 * 6));   // знак светится сам
+    if (face === 'void') L = 1;
+    const col = shade(rgb, DARKS.has(face) && face !== 'void' ? L * 1.6 : face === 'void' ? 1 : L * 1.25, T.tint, T.tc);
+    const sx = (T.axis === 0 ? c : 1) * sc, sy = (T.axis === 1 ? c : 1) * sc, cr = Math.cos(rot), sr = Math.sin(rot);
+    const V = [[0, -TH], [TW, 0], [0, TH], [-TW, 0]].map(([a, b]) => { const ax = a * sx, by = b * sy; return [X + ax * cr - by * sr, Y + ax * sr + by * cr]; });
+    cx.globalAlpha = alpha;
+    if (T.s < .015) {
+      cx.beginPath(); cx.moveTo(V[0][0], V[0][1]); cx.lineTo(V[1][0], V[1][1]); cx.lineTo(V[2][0], V[2][1]); cx.lineTo(V[3][0], V[3][1]); cx.closePath();
+      cx.fillStyle = col; cx.fill(); if (face !== 'void') { cx.strokeStyle = 'rgba(0,0,0,.55)'; cx.lineWidth = lw; cx.stroke(); }
+    } else {
+      const s = Math.min(T.s, 2.2);
+      for (let i = 0; i < 4; i++) {
+        const A = V[i], Bv = V[(i + 1) % 4], mx = (A[0] + Bv[0]) / 2 - X, my = (A[1] + Bv[1]) / 2 - Y;
+        const hh = (T.hs >>> (i * 7)) & 127, ja = (hh / 127 - .5) * 1.6, jr = .6 + (hh & 15) / 15;
+        const off = s * TW * 1.6 * jr, dir = Math.atan2(my, mx) + ja, ox = Math.cos(dir) * off, oy = Math.sin(dir) * off;
+        const spin = (i % 2 ? 1 : -1) * s * (1 + jr), cs = Math.cos(spin), sn = Math.sin(spin), shr = 1 - clamp(s * .22, 0, .45);
+        const pts = [[X, Y], A, Bv].map(([px, py]) => { const rx = (px - X) * shr, ry = (py - Y) * shr; return [X + ox + rx * cs - ry * sn, Y + oy + rx * sn + ry * cs]; });
+        cx.beginPath(); cx.moveTo(pts[0][0], pts[0][1]); cx.lineTo(pts[1][0], pts[1][1]); cx.lineTo(pts[2][0], pts[2][1]); cx.closePath();
+        cx.fillStyle = col; cx.globalAlpha = alpha * clamp(1.1 - s * .3, .35, 1); cx.fill();
+      }
+    }
+  }
+  cx.globalAlpha = 1;
+}
+/* ---------- кадр ---------- */
+function restart() {
+  rt = 0; cueIdx = 0; lastBar = -1; lastBeat = -1; lastAct = null; rng = mulberry32(0xA11E9);
+  waves = []; glides = []; spins = []; laughs = []; threads = []; caps = []; dancers = []; flashT = -99; golds = []; jobs = []; hints = [];
+  build(true);
+}
+// часы обряда — по настоящему времени; пружины — подшагами ≤ 1/60 с
+function step(rdt) { let left = rdt; while (left > 1e-9) { const d = Math.min(left, 1 / 60); rt += d; riteUpdate(); update(d); left -= d; } }
+function frame(now) {
+  requestAnimationFrame(frame);
+  const rdt = (now - last) / 1000; last = now;
+  if (paused) return;
+  step(rdt); render();
+}
+window.__ludus = { step, render, restart, EVLOG: () => EVLOG, get rt() { return rt; }, LEN, BAR, BEAT, ACTS };
+
+const ui = document.getElementById('ui'), tlFill = document.getElementById('tlFill'); let uiT = 0;
+(() => { const tl = document.getElementById('tl'); for (const [at, n, name] of ACTS) { const i = document.createElement('i'); i.style.left = (at / LEN * 100) + '%'; i.title = (n ? n + ' · ' : '') + name; tl.appendChild(i); } })();
+const showUI = () => { ui.classList.add('show'); clearTimeout(uiT); uiT = setTimeout(() => ui.classList.remove('show'), 2800); };
+addEventListener('mousemove', showUI); addEventListener('touchstart', showUI, { passive: true });
+function act(a) {
+  if (a === 'restart') { restart(); paused = false; }
+  else if (a === 'loop') { loopOn = !loopOn; document.getElementById('bLoop').textContent = 'Повтор: ' + (loopOn ? 'вкл' : 'выкл'); }
+  else if (a === 'pause') paused = !paused;
+  else if (a === 'fs') { const d = document; (d.fullscreenElement ? d.exitFullscreen() : d.documentElement.requestFullscreen?.())?.catch?.(() => {}); }
+}
+ui.addEventListener('click', e => { const b = e.target.closest('button'); if (b) act(b.dataset.a); });
+addEventListener('keydown', e => { const m = { r: 'restart', 'к': 'restart', l: 'loop', 'д': 'loop', p: 'pause', 'з': 'pause', ' ': 'pause', f: 'fs', 'а': 'fs' }[e.key.toLowerCase()]; if (m) { e.preventDefault(); act(m); } });
+let rzT = 0; addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(() => build(false), 150); });
+restart(); requestAnimationFrame(t0 => { last = t0; requestAnimationFrame(frame); });
+</script>
+</body>
+</html>
