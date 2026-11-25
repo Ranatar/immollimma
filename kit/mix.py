@@ -114,16 +114,24 @@ def archive(y, points, t0=0.0, seed=5):
 
 
 def mix(buses, seconds, out_path, sends=None, gains=None, master_db=-1.0, fade_in=0.0, fade_out=3.0,
-        stems_dir=None, reverb_seconds=3.2, post=None, t0=0.0):
+        stems_dir=None, reverb_seconds=3.2, post=None, t0=0.0, bus_post=None):
     """buses: {name: (frames, 2) float32}; writes a 24-bit WAV peak-normalised to master_db.
     Stems (one WAV per bus, same scaling, so they sum to the mix) when stems_dir is given.
     post: processes on the whole mix, e.g. [{"kind": "archive", "points": [...]}] (see archive());
-    t0: the time of the first frame in the piece (for windows)."""
+    t0: the time of the first frame in the piece (for windows).
+    bus_post: processes on one bus before the hall, e.g. {"radio": [{"kind": "archive", "points": [...]}]} —
+    a sound «from a loudspeaker» inside an otherwise clean mix (the hall is added after, as in the room)."""
     sends = {**SENDS, **(sends or {})}
     gains = {**GAINS, **(gains or {})}
     ir = make_ir(reverb_seconds)
     n = int(seconds * SR)
     y = np.zeros((n, 2), np.float32)
+    buses = dict(buses)
+    for name, procs in (bus_post or {}).items():
+        if name in buses:
+            for pr in procs:
+                if pr.get("kind") == "archive":
+                    buses[name] = archive(buses[name], pr["points"], t0=t0)
     for name, b in buses.items():
         y += _stem(b, n, sends.get(name, 0.3), 10 ** (gains.get(name, 0.0) / 20), ir)
     for pr in post or []:

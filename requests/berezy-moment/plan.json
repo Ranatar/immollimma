@@ -1,0 +1,215 @@
+{
+ "title": "Moment musical «18 берёз» — драматургия песни Чижа в духе op. 16 № 3 Рахманинова",
+ "styles": [
+  "romantic"
+ ],
+ "seconds": 266.5,
+ "tempo_bpm": 58,
+ "meter": "4/4",
+ "key": "B minor",
+ "language": "tonal",
+ "library": "sso",
+ "library_notes": [],
+ "defaults": [
+  "sync.video_file",
+  "ensemble.exclude",
+  "dramaturgy.climax_s",
+  "characters",
+  "silences"
+ ],
+ "sections": [
+  {
+   "t0": 0.0,
+   "t1": 16.6,
+   "label": "Рассвет",
+   "mood": "",
+   "intensity": 0.2,
+   "note": "ломаные аккорды снизу вверх, теплеет на G",
+   "leader": "левая → правая",
+   "texture": "ломаные аккорды снизу вверх",
+   "register": "wide",
+   "pulse": "free",
+   "dynamic": "pp"
+  },
+  {
+   "t0": 16.6,
+   "t1": 50.4,
+   "label": "I куплет",
+   "mood": "",
+   "intensity": 0.4,
+   "note": "тема-ламенто терциями, сарабанда левой, тенор",
+   "leader": "тема терциями",
+   "texture": "сарабанда левой, тенор",
+   "register": "mid",
+   "pulse": "steady",
+   "dynamic": "p"
+  },
+  {
+   "t0": 50.4,
+   "t1": 67.3,
+   "label": "Не спится",
+   "mood": "",
+   "intensity": 0.35,
+   "note": "вздох-задержание над басом-ламенто h–ais–a–gis–g–fis",
+   "leader": "вздох соль–фа#",
+   "texture": "бас-ламенто по полутонам",
+   "register": "mid",
+   "pulse": "slow",
+   "dynamic": "p"
+  },
+  {
+   "t0": 67.3,
+   "t1": 84.2,
+   "label": "II куплет",
+   "mood": "",
+   "intensity": 0.5,
+   "note": "тема гуще, аккорды левой пульсируют",
+   "leader": "тема терциями",
+   "texture": "аккорды левой пульсируют на каждую долю",
+   "register": "mid",
+   "pulse": "steady",
+   "dynamic": "mp"
+  },
+  {
+   "t0": 84.2,
+   "t1": 96.6,
+   "label": "Из динамика — Рахманинов",
+   "mood": "",
+   "intensity": 0.25,
+   "note": "такты 1–3 op. 16 № 3 через полосу репродуктора, шорох, треск; рояль молчит",
+   "leader": "op. 16 № 3 из динамика",
+   "texture": "репродуктор: полоса, шорох",
+   "register": "narrow",
+   "pulse": "steady",
+   "dynamic": "pp"
+  },
+  {
+   "t0": 96.6,
+   "t1": 113.5,
+   "label": "II куплет, вторая фраза",
+   "mood": "",
+   "intensity": 0.55,
+   "note": "вторая фраза темы, пульс",
+   "leader": "тема терциями",
+   "texture": "пульс левой",
+   "register": "mid",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 113.5,
+   "t1": 117.7,
+   "label": "Пацифистский значок",
+   "mood": "",
+   "intensity": 0.2,
+   "note": "чистый до-мажор высоко, чужой (неаполитанский)",
+   "leader": "до-мажор высоко",
+   "texture": "один аккорд и отблеск",
+   "register": "high",
+   "pulse": "free",
+   "dynamic": "pp"
+  },
+  {
+   "t0": 117.7,
+   "t1": 134.6,
+   "label": "Не спится (настойчиво)",
+   "mood": "",
+   "intensity": 0.6,
+   "note": "вздох дважды в такте, бас в октавах",
+   "leader": "вздох дважды в такте",
+   "texture": "бас-ламенто в октавах",
+   "register": "wide",
+   "pulse": "steady",
+   "dynamic": "mf"
+  },
+  {
+   "t0": 134.6,
+   "t1": 184.9,
+   "label": "Поезд",
+   "mood": "",
+   "intensity": 0.95,
+   "note": "октавы левой восьмыми, «поезд» ×4, «знаю» ×3, A7 — фермата, D-dur ff, g-moll, обвал",
+   "leader": "аккорд-«поезд» → мотив «знаю» → тема в D-dur октавами",
+   "texture": "октавы левой восьмыми (колёса), ускорение",
+   "register": "wide",
+   "pulse": "fast",
+   "dynamic": "f→ff"
+  },
+  {
+   "t0": 184.9,
+   "t1": 218.8,
+   "label": "III куплет: восемнадцать берёз",
+   "mood": "",
+   "intensity": 0.35,
+   "note": "мелодия одна, 18 ударов счёта и обрыв, ветер, сухой удар",
+   "leader": "мелодия одна",
+   "texture": "счёт — 18 высоких ударов, ветер",
+   "register": "wide",
+   "pulse": "steady",
+   "dynamic": "p"
+  },
+  {
+   "t0": 218.8,
+   "t1": 235.3,
+   "label": "Не спится (расплывается)",
+   "mood": "",
+   "intensity": 0.3,
+   "note": "вздох сбит с долей, рояль расстраивается",
+   "leader": "вздох сбит с долей",
+   "texture": "рояль расстраивается",
+   "register": "mid",
+   "pulse": "free",
+   "dynamic": "p"
+  },
+  {
+   "t0": 235.3,
+   "t1": 260,
+   "label": "Рассвет — кода",
+   "mood": "",
+   "intensity": 0.1,
+   "note": "ломаные аккорды вверх, уменьшённое над E → Fis7 → пустая квинта h",
+   "leader": "—",
+   "texture": "ломаные аккорды вверх, уменьшённое → Fis7 → пустая квинта",
+   "register": "wide",
+   "pulse": "free",
+   "dynamic": "ppp"
+  }
+ ],
+ "hits": [],
+ "silences": [],
+ "themes": [
+  {
+   "name": "ламенто",
+   "notation": "своя, h-moll, 8 тактов, в piece.py THEME",
+   "for": "фортепиано",
+   "transform": "терциями с сарабандой; гуще с пульсом; в D-dur октавами на вершине; одна мелодия над счётом"
+  }
+ ],
+ "characters": [],
+ "avoid": [
+  "квадратная механика",
+  "сухие стаккато",
+  "шумы",
+  "цитат мелодии Чижа и текста песни; эстрадной ритм-секции"
+ ],
+ "devices": [
+  "pad",
+  "melody",
+  "arpeggio(harp)",
+  "chorale",
+  "timp roll"
+ ],
+ "ending": "fade",
+ "deliver": [
+  "mp3",
+  "midi",
+  "musicxml",
+  "pdf",
+  "report"
+ ],
+ "sketch": {
+  "sketch_first": false,
+  "sketch_seconds": 60,
+  "ask_before_full": false
+ }
+}

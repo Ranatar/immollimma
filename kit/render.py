@@ -137,7 +137,7 @@ def render(piece, out_wav, backend="plain", t0=0.0, t1=None, sends=None, gains=N
     g = dict(piece.meta.get("gains", {}), **(gains or {}))
     mixer.mix(r.buses, seconds + (2.0 if full else 0.0), out_wav, sends=s, gains=g, master_db=master_db,
               fade_in=0.0 if full else 0.3, fade_out=3.0 if full else 0.5, stems_dir=stems_dir,
-              post=piece.meta.get("post"), t0=t0)
+              post=piece.meta.get("post"), t0=t0, bus_post=piece.meta.get("bus_post"))
     rep = r.report()
     rep.update(window=[t0, t1], seconds=seconds)
     return rep
