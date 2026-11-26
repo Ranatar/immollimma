@@ -13,7 +13,7 @@
   "cb_pizz@plain": 6,
   "cb_sus@plain": 25,
   "celesta@sso": 9,
-  "choir@sso": 168,
+  "choir@sso": 178,
   "cl_sus@plain": 27,
   "crotales@sso": 13,
   "eh_sus@sso": 39,
@@ -29,19 +29,19 @@
  "substitutions": {},
  "missing": {},
  "out_of_range_rescued": {},
- "sfizz_notes": 219,
+ "sfizz_notes": 224,
  "lengthened": 0,
  "window": [
   0.0,
   367.0
  ],
  "seconds": 367.0,
- "mp3": "/home/claude/ranatar/immollimma/requests/hora-lucis-defunctae/out/audio.mp3",
+ "mp3": "/home/claude/immollimma/requests/hora-lucis-defunctae/out/audio.mp3",
  "notation": {
-  "midi": "/home/claude/ranatar/immollimma/requests/hora-lucis-defunctae/out/score.mid",
+  "midi": "/home/claude/immollimma/requests/hora-lucis-defunctae/out/score.mid",
   "lost": {},
-  "musicxml": "/home/claude/ranatar/immollimma/requests/hora-lucis-defunctae/out/score.musicxml",
-  "pdf": "/home/claude/ranatar/immollimma/requests/hora-lucis-defunctae/out/score.pdf",
+  "musicxml": "/home/claude/immollimma/requests/hora-lucis-defunctae/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/hora-lucis-defunctae/out/score.pdf",
   "grid": [
    4,
    3
@@ -57,16 +57,16 @@
    40.2,
    75.8,
    80.2,
-   85.2,
-   88.2,
-   92.2,
+   87.8,
    232.8,
    255.8,
    273.8,
+   283.8,
    303.8,
-   325.5
+   325.5,
+   364.0
   ],
-  "png": "/home/claude/ranatar/immollimma/requests/hora-lucis-defunctae/out/report.png"
+  "png": "/home/claude/immollimma/requests/hora-lucis-defunctae/out/report.png"
  },
  "parts_lufs": {
   "Horn (Finrod)": -30.9,
@@ -78,7 +78,7 @@
   "English horn": -36.2,
   "Alto flute": -36.6,
   "Horns": -37.6,
-  "Choir III": -38.0,
+  "Choir III": -38.1,
   "Telperion (harmonics)": -39.0,
   "Laurelin (cellos)": -39.2,
   "Harp": -40.1,
@@ -90,5 +90,5 @@
   "Violas": -51.9,
   "Viola harmonics": -53.7
  },
- "seconds_taken": 113.1
+ "seconds_taken": 138.2
 }
