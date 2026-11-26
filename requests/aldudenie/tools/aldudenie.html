@@ -807,6 +807,63 @@ function drawMotes(x) {
   x.globalAlpha = 1;
 }
 
+/* ---------- Исиль и Анар: последний цветок Тельпериона и последний плод Лаурелин ----------
+   «Каждый должен был проходить из Валинора на восток и возвращаться: один выходит с запада, когда другой поворачивает
+   с востока». Исиль восходит с запада (слева), проходит небом и садится на востоке (справа); там же, в 97,4, встаёт
+   Анар и идёт на запад. Вместе их нет: передача — у горизонта. */
+const ORB = {
+  isil: { t0: 90.3, t1: 97.6, x0: .02, x1: .98, peak: .26 },
+  anar: { t0: 97.3, t1: 106.5, x0: .98, x1: .1, peak: .26 }
+};
+function orbPos(o, x) {
+  const p = clamp((x - o.t0) / (o.t1 - o.t0));
+  return [lerp(o.x0, o.x1, p) * W, H * (1.08 - (1.08 - o.peak) * Math.sin(Math.PI * p)), p];
+}
+function drawOrbs(x) {
+  if (rt < 90.3) return;
+  x.save();
+  // Исиль: серебряный диск, вокруг — семь лепестков последнего цветка Тельпериона
+  if (rt < ORB.isil.t1) {
+    const [px, py, p] = orbPos(ORB.isil, rt), a = Math.min(1, p * 8, (1 - p) * 8), R = sp * .62;
+    x.globalCompositeOperation = 'lighter';
+    let g = x.createRadialGradient(px, py, 0, px, py, R * 5); g.addColorStop(0, `rgba(190,210,255,${(.35 * a).toFixed(3)})`); g.addColorStop(.3, `rgba(150,175,235,${(.12 * a).toFixed(3)})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+    x.fillStyle = g; x.beginPath(); x.arc(px, py, R * 5, 0, TAU); x.fill();
+    for (let i = 0; i < 7; i++) {
+      const ang = i * TAU / 7 + rt * .15, cx = px + Math.cos(ang) * R * 1.45, cy = py + Math.sin(ang) * R * 1.45;
+      x.save(); x.translate(cx, cy); x.rotate(ang); x.scale(1, .42);
+      g = x.createRadialGradient(0, 0, 0, 0, 0, R * .9); g.addColorStop(0, `rgba(225,235,255,${(.42 * a).toFixed(3)})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+      x.fillStyle = g; x.beginPath(); x.arc(0, 0, R * .9, 0, TAU); x.fill(); x.restore();
+    }
+    x.globalCompositeOperation = 'source-over'; x.globalAlpha = a;
+    g = x.createRadialGradient(px - R * .3, py - R * .3, R * .1, px, py, R); g.addColorStop(0, '#ffffff'); g.addColorStop(.6, '#dfe8fb'); g.addColorStop(1, '#a9b9dc');
+    x.fillStyle = g; x.beginPath(); x.arc(px, py, R, 0, TAU); x.fill();
+    x.fillStyle = 'rgba(150,165,200,.28)';                         // тени на лике
+    for (const [dx, dy, r] of [[-.25, -.1, .22], [.2, .25, .16], [.15, -.3, .1], [-.1, .35, .12]]) { x.beginPath(); x.arc(px + dx * R, py + dy * R, r * R, 0, TAU); x.fill(); }
+    x.globalAlpha = 1;
+  }
+  // Анар: золотой плод-пламя, языки огня Ариэн вокруг
+  if (rt > ORB.anar.t0) {
+    const [px, py, p] = orbPos(ORB.anar, rt), a = Math.min(1, (rt - ORB.anar.t0) / .8), R = sp * .72;
+    x.globalCompositeOperation = 'lighter';
+    let g = x.createRadialGradient(px, py, 0, px, py, R * 6); g.addColorStop(0, `rgba(255,200,100,${(.45 * a).toFixed(3)})`); g.addColorStop(.25, `rgba(255,150,50,${(.16 * a).toFixed(3)})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+    x.fillStyle = g; x.beginPath(); x.arc(px, py, R * 6, 0, TAU); x.fill();
+    for (let i = 0; i < 18; i++) {
+      const ang = i * TAU / 18 + rt * .25, fl = .75 + .25 * Math.sin(rt * 7 + i * 2.3) * Math.sin(rt * 3.1 + i);
+      const r0 = R * .9, r1 = R * (1.5 + .45 * fl), w = .13;
+      x.fillStyle = `rgba(255,${170 + (i % 3) * 25},70,${(.55 * a).toFixed(3)})`;
+      x.beginPath(); x.moveTo(px + Math.cos(ang - w) * r0, py + Math.sin(ang - w) * r0);
+      x.quadraticCurveTo(px + Math.cos(ang + .08) * r1 * .8, py + Math.sin(ang + .08) * r1 * .8, px + Math.cos(ang) * r1, py + Math.sin(ang) * r1);
+      x.quadraticCurveTo(px + Math.cos(ang - .08) * r1 * .8, py + Math.sin(ang - .08) * r1 * .8, px + Math.cos(ang + w) * r0, py + Math.sin(ang + w) * r0);
+      x.fill();
+    }
+    x.globalCompositeOperation = 'source-over'; x.globalAlpha = a;
+    g = x.createRadialGradient(px - R * .25, py - R * .25, R * .1, px, py, R); g.addColorStop(0, '#fffbe8'); g.addColorStop(.5, '#ffd36a'); g.addColorStop(1, '#e88a1a');
+    x.fillStyle = g; x.beginPath(); x.arc(px, py, R, 0, TAU); x.fill();
+    x.globalAlpha = 1;
+  }
+  x.restore(); x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1;
+}
+
 /* ---------- подписи, кольца вспышек ---------- */
 function drawCaps(x) {
   caps = caps.filter(c => rt - c.t0 < c.dur);
@@ -841,8 +898,8 @@ const CUES = [
   [79.0, () => startMote(0xE012, 0xE010, 'ñ → n')],
   [84.0, () => startMote(0xE016, 0, 'anna')],
   [85.2, () => startWord(XW.vanwa, [.62, .78], 4.8)],
-  [90.8, () => startWord(XW.isil, [.2, .2], 6)],
-  [97.4, () => startWord(XW.anar, [.74, .2], 5)],
+  [90.8, () => startWord(XW.isil, [.2, .8], 6)],
+  [97.4, () => startWord(XW.anar, [.18, .7], 5)],
   [100.8, () => { cap(QP.title, .5, .82, 3.2, COL.pearl, 1.7); ev('title'); }]
 ].sort((a, b) => a[0] - b[0]);
 
@@ -879,6 +936,7 @@ function render() {
   const veil = .42 * sm(54, 63, rt) * (1 - .6 * sm(90, 97, rt));
   if (veil > .005) { dctx.fillStyle = `rgba(4,2,10,${veil.toFixed(3)})`; dctx.fillRect(0, 0, W, H); }
   drawWeb(dctx);
+  drawOrbs(dctx);
   // Сильмарилли светят и сквозь пелену
   if (rt > 54) { dctx.globalCompositeOperation = 'lighter'; drawSilmarils(dctx); dctx.globalCompositeOperation = 'source-over'; }
   drawSilmBodies(dctx);
