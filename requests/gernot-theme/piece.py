@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
-"""«Холодный мир» — тема Гернота (≈ 2:05). Инвариант персонажа — роль против человека: через мальчика говорят
-другие (боги и конклав — неразличимо), его истина — не о его мире; под ролью — свой голос, слабый и упрямый.
+"""«Холодный мир» — тема Гернота, вторая редакция (≈ 1:50). Портрет, без событий сюжета.
 
-Материал — одна формула культа: речитация на тоне фа# (выросла из головы темы мира опенинга: F# F# E F#), 16 долей,
-16-я пуста — тоники си культ не достигает (как облик Рейха в опенинге, где фраза шкатулки обрывается до тоники).
-Верхний изгиб — на ля, а не на соль: в каноне через долю соль против фа# давала полутон; с ля между ведущим и
-ведомым остаются только целые тоны (ми/фа#, ре/ми) — гетерофония обряда, а не фальшь.
+Первая редакция (речитация культа, канон «рука на руке», пророчество, отказ, приход в си) пересказывала путь
+героя — заказчик: «опять экспликация сюжета, а не сущность характера». Здесь только то, что в Герноте неизменно:
 
-Форма: огонь (педаль, тамтам) — обряд (ведущий один: тихий орган в унисон с засурдиненной валторной, низкие
-струнные) — рука на руке (Гернот повторяет каноном через долю на две октавы выше флажолетами) — пророчество
-(речитация ускоряется, вступления копятся стреттой, проступает тень формулы на полутон выше — до минор, тональность
-войны в опенинге) — обрыв, тишина — свой голос (формула в метре у скрипки соло, рабочий шаг пиццикато; гармония
-песенная, по тактам: Bm | Bm | Bm | G Em — без V–I) — ведущий начинает формулу, мальчик не повторяет — кларнет один
-заполняет 16-ю долю: ми – ре – до# – си, без аккорда.
+- достоинство без власти — сарабанда: медленный трёхдольный шаг с тяжестью на второй доле, ровная осанка мелодии,
+  ни одного вскрика; он держит себя прямо;
+- тяга вверх — каждая фраза начинается скачком вверх к долгому звуку на второй доле (терция, квинта, секста,
+  октава), и каждый раз мелодия спокойно спускается обратно: тянется — и не позволяет себе большего;
+- свой звук над чужим полом — мелодия всегда в одном ладу (си дорийский, с соль#), но под её долгим звуком на
+  третьей доле гармония съезжает в аккорд из чужого лада, хроматическую медианту с тем же общим звуком
+  (Bm → Gm, Bm → B, E → C#, A → F#, G → E, D → B♭): звук его, мир под ним не его; чужие аккорды подкрашены
+  флажолетами. Мелодия при этом не меняет ни ноты;
+- дом без дома — тема кончается на си, но си звучит терцией соль мажора: тоника мелодии над чужим основанием.
+
+Тембр один на всю пьесу — скрипка соло: юный, тонкий, серьёзный голос; партнёра у него нет.
+Форма музыкальная, не сюжетная: A (тема, два предложения) — B (развитие скачка вверх секвенцией до вершины
+ре третьей октавы и спуск) — A′ (второе предложение октавой ниже, на струне соль, тише).
 
     python3 -m kit run requests/gernot-theme/piece.py --parts
 """
@@ -24,32 +28,62 @@ sys.path.insert(0, os.path.join(HERE, "..", ".."))
 from kit.devices import Composer  # noqa: E402
 from kit.events import Piece  # noqa: E402
 
-BPM = 60
+BPM = 58
 SPB = 60.0 / BPM
+BAR = 3
 
-# формула культа (доля, длительность, midi) на фа# малой октавы (54); 16-я доля (15–16) пуста
-D, E, Fs, A = 50, 52, 54, 57
-H1 = [(0, .5, D), (.5, .5, E), (1, 1, Fs), (2, .5, Fs), (2.5, .5, Fs), (3, 1, Fs),
-      (4, .5, Fs), (4.5, .5, A), (5, 1, Fs), (6, 1, E), (7, 1, Fs)]
-H2 = [(8, 1, Fs), (9, .5, Fs), (9.5, .5, Fs), (10, 1, Fs), (11, 1, E), (12, 1, D), (13, 2, E)]
-FORMULA = H1 + H2
-# его окончание: та же формула, но последний ми — на долю, и 16-я доля заполнена: ре – до# – си
-OWN_END = H1 + H2[:-1] + [(13, 1, E), (14, .5, D), (14.5, .5, D - 1), (15, 1, D - 3)]
+# ноты (midi): си дорийский
+B4, Cs5, D5, E5, Fs5, Gs5, A5, B5 = 71, 73, 74, 76, 78, 80, 81, 83
+A4 = 69
+Cs6, D6 = 85, 86
+
+# аккорды: имя → (основной тон, высотные классы)
+PC = {"C": 0, "C#": 1, "D": 2, "Eb": 3, "E": 4, "F": 5, "F#": 6, "G": 7, "G#": 8, "A": 9, "Bb": 10, "B": 11}
 
 
-def tr(notes, semis=0, dt=0.0, scale=1.0):
-    return [(dt + b * scale, d * scale, m + semis) for b, d, m in notes]
+def chord(name):
+    minor = name.endswith("m")
+    r = PC[name[:-1] if minor else name]
+    return r, {r, (r + (3 if minor else 4)) % 12, (r + 7) % 12}
+
+
+# такт: (мелодия [(доля в такте, длительность, midi)], гармония [(доля, длительность, аккорд)], чужой аккорд) —
+# все звуки мелодии на долях — звуки аккорда; неаккордовы только восьмые на «и» третьей доли (проходящие)
+def bar(mel, harm, slide=None):
+    if isinstance(harm, str):
+        harm = [(0, 2 if slide else 3, harm)]
+    if slide:
+        harm = harm + [(2, 1, slide)]
+    return (mel, harm, slide)
+
+
+REACH = lambda a, b: [(0, 1, a), (1, 2, b)]  # noqa: E731 — скачок вверх к долгому звуку на второй доле
+FALL = lambda a, b, c: [(0, 1, a), (1, 1.5, b), (2.5, .5, c)]  # noqa: E731 — спокойный спуск
+TWO = lambda x, y: [(0, 1, x), (1, 2, y)]  # noqa: E731 — смена гармонии на второй доле (сарабанда)
+
+PHRASE1 = [bar(REACH(B4, D5), "Bm", "Gm"), bar(FALL(Cs5, B4, Gs5 - 12), TWO("A", "E")),
+           bar(REACH(B4, Fs5), "Bm", "B"), bar(FALL(E5, Cs5, A4), "A"),
+           bar(REACH(E5, Gs5), "E", "C#"), bar(FALL(Fs5, E5, Cs5), TWO("Bm", "A")),
+           bar([(0, 1, Cs5), (1, 1, E5), (2, 1, A4)], TWO("F#m", "A")), bar([(0, 3, Cs5)], "A", "F#")]
+PHRASE2 = [bar(REACH(B4, D5), "Bm", "Gm"), bar(FALL(Cs5, B4, Gs5 - 12), TWO("A", "E")),
+           bar(REACH(B4, Fs5), "Bm", "B"), bar(FALL(E5, Cs5, A4), "A"),
+           bar(REACH(D5, B5), "G", "E"), bar(FALL(A5, Gs5, E5), TWO("A", "E")),
+           bar([(0, 1, E5), (1, 1, Cs5), (2, 1, A4)], "A"), bar([(0, 3, B4)], "G")]
+# развитие: скачок вверх секвенцией (кварта, кварта, кварта, кварта) до ре третьей октавы, затем спуск
+MIDDLE = [bar(REACH(Cs5, Fs5), "F#m", "D"), bar(REACH(E5, A5), "A", "F"),
+          bar(REACH(Fs5, B5), "Bm", "G"), bar(REACH(A5, D6), "D", "Bb"),
+          bar(FALL(Cs6, B5, Gs5), TWO("A", "E")), bar(FALL(Gs5, Fs5, D5), TWO("E", "Bm")),
+          bar([(0, 1, E5), (1, 1, Cs5), (2, 1, A4)], "A"), bar([(0, 3, Cs5)], "A", "F#")]
 
 
 class G:
     def __init__(self):
-        self.p = Piece("«Холодный мир» — тема Гернота", bpm=BPM, meter=(4, 4), key="B minor", seed=16)
-        self.p.meta["subtitle"] = "формула культа и свой голос"
-        self.p.meta["sends"] = {"strings": 0.45, "brass": 0.4, "winds": 0.35, "perc": 0.4, "keys": 0.5}
+        self.p = Piece("«Холодный мир» — тема Гернота", bpm=BPM, meter=(3, 4), key="B dorian", seed=16)
+        self.p.meta["subtitle"] = "сарабанда"
+        self.p.meta["sends"] = {"strings": 0.45, "winds": 0.35, "keys": 0.45}
         self.c = Composer(self.p, lib="vsco", seed=15)
-        self.slow = []          # (доля0, доля1, множитель длительности)
-        self.cut = None         # доля обрыва: всё, что звучит дальше, срезается
-        self.level = 1.0        # общий уровень раздела (свой голос — тише вершины пророчества)
+        self.slow = []
+        self.prev = [50, 57, 62]  # голоса фона (для плавного голосоведения)
 
     def perf(self, beat):
         s = 0.0
@@ -59,176 +93,86 @@ class G:
             s += (min(beat, b1) - b0) * (f - 1)
         return (beat + s) * SPB
 
-    def n(self, inst, m, beat, dur, part, legato=0.96, **kw):
-        if self.cut is not None:
-            lo, hi = self.cut
-            if lo <= beat < hi:
-                return None
-            if beat < lo < beat + dur:
-                dur = lo - beat
-                kw["release"] = 0.15
-                legato = 1.0
-        kw.setdefault("release", 0.5)
-        kw["gain"] = kw.get("gain", 1.0) * self.level
+    def n(self, inst, m, beat, dur, part, legato=0.97, **kw):
+        kw.setdefault("release", 0.6)
         t0, t1 = self.perf(beat), self.perf(beat + dur)
         e = self.p.note(inst, m, t0, max(0.06, (t1 - t0) * legato), part=part, **kw)
         e["wt"], e["wdur"] = beat * SPB, dur * SPB
         return e
 
-    def voice(self, inst, notes, part, vel, gain, stress=0.08, **kw):
-        """речитация: начальные и изгибные звуки чуть сильнее, повторы фа# — ровнее и тише"""
-        prev = None
-        for b, d, m in notes:
-            acc = stress if (m != prev) else 0.0
-            self.n(inst, m, b, d, part, vel=vel + acc, gain=gain * (1 + acc), **kw)
-            prev = m
-
-    def fx(self, kind, beat, **kw):
-        return self.c.fx(kind, self.perf(beat), bus="perc", **kw)
-
-
-# ===================================================================== голоса
-
-def alien(o, notes, vel=0.42, gain=0.32, with_strings=True):
-    """чужой голос — боги и конклав неразличимо: тихий орган (8′ и 4′) в унисон с засурдиненной валторной;
-    низкие струнные держат тот же звук октавой ниже — опора баса"""
-    o.voice("org_quiet", notes, "Organo", vel=vel, gain=gain, attack=0.05)
-    o.voice("org_quiet", tr(notes, 12), "Organo", vel=vel - 0.08, gain=gain * 0.55, attack=0.05)
-    o.voice("hn_mute", notes, "Corno con sord.", vel=vel, gain=gain * 0.9, attack=0.06)
-    if with_strings:
-        o.voice("cb_sus", tr(notes, -12), "Contrabassi", vel=vel - 0.04, gain=gain * 0.8, attack=0.12, stress=0.0)
+    def voicing(self, pcs, top):
+        """три голоса фона из звуков аккорда, все ниже `top`, ближайшие к прежним"""
+        out = []
+        for v in self.prev:
+            cands = [m for m in range(40, top) if m % 12 in pcs and m not in out]
+            out.append(min(cands, key=lambda m: (abs(m - v), m)))
+        out.sort()
+        self.prev = out
+        return out
 
 
-def boy_role(o, notes, vel=0.36, gain=0.26):
-    """Гернот в роли: флажолеты скрипок на две октавы выше ведущего — бесцветный «холодный свет»"""
-    o.voice("vln_harm", tr(notes, 24), "Violini (flag.)", vel=vel, gain=gain, attack=0.08, stress=0.05)
+def statement(o, b0, bars, *, octave=0, vel=0.5, gain=0.42, pad_gain=0.16, bass_step=False, pad_top=None, hold=None):
+    """проведение: скрипка соло, фон струнных ниже мелодии, бас по основным тонам; чужой аккорд на третьей доле
+    подкрашен флажолетами"""
+    for i, (mel, harm, slide) in enumerate(bars):
+        t = b0 + i * BAR
+        last = hold if (hold and i == len(bars) - 1) else None
+        if last:
+            mel = [(b, last, m) for b, _, m in mel]
+        for b, d, m in mel:
+            acc = 0.06 if b == 1 else 0.0  # тяжесть сарабанды — на второй доле
+            o.n("vln_solo", m + octave, t + b, d, "Violino solo", vel=vel + acc, gain=gain * (1 + acc), attack=0.06)
+        lo = min(m for _, _, m in mel) + octave
+        top = min(pad_top or 99, lo - 2)
+        segs = [(0, last, harm[0][2])] if last else harm
+        for sb, sd, name in segs:
+            root, pcs = chord(name)
+            foreign = name == slide
+            for k, m in enumerate(o.voicing(pcs, top)):
+                inst = "vla_sus" if m >= 55 else "vc_sus"
+                o.n(inst, m, t + sb, sd, "Archi", vel=0.38, gain=pad_gain, attack=0.25 if sb == 0 else 0.4,
+                    release=0.5, legato=1.0)
+            bass = 36 + (root - 36) % 12  # основной тон в c – h большой октавы
+            if bass > 43:
+                bass -= 12
+            if bass_step and not foreign and sd >= 2:  # сарабандный бас: основной тон, на второй доле — квинта
+                o.n("cb_sus", bass, t + sb, 1, "Contrabassi", vel=0.42, gain=0.3, attack=0.1, release=0.4)
+                o.n("cb_sus", bass + 7 if bass + 7 <= 47 else bass - 5, t + sb + 1, sd - 1, "Contrabassi",
+                    vel=0.46, gain=0.32, attack=0.1, release=0.5)
+            else:
+                o.n("cb_sus", bass, t + sb, sd, "Contrabassi", vel=0.42, gain=0.3, attack=0.15, release=0.5)
+            if foreign:  # чужой пол — флажолеты на две октавы выше двух верхних голосов фона
+                for m in o.prev[1:]:
+                    h = m + 24 if m + 24 >= 76 else m + 36  # флажолеты записаны от соль второй октавы
+                    o.n("vln_harm", h, t + sb, sd, "Flautando (flag.)", vel=0.34, gain=0.12,
+                        attack=0.3, release=0.25, legato=1.0)
 
 
-# ===================================================================== разделы
-
-def fire(o, t0):
-    """огонь: педаль органа фа# вырастает из тишины; тамтам и скрежет гонга — обряд обновления огня"""
-    o.n("org_quiet", 42, t0, 4, "Organo", vel=0.35, gain=0.28, attack=2.5, release=0.3)
-    o.n("cb_sus", 30, t0 + 1, 3, "Contrabassi", vel=0.36, gain=0.3, attack=2.0, release=0.3)
-    o.fx("tamtam", t0, gain=0.07)
-    o.fx("gong_scrape", t0 + 2.2, gain=0.05)
-
-
-def ritual(o, t0):
-    """обряд: формула одна, ведущий без отклика; 16-я доля пуста — в ней только хвост тамтама"""
-    alien(o, tr(FORMULA, 0, t0))
-    o.n("org_quiet", 42, t0, 15, "Organo", vel=0.33, gain=0.22, attack=0.5, release=0.3)  # педаль: тот же фа#
-    o.fx("tamtam", t0 + 15, gain=0.035)
-
-
-def hand_on_hand(o, t0):
-    """рука на руке: мальчик повторяет каждую фразу через долю на две октавы выше; ведущий чуть тише —
-    его ведут, но слышно, что звук один"""
-    alien(o, tr(FORMULA, 0, t0), vel=0.4, gain=0.28)
-    o.n("org_quiet", 42, t0, 15, "Organo", vel=0.33, gain=0.2, attack=0.5, release=0.3)
-    boy_role(o, tr(FORMULA, 0, t0 + 1))
-    o.fx("tamtam", t0 + 15.5, gain=0.03)
-
-
-def prophecy(o, t0):
-    """пророчество: три формулы подряд, всё быстрее; к ведущему и мальчику добавляются вступления через
-    полдоли и полторы (флажолеты виолончелей — у альтов записаны только от до5, засурдиненная труба, виолончели), с второй формулы проступает тень —
-    та же формула на полутон выше (до минор) флажолетами альтов и тихим органом сверху; к третьей — тремоло
-    низких струнных на фа# и тень громче. Обрыв в начале пустой 16-й доли третьей формулы."""
-    for k in range(3):
-        s = t0 + 16 * k
-        v = 0.42 + 0.06 * k
-        alien(o, tr(FORMULA, 0, s), vel=v, gain=0.3 + 0.05 * k)
-        boy_role(o, tr(FORMULA, 0, s + 1), vel=0.38 + 0.05 * k, gain=0.27 + 0.04 * k)
-        o.voice("vc_harm", tr(FORMULA, 12, s + .5), "Violoncelli (flag.)", vel=0.34 + 0.05 * k, gain=0.18 + 0.05 * k,
-                attack=0.06)
-        if k >= 1:
-            o.voice("tpt_mute", tr(FORMULA, 12, s + 2), "Tromba con sord.", vel=0.36 + 0.06 * k,
-                    gain=0.16 + 0.06 * k, attack=0.05)
-            o.voice("vc_sus", tr(FORMULA, 0, s + 1.5), "Violoncelli", vel=0.4 + 0.05 * k, gain=0.12 + 0.03 * k,
-                    attack=0.08)
-            # тень: истина из другого мира — на полутон выше, со своим запаздыванием (две с половиной доли)
-            o.voice("vln_harm", tr(FORMULA, 25, s + 2.5), "Ombra (flag.)", vel=0.3 + 0.06 * k,
-                    gain=0.1 + 0.08 * (k - 1), attack=0.1, stress=0.0)
-            o.voice("org_quiet", tr(FORMULA, 37, s + 2.5), "Ombra (flag.)", vel=0.28, gain=0.05 + 0.05 * (k - 1),
-                    attack=0.1, stress=0.0)
-        if k == 2:
-            o.n("cb_trem", 42, s, 15, "Contrabassi", vel=0.45, gain=0.26, attack=6.0)
-            o.n("vc_trem", 54, s + 4, 11, "Violoncelli", vel=0.45, gain=0.2, attack=5.0)
-        o.n("org_quiet", 42, s, 16, "Organo", vel=0.36 + 0.04 * k, gain=0.22 + 0.04 * k, attack=0.4, release=0.3)
-
-
-def own_voice(o, t0):
-    """свой голос: формула в метре у скрипки соло, на октаву ниже роли — «рабочий шаг»; бас пиццикато по
-    основным тонам и квинтам, виолончели держат основной тон ниже темы. Гармония по тактам: Bm | Bm | Bm | G Em.
-    В конце он ещё останавливается на ми — 16-я доля пуста."""
-    mel = tr(FORMULA, 12, t0)
-    o.voice("vln_solo", mel, "Violino solo", vel=0.5, gain=0.42, stress=0.06, attack=0.04)
-    roots = [(0, 47), (4, 47), (8, 47), (12, 43), (13, 40)]
-    for i, (b, r) in enumerate(roots):
-        d = (roots[i + 1][0] if i + 1 < len(roots) else 15) - b
-        o.n("vc_sus", r, t0 + b, d, "Violoncelli", vel=0.36, gain=0.24, attack=0.3, release=0.6)
-    steps = [(0, 35), (2, 42), (4, 35), (6, 35), (8, 35), (10, 42), (12, 31), (13, 28)]  # на 6-й доле в теме ми —
-    # не фа# в басу (секунда), а основной тон
-    for b, r in steps:
-        o.n("cb_pizz", r, t0 + b, 1, "Contrabassi", vel=0.55, gain=0.5, release=0.8)
-    for b in (1, 3, 5, 7, 9, 11):  # рабочий шаг: слабые доли — тише, у виолончелей
-        o.n("vc_pizz", 47 if b < 12 else 43, t0 + b, 1, "Violoncelli pizz.", vel=0.4, gain=0.22, release=0.5)
-
-
-def refusal(o, t0):
-    """ведущий начинает формулу (ре – ми – фа#… ) и ждёт отклика; мальчик молчит"""
-    alien(o, tr(H1[:4], 0, t0), vel=0.4, gain=0.3)
-    o.n("org_quiet", 54, t0 + 2, 1.5, "Organo", vel=0.36, gain=0.22, release=0.8)
-
-
-def to_tonic(o, t0):
-    """кларнет один: формула в метре, первую половину ещё держит пиццикато, вторую — никто; окончание
-    заполняет 16-ю долю: ми – ре – до# – си; си тянется и гаснет, без аккорда"""
-    mel = tr(OWN_END, 12, t0)
-    *body, last = mel
-    o.voice("cl_sus", body, "Clarinetto", vel=0.48, gain=0.46, stress=0.05, attack=0.05)
-    b, d, m = last
-    o.n("cl_sus", m, b, 6, "Clarinetto", vel=0.42, gain=0.4, attack=0.05, release=2.5)
-    for b2, r in [(0, 35), (2, 42), (4, 35), (6, 35)]:
-        o.n("cb_pizz", r, t0 + b2, 1, "Contrabassi", vel=0.5 - 0.03 * b2 / 2, gain=0.44 - 0.04 * b2 / 2,
-            release=0.8)
-    o.n("vc_sus", 47, t0, 8, "Violoncelli", vel=0.34, gain=0.2, attack=0.3, release=1.2)
-
-
-# замер `--parts` без баланса: кларнет −27.0, виолончели −28.4, орган −37.1, скрипка соло −37.8, валторна −38.7,
-# труба −40.3, флажолеты скрипок −45.6, альтов −46.0, тень −48.6, контрабасы −52.0, пиццикато виолончелей −56.2 LUFS:
-# (четвёртый замер: стретта виолончелей −31 — громче ведущего; вдвое тише)
-# (второй замер: тень −50, флажолеты виолончелей −29 — громче темы, пиццикато −46.5, контрабасы −37.5 при теме −30 — добавлено)
-# свой голос скрипки на 10 дБ тише кларнета, мальчик в роли почти не слышен, басы утонули; тамтам на 20 дБ громче всего
-BAL = {"Clarinetto": -3, "Violino solo": +8, "Organo": +3, "Corno con sord.": +2, "Violini (flag.)": +10,
-       "Violoncelli (flag.)": -8, "Ombra (flag.)": +10, "Contrabassi": +18, "Violoncelli pizz.": +18, "Violoncelli": -3}
+# замер `--parts` без баланса: скрипка соло −35.5, фон −47.6, контрабасы −48.6, флажолеты −55.8 LUFS —
+# бас утонул (правило: тема и бас в пределах ±3 дБ), фон и флажолеты почти не слышны; второй замер: фон −38.7
+# (на 3 дБ под темой — громковато), флажолеты −48.6
+BAL = {"Archi": +3, "Contrabassi": +12, "Flautando (flag.)": +13}
 
 
 def build(ctx):
     o = G()
-    # доли: огонь 0–4 | обряд 4–20 | рука на руке 20–36 | пророчество 36–84 (обрыв на 83) | тишина 83–87 |
-    #       свой голос 87–103 | не повторяет 103–109 | до си 109–125 (+6)
-    o.slow += [(0, 4, 1.2), (4, 36, 1.15),
-               (36, 52, 1.0), (52, 68, 0.84), (68, 84, 0.7),
-               (87, 109, 0.86), (109, 120, 0.86), (120, 131, 1.15)]
-    plan = [(0, "Огонь"), (4, "Обряд"), (20, "Рука на руке"), (36, "Пророчество"), (83, "Обрыв"),
-            (87, "Свой голос"), (103, "Не повторяет"), (109, "До си")]
-    fire(o, 0)
-    ritual(o, 4)
-    hand_on_hand(o, 20)
-    o.cut = (83, 87)
-    prophecy(o, 36)
-    o.cut = None
-    o.level = 0.5  # третий замер: свой голос (−15 dBFS) звучал громче вершины пророчества (−20) — он mp, не кульминация
-    own_voice(o, 87)
-    o.level = 1.0
-    refusal(o, 103)
-    o.level = 0.5
-    to_tonic(o, 109)
+    # такты: вступление 0 | A 1–16 | B 17–24 | A′ 25–32 | хвост 33–34
+    o.slow += [(21, 24, 1.12), (45, 48, 1.15), (69, 72, 1.15), (93, 105, 1.25)]
+    # вступление: только фон — си минор, затем чужой соль минор
+    r, pcs = chord("Bm")
+    for m in o.voicing(pcs, 68):
+        o.n("vla_sus" if m >= 55 else "vc_sus", m, 0, 3, "Archi", vel=0.36, gain=0.14, attack=1.2, legato=1.0)
+    o.n("cb_sus", 35, 0, 3, "Contrabassi", vel=0.4, gain=0.28, attack=1.0)
+    statement(o, 3, PHRASE1)
+    statement(o, 27, PHRASE2, bass_step=True, pad_gain=0.18)
+    statement(o, 51, MIDDLE, vel=0.6, gain=0.58, pad_gain=0.27, bass_step=True)  # вершина пьесы — mf
+    o.prev = [40, 45, 50]
+    statement(o, 75, PHRASE2, octave=-12, vel=0.42, gain=0.3, pad_gain=0.11, pad_top=58, hold=9)  # p
+    # хвост: последний си (терция соль мажора) тянется и гаснет
     o.p.balance(BAL)
-    for bt, label in plan:
+    for bt, label in [(0, "Вступление"), (3, "A: первое предложение"), (27, "A: второе предложение"),
+                      (51, "B: развитие"), (75, "A′"), (96, "Хвост")]:
         o.p.mark(o.perf(bt), label)["wt"] = bt * SPB
-    o.p.meta["beats"] = 131
-    o.p.meta["length"] = o.perf(131) + 4
+    o.p.meta["beats"] = 105
+    o.p.meta["length"] = o.perf(105) + 4
     return o.p
