@@ -10,16 +10,16 @@
   "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
  ],
  "by_instrument": {
-  "cb_sus@plain": 73,
-  "vc_sus@plain": 132,
-  "vla_sus@plain": 39,
+  "cb_sus@plain": 76,
+  "vc_sus@plain": 128,
+  "vla_sus@plain": 61,
   "vln_harm@sso": 30,
-  "vln_solo@vsco": 75
+  "vln_solo@vsco": 79
  },
  "substitutions": {},
  "missing": {},
  "out_of_range_rescued": {},
- "sfizz_notes": 73,
+ "sfizz_notes": 59,
  "lengthened": 0,
  "window": [
   0.0,
@@ -43,26 +43,26 @@
   "clicks": [],
   "flat": [],
   "bounds": [
-   7.5,
-   38.8,
-   41.2,
-   42.0,
-   57.0,
-   58.0,
-   64.2,
+   10.5,
+   54.8,
+   61.0,
    67.2,
-   68.8,
-   70.5,
-   79.5,
-   88.5
+   70.2,
+   72.2,
+   73.8,
+   74.2,
+   74.8,
+   87.0,
+   91.5,
+   96.8
   ],
   "png": "/home/claude/immollimma/requests/gernot-theme/out/report.png"
  },
  "parts_lufs": {
-  "Violino solo": -33.6,
-  "Contrabassi": -36.3,
-  "Archi": -41.2,
-  "Flautando (flag.)": -44.6
+  "Violino solo": -33.3,
+  "Contrabassi": -36.0,
+  "Archi": -41.5,
+  "Flautando (flag.)": -43.3
  },
- "seconds_taken": 22.3
+ "seconds_taken": 21.5
 }
