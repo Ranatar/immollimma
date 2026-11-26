@@ -687,29 +687,38 @@ const au = document.getElementById("au"), startEl = document.getElementById("sta
 const params = new URLSearchParams(location.search);
 let tNow = parseFloat(params.get("t") || "0") || 0, playing = false, lastAudio = -1, lastPerf = 0;
 window.__frame = t => { tNow = t; frame(t); };          // для съёмки
+const hasAudio = au.getAttribute("src").length > 40;   // без музыки страница идёт по собственным часам
+let clock0 = 0, clockT = 0;
 function loop(now) {
   if (playing) {
-    const a = au.currentTime;
-    if (a !== lastAudio) { lastAudio = a; lastPerf = now; tNow = a; }
-    else tNow = a + Math.min(0.1, (now - lastPerf) / 1000);
-    if (au.ended) { playing = false; tNow = LEN; startEl.style.display = "flex"; }
+    if (hasAudio) {
+      const a = au.currentTime;
+      if (a !== lastAudio) { lastAudio = a; lastPerf = now; tNow = a; }
+      else tNow = a + Math.min(0.1, (now - lastPerf) / 1000);
+      if (au.ended) stop(LEN);
+    } else {
+      tNow = clockT + (now - clock0) / 1000;
+      if (tNow >= LEN) stop(LEN);
+    }
   }
   if (!window.__manual) frame(Math.min(LEN, tNow));
   requestAnimationFrame(loop);
 }
+function stop(t) { playing = false; tNow = t; startEl.style.display = "flex"; }
 function start() {
   if (tNow >= LEN - 0.5) tNow = 0;
+  if (!hasAudio) { clock0 = performance.now(); clockT = tNow; playing = true; startEl.style.display = "none"; return; }
   au.currentTime = tNow; au.play().then(() => { playing = true; startEl.style.display = "none"; }).catch(() => {});
 }
+function seek(t) { tNow = clamp(t, 0, LEN - 0.1); if (hasAudio) au.currentTime = tNow; else { clock0 = performance.now(); clockT = tNow; } }
 startEl.addEventListener("click", start);
 let uiTimer = 0;
 addEventListener("mousemove", () => { document.body.classList.add("ui"); clearTimeout(uiTimer); uiTimer = setTimeout(() => document.body.classList.remove("ui"), 1800); });
 addEventListener("keydown", e => {
-  if (e.code === "Space") { e.preventDefault(); if (playing) { au.pause(); playing = false; } else start(); }
-  else if (e.code === "ArrowRight" || e.code === "ArrowLeft") {
-    tNow = clamp(tNow + (e.code === "ArrowRight" ? 10 : -10), 0, LEN - 0.1); au.currentTime = tNow;
-  } else if (e.code === "KeyF") { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
-  else if (e.code === "Home") { tNow = 0; au.currentTime = 0; }
+  if (e.code === "Space") { e.preventDefault(); if (playing) { if (hasAudio) au.pause(); playing = false; } else start(); }
+  else if (e.code === "ArrowRight" || e.code === "ArrowLeft") seek(tNow + (e.code === "ArrowRight" ? 10 : -10));
+  else if (e.code === "KeyF") { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+  else if (e.code === "Home") seek(0);
 });
 addEventListener("resize", resize);
 resize();
