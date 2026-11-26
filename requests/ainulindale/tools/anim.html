@@ -638,13 +638,19 @@ function drawEa(t) {
     g.addColorStop(1, rgba(hsl(38, 80, 60), 0));
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(CX, CY, rr * 4, 0, TAU); ctx.fill();
   }
-  const ta = sstep(296.5, 300, t);
-  if (ta > 0) {
+  // «Потому я говорю: Да будет! Эа!» — над пламенем слово, под ним — имя Мира Сущего
+  const tw = sstep(293.5, 296.5, t), ta = sstep(296.8, 300, t);
+  if (tw > 0 || ta > 0) {
     ctx.globalCompositeOperation = "source-over";
-    ctx.font = `${Math.round(64 * K)}px Ea, Georgia, serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillStyle = rgba(hsl(40, 60, 82), 0.85 * ta);
-    ctx.shadowColor = rgba(GOLD, 0.6 * ta); ctx.shadowBlur = 18 * K;
-    ctx.fillText("Эа", CX, CY + 0.4 * R);
+    ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.shadowColor = rgba(GOLD, 0.55); ctx.shadowBlur = 16 * K;
+    if (tw > 0) {
+      ctx.font = `${Math.round(40 * K)}px Ea, Georgia, serif`; ctx.fillStyle = rgba(hsl(40, 45, 80), 0.75 * tw);
+      ctx.fillText("Да будет!", CX, CY - 0.4 * R);
+    }
+    if (ta > 0) {
+      ctx.font = `${Math.round(68 * K)}px Ea, Georgia, serif`; ctx.fillStyle = rgba(hsl(40, 60, 84), 0.88 * ta);
+      ctx.fillText("Эа", CX, CY + 0.4 * R);
+    }
     ctx.shadowBlur = 0;
   }
 }
