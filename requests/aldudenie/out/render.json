@@ -13,13 +13,13 @@
   "afl_sus@sso": 16,
   "bcl_sus@sso": 7,
   "cb_pizz@plain": 27,
-  "cb_sus@plain": 20,
+  "cb_sus@plain": 21,
   "cbsn_sus@sso": 2,
-  "celesta@sso": 86,
+  "celesta@sso": 88,
   "choir@sso": 63,
-  "crotales@sso": 11,
+  "crotales@sso": 12,
   "glock@plain": 6,
-  "harp@plain": 179,
+  "harp@plain": 186,
   "hn_sus@plain": 19,
   "vc_pizz@plain": 35,
   "vc_sus@plain": 20,
@@ -33,13 +33,13 @@
  "substitutions": {},
  "missing": {},
  "out_of_range_rescued": {},
- "sfizz_notes": 159,
+ "sfizz_notes": 160,
  "lengthened": 0,
  "window": [
   0.0,
-  105.2
+  111.2
  ],
- "seconds": 105.2,
+ "seconds": 111.2,
  "mp3": "/home/claude/immollimma/requests/aldudenie/out/audio.mp3",
  "notation": {
   "midi": "/home/claude/immollimma/requests/aldudenie/out/score.mid",
@@ -66,30 +66,30 @@
    63.0,
    65.2,
    71.2,
-   72.8,
    82.8,
    85.8,
    87.0,
-   98.5
+   98.5,
+   100.0
   ],
   "png": "/home/claude/immollimma/requests/aldudenie/out/report.png"
  },
  "parts_lufs": {
-  "Choir": -23.0,
+  "Choir": -23.1,
   "Alto flute": -26.4,
   "Violin solo": -28.1,
-  "Horn": -29.3,
   "Contrabassoon": -29.7,
+  "Horn": -30.0,
   "Violin harmonics": -30.6,
-  "Cellos": -31.5,
+  "Cellos": -31.6,
   "Violins": -33.7,
   "Violas": -34.4,
-  "Harp": -34.7,
+  "Harp": -34.9,
   "Bass clarinet": -35.6,
-  "Celesta": -36.9,
-  "Basses": -37.2,
+  "Celesta": -37.0,
+  "Basses": -37.4,
   "Crotales": -39.3,
   "Glockenspiel": -47.4
  },
- "seconds_taken": 38.7
+ "seconds_taken": 40.5
 }

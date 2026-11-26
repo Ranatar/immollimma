@@ -17,7 +17,7 @@ MOOD = {
     "nainië": ("Плач: тьма, остались формы букв, звуки ушли; утрата", 0.3,
                "þ→s (74), ñ→n (79), anna без звука (84), vanwa (85,2)"),
     "Isil ar Anar": ("Исиль и Анар: серебро и золото сменяют друг друга, не смешиваясь; смешанный свет — только в камнях", 0.5,
-                     "Isil (90,8), Anar (97,4); титул Aldudénië (100,8); уход в темноту 102,4–104"),
+                     "Isil (90,8), Anar (97,4); титул Aldudénië (100,8); уход в темноту 103,6–109,6"),
 }
 cues = []
 stages = [e for e in ev if e["type"] == "stage"]
@@ -46,7 +46,7 @@ for e in ev:
 for t, s in [(37.5, "Silmarilli"), (54.0, "Úcala Ungolianteva"), (58.4, "Ungoliantë yúla i Aldu"), (62.4, "lómë"),
              (66.0, "Silmarilli uir túrimë mornienen")]:
     add(t, s, "document", 0.45, "надпись тенгваром и латиницей")
-add(102.4, "уход в темноту", "swell", 0.0, "в чёрное к 104; затем цикл повторяется", end=104.0)
+add(103.6, "уход в темноту", "swell", 0.0, "медленно в чёрное к 109,6; затем цикл повторяется", end=110.0)
 cues.sort(key=lambda c: (c["t"], c["kind"] != "section"))
 hours = [dict(t=e["t"], h=e["h"]) for e in ev if e["type"] == "hour"]
 json.dump(dict(version=1, duration_s=d["rite_len"], fps=None, video="aldudenie.html (анимация, цикл 104 с)",

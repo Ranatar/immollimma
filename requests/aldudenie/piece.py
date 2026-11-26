@@ -26,7 +26,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", ".."))
 from kit.events import Piece  # noqa: E402
 
-LEN = 104.0
+LEN = 110.0
 BPM = 72
 B = 60.0 / BPM                       # доля = 0,8333 с; час Древ в первой ступени = 2 доли
 
@@ -77,6 +77,7 @@ def build(ctx):
         if c["kind"] == "section":
             p.mark(c["t"], c["label"])
     p.meta["length"] = LEN
+    # конец: звучание держится до ~108,6, а уход делает затухание сведения 103,4–109,6 (сделано при нарезке цикла)
     p.meta["reverb_seconds"] = 4.6
     p.meta["sends"] = {"choir": 0.6, "strings": 0.5, "harp": 0.55, "winds": 0.45, "brass": 0.4}
 
@@ -300,7 +301,7 @@ def build(ctx):
 
     # ============================================================ VI  Isil ar Anar (90–104)
     # камни теперь мерцают: кроталы и челеста тихо, поочерёдно (смешанный свет — только здесь)
-    for k, t in enumerate([89.4, 92.0, 94.6, 97.2, 99.8, 102.2]):
+    for k, t in enumerate([89.4, 92.0, 94.6, 97.2, 99.8, 102.2, 104.9]):
         i = k % 3
         n("celesta", SILM[i], t, 2.4, vel=0.38, gain=0.3, pan=(-0.3, 0.3, 0.0)[i])
         if k % 2 == 0:
@@ -316,17 +317,21 @@ def build(ctx):
     # Анар: фраза b валторной, в миксолидийском, низко-тепло; под ней арфа с солью
     p.mark(97.4, "Anar — валторна")
     t = line("hn_sus", B_GOLD[:-1], 97.4, vel=0.55, gain=0.42, pan=-0.2, attack=0.1, release=0.6)
-    n("hn_sus", 57, t, 102.9 - t, vel=0.5, gain=0.40, pan=-0.2, release=0.6)
+    n("hn_sus", 57, t, 108.6 - t, vel=0.5, gain=0.40, pan=-0.2, attack=0.1, release=2.5)
     for k, notes in enumerate([[45, 52, 57, 59], [45, 50, 54, 57], [43, 50, 55, 59]]):   # A(без терции) | D | G (♭VII) → A
         harp_slot(97.4 + k * 2 * B, notes, gain=0.24, span=2 * B if k < 2 else 101.5 - (97.4 + 4 * B))
-    n("vc_sus", 45, 97.4, 5.5, vel=0.36, gain=0.7, attack=1.2, release=0.8)
+    n("vc_sus", 45, 97.4, 11.3, vel=0.36, gain=0.7, attack=1.2, release=2.5)
+    n("cb_sus", 33, 101.4, 7.3, vel=0.34, gain=0.6, attack=1.5, release=2.5)
     # титул: хор на аккорде камней, арфа последний раз
     p.mark(100.8, "Aldudénië")
     T_END = 97.4 + 5 * B                                     # = 101,57: валторна приходит на ля (♭VII → I)
     for m, g in [(57, 0.22), (64, 0.2), (71, 0.18)]:
-        n("choir", m, T_END, 1.6, vel=0.3, gain=g, attack=0.8, release=0.6)
-    harp_slot(T_END, [45, 52, 59, 64, 69, 71], gain=0.22, step=0.12, ring=1.6)
-    n("crotales", 93, T_END, 1.6, vel=0.35, gain=0.12)
+        n("choir", m, T_END, 7.0, vel=0.3, gain=g, attack=0.8, release=2.0)
+    harp_slot(T_END, [45, 52, 59, 64, 69, 71], gain=0.22, step=0.12, ring=3.0)
+    n("crotales", 93, T_END, 4.0, vel=0.35, gain=0.12)
+    # уход: последнее, медленное арпеджио аккорда камней — вверх, в тишину
+    harp_slot(104.2, [45, 52, 59, 64, 71, 76, 81], gain=0.17, step=0.42, ring=3.5)
+    n("celesta", SILM[2], 106.9, 3.0, vel=0.3, gain=0.18, pan=0.2)
 
     p.balance({"Celesta": +9, "Crotales": +7, "Violin harmonics": +12, "Glockenspiel": +6, "Violins": +3, "Violin solo": +9, "Bass clarinet": +3})
     return p

@@ -332,7 +332,7 @@ function intensities(x = rt) {
   if (x < 64) { const f = (1 - sm(52, 62, x)) * (.82 + .18 * Math.sin(x * 23) * Math.sin(x * 7.1)); return { h: 6.5, iT: .9 * f, iL: .9 * f, band: 1 - sm(53, 57, x) }; }
   if (x < 90) return { h: 6.5, iT: 0, iL: 0, band: 0 };
   // Исиль и Анар: серебро и золото теперь сменяют друг друга, не смешиваясь
-  return { h: 6.5, iT: .62 * bell((x - 90) / 7), iL: .66 * bell((x - 97.2) / 7), band: 0 };
+  return { h: 6.5, iT: .62 * bell((x - 90) / 7), iL: .66 * (x < 100.7 ? bell((x - 97.2) / 7) : bell(.5) * (1 - sm(100.7, 109.5, x) * .7)), band: 0 };
 }
 const lin = (a, b, x) => clamp((x - a) / (b - a));
 const sm = (a, b, x) => { const u = lin(a, b, x); return u * u * (3 - 2 * u); };
@@ -530,7 +530,7 @@ function drawHours(x, I) {
    V   72–90  Плач — тьма; формы букв пережили звуки: þ → s, ñ → n, anna — без звука; vanwa
    VI  90–104 Исиль и Анар — серебро и золото сменяют друг друга, не смешиваясь; смешанный свет — только в камнях
    Время — настоящие часы (rt), события — по постоянным отметкам; случайность — от посева. */
-const RITE_LEN = 104;
+const RITE_LEN = 110;          // плавный уход: титул, медленное угасание 104–109,6 и тишина до повтора
 let rt = 0, t = 0, last = performance.now(), paused = false, loopOn = true, cueIdx = 0;
 let silms = [], strands = [], chords = [], damage = null, dctxD = null, dmgPtr = [], motes = [], caps = [], rings = [];
 const EVLOG = []; let cueT = null;
@@ -813,7 +813,7 @@ function drawMotes(x) {
    Анар и идёт на запад. Вместе их нет: передача — у горизонта. */
 const ORB = {
   isil: { t0: 90.3, t1: 97.6, x0: .02, x1: .98, peak: .26 },
-  anar: { t0: 97.3, t1: 106.5, x0: .98, x1: .1, peak: .26 }
+  anar: { t0: 97.3, t1: 114, x0: .98, x1: .2, peak: .12 }
 };
 function orbPos(o, x) {
   const p = clamp((x - o.t0) / (o.t1 - o.t0));
@@ -900,7 +900,7 @@ const CUES = [
   [85.2, () => startWord(XW.vanwa, [.62, .78], 4.8)],
   [90.8, () => startWord(XW.isil, [.2, .8], 6)],
   [97.4, () => startWord(XW.anar, [.18, .7], 5)],
-  [100.8, () => { cap(QP.title, .5, .82, 3.2, COL.pearl, 1.7); ev('title'); }]
+  [100.8, () => { cap(QP.title, .5, .82, 7.4, COL.pearl, 1.7); ev('title'); }]
 ].sort((a, b) => a[0] - b[0]);
 
 function riteRestart() {
@@ -944,7 +944,7 @@ function render() {
   const st = stageAt(rt), sa = sm(1, 2.5, rt) * (1 - sm(99.5, 100.5, rt));
   if (sa > 0) drawPhrase(dctx, st[1], W / 2, 14 * k + sp * .3, sp * .6, '#d8e2f5', .75 * sa, sp * .17);
   // вход из темноты и уход в темноту
-  const black = Math.max(1 - sm(0, 2.2, rt), sm(102.4, 104, rt));
+  const black = Math.max(1 - sm(0, 2.2, rt), sm(103.6, 109.6, rt));
   if (black > .002) { dctx.fillStyle = `rgba(0,0,0,${black.toFixed(3)})`; dctx.fillRect(0, 0, W, H); }
 }
 function step(rdt) {
