@@ -34,6 +34,7 @@ const LEN = D.length, TAU = Math.PI * 2, OM = TAU / 17, FS = 40;
 const cv = document.getElementById("c"), ctx = cv.getContext("2d");
 const small = document.createElement("canvas"), sctx = small.getContext("2d");
 const whole = document.createElement("canvas"), wctx = whole.getContext("2d");
+const echo = document.createElement("canvas"), ectx = echo.getContext("2d");
 let W = 0, H = 0, S = 0, CX = 0, CY = 0, R = 0, K = 1;
 
 // ------------------------------------------------------------------ утилиты
@@ -82,6 +83,7 @@ const ji = m => JI[((m - 2) % 12 + 12) % 12] / 100;
 
 // ------------------------------------------------------------------ цвета и семейства нитей
 const GOLD = hsl(44, 85, 74), WGOLD = hsl(40, 70, 86), RED = hsl(4, 88, 52), EMBER = hsl(16, 95, 58);
+const HEAT = hsl(8, 100, 62), ICE = hsl(188, 95, 72);   // Мелькор — крайности: жар и лёд, ярче всего прочего
 const DEVC = [hsl(30, 75, 64), hsl(210, 35, 86), hsl(172, 55, 68), hsl(24, 55, 48), hsl(50, 80, 66), hsl(128, 38, 70)];
 const SECC = [hsl(262, 45, 80), hsl(232, 50, 78), hsl(285, 40, 78), hsl(250, 35, 62)];
 const FAM = {
@@ -94,7 +96,7 @@ const FAM = {
   sec:    { L: 18, tau: 9, w: 2.4, a: .9 },
   secv:   { L: 10, tau: 4.5, w: 1.5, a: .85 },
   t3:     { L: 20, tau: 15, w: 2.6, a: 1 },
-  uni:    { L: 25, tau: 18, w: 2.8, a: .9 },
+  uni:    { L: 30, tau: 30, w: 2.4, a: .9 },
 };
 const DEV_VAL = [0.6, 0.3, 0.15, 2.4, 1.0, 0.45], DEV_PH = [0.6, 2.3, 3.9, 5.1, 1.4, 4.5], DEV_LOCK = [1, .55, .4, 1, 1, .6];
 const SEC_VAL = [0.4, 0.2, 0.3, 1.6], SEC_PH = [1.0, 3.1, 4.6, 5.6];
@@ -117,18 +119,21 @@ function prep(th) {
   } else if (f === "cantus") { om = OM / th.unit; col = th.key.startsWith("ret") ? WGOLD : GOLD; }
   else if (f === "dev") { om = OM * Math.pow(DEV_VAL[th.vi], -0.55) / 2.6; ph = -Math.PI / 2 + DEV_PH[th.vi] / 5; lock = DEV_LOCK[th.vi]; col = DEVC[th.vi]; k = 5; if (th.vi === 2) width = 0.8; }
   else if (f === "sec") { om = -OM / th.unit; col = th.key === "sec_pk" ? hsl(268, 55, 88) : SECC[0]; }
-  else if (f === "secv") { om = -OM * Math.pow(SEC_VAL[th.vi], -0.55) / 2.6; ph = -Math.PI / 2 + SEC_PH[th.vi] / 5; col = SECC[th.vi]; k = 5; mirror = true; }
+  else if (f === "secv") { om = -OM * Math.pow(SEC_VAL[th.vi], -0.55) / 2.6; ph = -Math.PI / 2 + SEC_PH[th.vi] / 7; col = SECC[th.vi]; k = 7; mirror = true; }
   else if (f === "t3") {
     om = TAU / (16 * th.beat);
     col = th.line < 406 ? hsl(350, 45, 86) : th.line < 410 ? hsl(28, 65, 78) : hsl(205, 45, 78);
-  } else if (f === "mel") { mode = "poly"; poly = t => phM(t); col = RED; }
-  else if (f === "str") { mode = "poly"; const b = -Math.PI / 2 + th.pan * Math.PI + th.k * 0.9; poly = t => b + (t - t0) * 2.2; col = EMBER; }
-  else if (f === "uni") { mode = "poly"; poly = t => -Math.PI / 2 + (t - T.unison) * TAU / 24; col = hsl(2, 80, 48); }
+  } else if (f === "mel") { mode = "poly"; poly = t => phM(t); col = th.key.startsWith("mel356") ? ICE : HEAT; }
+  else if (f === "str") { mode = "poly"; const b = -Math.PI / 2 + th.pan * Math.PI + th.k * 0.9; poly = t => b + (t - t0) * 2.2; col = th.k % 2 ? ICE : HEAT; }
+  else if (f === "uni") { mode = "poly"; poly = t => -Math.PI / 2 + (t - T.unison) * TAU / 24; col = ICE; }
   else { globeThreads.push(th); return; }
   const fam = FAM[f];
   th.L = fam.L; th.tau = fam.tau; th.w = fam.w * width; th.a = fam.a; th.col = col; th.mode = mode;
   th.copies = [];                                       // узор Айнур: поворот на 2π/5 (и зеркало у второй темы)
   for (let j = 0; j < k; j++) { th.copies.push([j * TAU / k, false]); if (mirror) th.copies.push([j * TAU / k, true]); }
+  th.bundle = f === "cantus" ? 9 : f === "dev" ? 3 : f === "secv" ? 2 : 1;   // Айнур много: голос — хор нитей
+  const arc = f === "uni";                               // для вбирания: тот же унисон, но дугами
+  const xs2 = arc ? new Float32Array(Math.ceil((th.tB - th.tA) * FS) + 2) : null, ys2 = arc ? new Float32Array(xs2.length) : null;
   const N = Math.ceil((th.tB - th.tA) * FS) + 2;
   const xs = new Float32Array(N), ys = new Float32Array(N), I = new Float32Array(N), M = new Float32Array(N), Lk = new Float32Array(N);
   let ni = 0;
@@ -138,7 +143,7 @@ function prep(th) {
     const n = ns[ni];
     let m = n[2];
     if (ni > 0 && tau >= n[0]) {
-      const g = Math.min(0.09, 0.35 * n[1]), u = (tau - n[0]) / g;
+      const g = clamp(0.6 * n[1], 0.08, 0.7), u = (tau - n[0]) / g;   // плавный перелив, не ступенька
       if (u < 1) { const pm = ns[ni - 1][2], s = u * u * (3 - 2 * u); m = pm + (n[2] - pm) * s; }
     }
     let e = env(n, tau); if (ni > 0) e = Math.max(e, env(ns[ni - 1], tau));
@@ -151,6 +156,15 @@ function prep(th) {
       if (ni > 0 && tau < n[0] + 0.06) {
         const p = ns[ni - 1], pa = poly(p[0]), pr = rN(p[2]), u = clamp((tau - n[0]) / 0.06, 0, 1);
         x = Math.cos(pa) * pr + (x - Math.cos(pa) * pr) * u; y = Math.sin(pa) * pr + (y - Math.sin(pa) * pr) * u;
+      }
+      if (arc) {
+        const nx = ns[ni + 1];
+        let a2 = va, r2 = vr;
+        if (nx && tau >= n[0]) {
+          const v = clamp((tau - n[0]) / (nx[0] - n[0]), 0, 1), sv = v * v * (3 - 2 * v);
+          a2 = va + (poly(nx[0]) - va) * v; r2 = vr + (rN(nx[2]) - vr) * sv;
+        }
+        xs2[i] = Math.cos(a2) * r2; ys2[i] = Math.sin(a2) * r2;
       }
     } else if (mode === "local") {
       const rr = 0.05 + 0.12 * clamp((m - 50) / 32, 0, 1);
@@ -168,7 +182,7 @@ function prep(th) {
     }
     xs[i] = x; ys[i] = y;
   }
-  Object.assign(th, { xs, ys, I, M, Lk, N });
+  Object.assign(th, { xs, ys, I, M, Lk, N, xs2, ys2 });
   threads.push(th);
 }
 D.threads.forEach(prep);
@@ -194,6 +208,7 @@ function resize() {
   S = Math.min(W, H); CX = W / 2; CY = H / 2; R = 0.46 * S; K = S / 1000;
   small.width = Math.ceil(W / 4); small.height = Math.ceil(H / 4);
   whole.width = W; whole.height = H; drawWhole();
+  echo.width = Math.ceil(W / 2); echo.height = Math.ceil(H / 2);
   last = -1;
 }
 // вся Музыка разом — для последнего аккорда
@@ -259,6 +274,13 @@ function drawThread(th, t, gain) {
   const tEnd = Math.min(t, th.tB), iH = (tEnd - th.tA) * FS, i1 = Math.floor(iH);
   const i0 = Math.max(0, Math.floor((t - th.L - th.tA) * FS));
   if (i1 <= i0) return;
+  // вбирание: угловатый унисон Мелькора изгибается дугами и встаёт звеном в узор
+  const mu = th.xs2 ? sstep(T.absorb, T.absorb + 12, t) : 0;
+  let X = th.xs, Y = th.ys;
+  if (mu > 0) {
+    X = new Float32Array(th.N); Y = new Float32Array(th.N);
+    for (let i = i0; i <= Math.min(i1 + 1, th.N - 1); i++) { X[i] = th.xs[i] + (th.xs2[i] - th.xs[i]) * mu; Y[i] = th.ys[i] + (th.ys2[i] - th.ys[i]) * mu; }
+  }
   const paths = new Map(), invTau = 1 / th.tau;
   const lkNow = th.Lk ? th.Lk[Math.min(i1, th.N - 1)] : 0;
   for (let i = i0; i < i1 && i + 1 < th.N; i++) {
@@ -267,39 +289,55 @@ function drawThread(th, t, gain) {
     if (al < 0.012) continue;
     const lv = Math.min(16, Math.max(1, Math.round(al * 14)));
     let p = paths.get(lv); if (!p) { p = new Path2D(); paths.set(lv, p); }
-    p.moveTo(CX + th.xs[i] * R, CY + th.ys[i] * R);
-    p.lineTo(CX + th.xs[i + 1] * R, CY + th.ys[i + 1] * R);
+    p.moveTo(CX + X[i] * R, CY + Y[i] * R);
+    p.lineTo(CX + X[i + 1] * R, CY + Y[i + 1] * R);
   }
-  // голова — точно в текущий миг
   const j = Math.min(i1, th.N - 2), u = iH - j;
-  const hx = CX + (th.xs[j] + (th.xs[j + 1] - th.xs[j]) * u) * R, hy = CY + (th.ys[j] + (th.ys[j + 1] - th.ys[j]) * u) * R;
+  const hx = CX + (X[j] + (X[j + 1] - X[j]) * u) * R, hy = CY + (Y[j] + (Y[j + 1] - Y[j]) * u) * R;
   const hI = th.I[j] * gain * th.a * (t <= th.tB ? 1 : 0);
-  const col = lkNow > 0 ? mix(th.col, EMBER, lkNow * 0.75) : th.col;
+  let col = lkNow > 0 ? mix(th.col, HEAT, lkNow * 0.7) : th.col;
+  if (mu > 0) col = mix(col, WGOLD, mu);
   const isMel = th.mode === "poly";
-  const setCopy = (ang, mir) => {
+  const setCopy = (ang, mir, sc) => {
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.translate(CX, CY); ctx.rotate(ang);
-    if (mir) ctx.scale(-1, 1); ctx.translate(-CX, -CY);
+    ctx.scale(mir ? -sc : sc, sc); ctx.translate(-CX, -CY);
   };
-  if (isMel) {                                         // тьма Мелькора гасит свет вокруг себя
+  if (isMel && mu < 0.98) {                            // тьма вокруг Мелькора гасит чужой свет
     ctx.globalCompositeOperation = "destination-out"; ctx.lineWidth = 15 * K;
-    for (const [lv, p] of paths) { ctx.strokeStyle = `rgba(0,0,0,${Math.min(.5, lv / 14 * .45)})`; ctx.stroke(p); }
+    for (const [lv, p] of paths) { ctx.strokeStyle = `rgba(0,0,0,${Math.min(.5, lv / 14 * .45) * (1 - mu)})`; ctx.stroke(p); }
     ctx.globalCompositeOperation = "lighter";
   }
-  ctx.lineWidth = th.w * K;
-  const rr = (3 + 5 * Math.min(1, hI)) * K * (isMel ? 1.3 : 1);
+  const rr = (3 + 5 * Math.min(1, hI)) * K * (isMel ? 1.4 : 1);
   let g = null;
   if (hI > 0.03) {
     g = ctx.createRadialGradient(hx, hy, 0, hx, hy, rr * 2.2);
     g.addColorStop(0, rgba(mix(col, [255, 255, 255], 0.6), Math.min(1, hI)));
     g.addColorStop(1, rgba(col, 0));
   }
-  for (let c = 0; c < th.copies.length; c++) {
-    const [ang, mir] = th.copies[c];
-    const ca = c === 0 ? 1 : 1 - lkNow;                // втянутый Мелькором голос теряет свои отражения
+  let copies = th.copies;
+  if (mu > 0) copies = [0, 1, 2, 3, 4].map(q => [q * TAU / 5, false]);
+  const core = mix(col, [255, 255, 255], 0.72);
+  const mid = (th.bundle - 1) / 2;
+  for (let c = 0; c < copies.length; c++) {
+    const [ang, mir] = copies[c];
+    const ca = c === 0 ? 1 : mu > 0 ? mu * 0.65 : 1 - lkNow;   // втянутый Мелькором голос теряет отражения
     if (ca < 0.02) continue;
-    if (th.copies.length > 1) setCopy(ang, mir);
-    for (const [lv, p] of paths) { ctx.strokeStyle = rgba(col, Math.min(1, lv / 10) * ca); ctx.stroke(p); }
-    if (g) { ctx.globalAlpha = ca; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(hx, hy, rr * 2.2, 0, TAU); ctx.fill(); ctx.globalAlpha = 1; }
+    for (let bi = 0; bi < th.bundle; bi++) {
+      const off = bi - mid, lead = Math.abs(off) < 0.6 || th.bundle === 1;
+      const ba = lead ? 1 : 0.42 + 0.1 * ((bi * 7) % 3);
+      if (copies.length > 1 || th.bundle > 1) setCopy(ang + off * 0.03, mir, 1 + ((bi * 5) % 5 - 2) * 0.014 * (lead ? 0 : 1));
+      if (isMel) {                                     // раскалённое ядро в цветном ореоле
+        ctx.lineWidth = th.w * K * 2;
+        for (const [lv, p] of paths) { ctx.strokeStyle = rgba(col, Math.min(1, lv / 10) * ca * 0.5); ctx.stroke(p); }
+        ctx.lineWidth = th.w * K * 0.6;
+        for (const [lv, p] of paths) { ctx.strokeStyle = rgba(core, Math.min(1, lv / 9) * ca); ctx.stroke(p); }
+      } else {
+        ctx.lineWidth = th.w * K * (lead ? 1 : 0.5);
+        for (const [lv, p] of paths) { ctx.strokeStyle = rgba(col, Math.min(1, lv / 10) * ca * ba); ctx.stroke(p); }
+      }
+      if (g && lead) { ctx.globalAlpha = ca; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(hx, hy, rr * 2.2, 0, TAU); ctx.fill(); ctx.globalAlpha = 1; }
+      else if (g && hI > 0.1) { ctx.fillStyle = rgba(core, Math.min(.6, hI * .5) * ca); ctx.beginPath(); ctx.arc(hx, hy, 1.6 * K, 0, TAU); ctx.fill(); }
+    }
   }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   return hI > 0.08 ? th.M[j] : null;
@@ -411,7 +449,7 @@ function drawMusic(t) {
   drawRings(t, gate);
   for (const th of threads) if (th.mode === "poly") {
     let g = 1;
-    if (th.fam === "uni" && t > T.absorb) g = 1 - 0.75 * sstep(T.absorb, T.absorb + 8, t);
+    if (th.fam === "uni" && t > T.absorb) g = 1 - 0.3 * sstep(T.absorb, T.absorb + 12, t);
     drawThread(th, t, g);
   }
   drawFx(t);
@@ -422,12 +460,30 @@ function drawMusic(t) {
 }
 
 // ------------------------------------------------------------------ видение: Музыка становится миром
-const GLOBE = (() => {
-  const q = rnd(4242), mounts = [];
-  for (let k = 0; k < 11; k++) mounts.push([-0.15 + q() * 0.75, q() * TAU, q()]);
-  const q2 = rnd(77), drops = [];
-  for (let k = 0; k < 80; k++) drops.push(q2());
-  return { mounts, drops };
+// поверхность мира — правильная решётка Фибоначчи: узор, а не карта
+const LV = k => k === 0 ? 9 : 0.82 - 0.07 * (k - 1);      // уровень моря после k щипков Аулэ
+const SURF = (() => {
+  const N = 5200, ga = Math.PI * (3 - Math.sqrt(5)), q = rnd(9001), pts = [];
+  const pulses = FX_AULE.map(r => r.n[0]).sort((a, b) => a - b);
+  for (let i = 0; i < N; i++) {
+    const Y = 1 - 2 * (i + 0.5) / N, lat = Math.asin(Y), lon = (i * ga) % TAU;
+    const cl = Math.cos(lat), X = cl * Math.cos(lon), Z = cl * Math.sin(lon);
+    const h = 0.5 * Math.sin(2.3 * X + 1.7 * Y + 0.5) + 0.35 * Math.sin(3.7 * Y - 2.1 * Z + 1.1)
+      + 0.25 * Math.sin(5.3 * Z + 4.1 * X - 0.7) + 0.15 * Math.sin(9.1 * X - 7.3 * Z + 2.0);
+    let tRise = Infinity;
+    for (let k = 0; k < pulses.length; k++) if (h > LV(k + 1)) { tRise = pulses[k]; break; }
+    pts.push({ lat, lon, h, tRise, r1: q(), r2: q() });
+  }
+  const cl = [], q2 = rnd(4711);
+  for (let i = 0; i < 900; i++) {
+    const Y = 1 - 2 * (i + 0.5) / 900, lat = Math.asin(Y) * 0.9, lon = (i * ga * 1.0001) % TAU;
+    cl.push({ lat, lon, r: q2() });
+  }
+  const stars = [], q3 = rnd(555);
+  for (let i = 0; i < 520; i++) stars.push([q3() * TAU, 1.08 + Math.pow(q3(), 0.7) * 2.6, q3(), q3()]);
+  const q4 = rnd(77), drops = [];
+  for (let k = 0; k < 80; k++) drops.push(q4());
+  return { pts, cl, stars, drops };
 })();
 function sph(lat, lon, rot, tilt, Rg) {
   const cl = Math.cos(lat), x = cl * Math.sin(lon + rot), y0 = Math.sin(lat), z0 = cl * Math.cos(lon + rot);
@@ -435,6 +491,9 @@ function sph(lat, lon, rot, tilt, Rg) {
   return [CX + x * Rg, CY - y * Rg, z];
 }
 const latOf = m => (-62 + 124 * clamp((m - 62) / (95 - 62), 0, 1)) * Math.PI / 180;
+const envMax = (list, t) => list.reduce((s, r) => Math.max(s, env(r.n, t)), 0);
+const SEA0 = hsl(208, 75, 46), SEA1 = hsl(182, 85, 70), AMBER = hsl(34, 80, 62), GREEN = hsl(110, 60, 56),
+  SNOW = hsl(45, 40, 92), ICEC = hsl(190, 90, 82), CHILDC = hsl(44, 100, 78);
 function drawVision(t) {
   if (t < T.vision || t >= T.vcut) return;
   const u = t - T.vision, appear = sstep(0, 2.2, u);
@@ -442,12 +501,23 @@ function drawVision(t) {
   const rot = u * 0.22, Rg = R * (0.58 + 0.06 * sstep(0, 6.5, u));
   const child = sstep(T.child - 0.6, T.child + 2.5, t);
   ctx.globalCompositeOperation = "lighter"; ctx.lineCap = "round";
-  // тело мира и воздух (флажолеты)
-  const atm = rings.filter(r => r.fam === "vharm").reduce((s, r) => Math.max(s, env(r.n, t)), 0);
-  let g = ctx.createRadialGradient(CX, CY, Rg * 0.2, CX, CY, Rg * 1.12);
-  const body = sstep(2.5, 7, u) * appear;
-  g.addColorStop(0, rgba(hsl(215, 45, 14), 0.35 * body)); g.addColorStop(0.9, rgba(hsl(205, 50, 18), 0.4 * body));
-  g.addColorStop(0.97, rgba(hsl(195, 60, 62), (0.05 + 0.3 * atm) * body)); g.addColorStop(1, rgba(hsl(195, 60, 60), 0));
+  // «посреди бессчётных звёзд»: кружащиеся огни в Пустоте, что держит мир
+  const st = sstep(1.5, 9, u);
+  if (st > 0) for (const [a0, rr, s1, s2] of SURF.stars) {
+    const a = a0 + u * (0.012 + 0.02 * s1) * (s2 > .5 ? 1 : -1), x = CX + Math.cos(a) * rr * Rg * 1.25, y = CY + Math.sin(a) * rr * Rg * 0.8;
+    if (x < 0 || x > W || y < 0 || y > H) continue;
+    const tw = 0.55 + 0.45 * Math.sin(t * (0.8 + 2 * s1) + s2 * 40);
+    ctx.fillStyle = rgba(s2 > .8 ? hsl(40, 70, 82) : s2 > .6 ? hsl(210, 60, 85) : [235, 238, 250], st * tw * (0.25 + 0.6 * s1));
+    const z = (0.8 + 1.4 * s1 * s1) * K; ctx.fillRect(x - z / 2, y - z / 2, z, z);
+  }
+  // мир заслоняет звёзды за собой
+  ctx.globalCompositeOperation = "destination-out"; ctx.fillStyle = `rgba(0,0,0,${0.95 * appear})`;
+  ctx.beginPath(); ctx.arc(CX, CY, Rg * 1.005, 0, TAU); ctx.fill(); ctx.globalCompositeOperation = "lighter";
+  // воздух (флажолеты)
+  const body = sstep(2.5, 7, u) * appear, atm = envMax(rings.filter(r => r.fam === "vharm"), t);
+  let g = ctx.createRadialGradient(CX, CY, Rg * 0.94, CX, CY, Rg * 1.12);
+  g.addColorStop(0, rgba(hsl(195, 70, 62), 0)); g.addColorStop(0.35, rgba(hsl(195, 70, 66), (0.06 + 0.3 * atm) * body));
+  g.addColorStop(1, rgba(hsl(195, 60, 60), 0));
   ctx.fillStyle = g; ctx.beginPath(); ctx.arc(CX, CY, Rg * 1.12, 0, TAU); ctx.fill();
   const drawLat = (lat, col, a, w, lon0 = 0, lon1 = TAU, back = 0.18) => {
     let prev = null; const n = Math.max(8, Math.round((lon1 - lon0) / TAU * 150));
@@ -457,17 +527,43 @@ function drawVision(t) {
       prev = p;
     }
   };
-  // широты — та же решётка лада
+  // широты — та же решётка лада; с полюса это ещё кольца Музыки
+  const ringy = 1 - sstep(1, 7, u);
   const PENT = [62, 64, 66, 69, 71, 74, 76, 78, 81, 83, 86, 88, 90, 93, 95];
-  const ringy = 1 - sstep(1, 7, u);                   // кольца Музыки, увиденные с полюса, гаснут до решётки шара
-  for (const m of PENT) drawLat(latOf(m), mix(hsl(42, 50, 72), hsl(30, 70, 70), child), (0.12 + 0.3 * ringy) * appear, (0.9 + ringy) * K);
-  for (let k = 0; k < 12; k++) {                       // меридианы
-    let prev = null;
-    for (let s = 0; s <= 40; s++) {
-      const p = sph(-Math.PI / 2 + Math.PI * s / 40, k / 12 * TAU, rot, tilt, Rg);
-      if (prev) { ctx.strokeStyle = rgba(hsl(210, 30, 70), 0.05 * appear * (p[2] > 0 ? 1 : .2)); ctx.lineWidth = .8 * K; ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(p[0], p[1]); ctx.stroke(); }
-      prev = p;
+  for (const m of PENT) drawLat(latOf(m), mix(hsl(42, 50, 72), hsl(30, 70, 70), child), (0.05 + 0.35 * ringy) * appear, (0.8 + ringy) * K);
+  // поверхность: вода Ульмо, земля Аулэ, стужа и жар Мелькора, жизнь, Дети
+  const ulmoE = globeThreads.filter(x => x.fam === "ulmo").reduce((s, x) => Math.max(s, x.notes.reduce((q, n) => Math.max(q, env(n, t)), 0)), 0);
+  const roar = envMax(rings.filter(r => r.fam === "vsea"), t);
+  const dots = sstep(1.0, 5.5, u) * appear, frost = sstep(265, 276, t), fire = sstep(272.5, 275, t), life = sstep(274, 280.5, t);
+  const iceLat = (88 - 24 * frost) * Math.PI / 180, z0 = 2.4 * K;
+  for (const p of SURF.pts) {
+    const s = sph(p.lat, p.lon, rot, tilt, Rg); if (s[2] < 0.02) continue;
+    const lightF = (0.35 + 0.65 * s[2]) * dots * 1.5;
+    let col, a, z = z0;
+    if (Math.abs(p.lat) > iceLat + (p.r1 - 0.5) * 0.12) {                           // лёд и снег
+      col = ICEC; a = 0.55 + 0.4 * Math.sin(t * 5 + p.r1 * 40) * frost; z = z0 * (1 + 0.5 * frost);
+    } else if (t >= p.tRise) {
+      const v = t - p.tRise, fl = Math.exp(-v / 0.35), rise = clamp(v / 0.6, 0, 1);
+      const peak = p.h > 0.78;
+      col = peak ? SNOW : mix(AMBER, GREEN, life * (p.r2 > 0.18 ? 1 : 0.3));
+      a = 0.35 + 0.45 * rise + 0.9 * fl;
+      if (p.r1 < 0.03 && fire > 0) { col = HEAT; a = fire * (0.6 + 0.4 * Math.sin(t * 9 + p.r2 * 30)); z = z0 * 1.3; }  // жар, что нельзя обуздать
+      else if (child > 0 && p.r1 > 0.5 && p.r1 < 0.57 && t > T.child + p.r2 * 5) { col = CHILDC; a = Math.min(1, (t - T.child - p.r2 * 5) * 1.5); z = z0 * 1.35; }
+    } else {
+      const sh = 0.6 * ulmoE * (0.5 + 0.5 * Math.sin(p.lon * 5 - t * 2.6 + p.lat * 3))
+        + 0.5 * roar * (0.5 + 0.5 * Math.sin(p.lon * 11 + t * 6 + p.r1 * 3));
+      col = mix(SEA0, SEA1, Math.min(1, 0.1 + sh)); a = 0.45 + 0.5 * Math.min(1, sh);
     }
+    ctx.fillStyle = rgba(col, Math.min(1, a) * lightF); ctx.fillRect(s[0] - z / 2, s[1] - z / 2, z, z);
+  }
+  // облака Манвэ и Ульмо
+  const cloud = sstep(264, 267.5, t);
+  if (cloud > 0) for (const c of SURF.cl) {
+    const lon = c.lon + u * 0.06, X = Math.cos(c.lat) * Math.cos(lon), Y = Math.sin(c.lat), Z = Math.cos(c.lat) * Math.sin(lon);
+    const m = Math.sin(3.1 * X + 2.2 * Z + u * 0.15) + Math.sin(4.3 * Y - 2.7 * X - u * 0.1) + 0.6 * Math.sin(7 * Z + 5 * Y);
+    if (m < 0.9) continue;
+    const s = sph(c.lat, lon, rot, tilt, Rg * 1.025); if (s[2] < 0.05) continue;
+    ctx.fillStyle = rgba([240, 244, 252], cloud * 0.4 * (m - 0.9) * s[2]); ctx.fillRect(s[0] - K, s[1] - K, 2.2 * K, 2.2 * K);
   }
   // арфа: искры бегут по широтам
   for (const r of FX_VHARP) {
@@ -475,17 +571,6 @@ function drawVision(t) {
     const lat = latOf(r.n[2]), lon0 = r.i * 2.399, e = env(r.n, t);
     const c = r.n[0] >= T.child - 0.5 ? hsl(36, 80, 76) : hsl(48, 70, 80);
     drawLat(lat, c, Math.min(.8, e * 1.6), 1.6 * K, lon0, lon0 + 0.25 + v * 0.9, 0.1);
-  }
-  // море (рёв), Ульмо
-  const sea = rings.filter(r => r.fam === "vsea").reduce((s, r) => Math.max(s, env(r.n, t)), 0);
-  if (sea > 0.01) for (let k = 0; k < 5; k++) {
-    let prev = null; const lat0 = (-38 + k * 6) * Math.PI / 180;
-    for (let s = 0; s <= 150; s++) {
-      const lon = s / 150 * TAU, lat = lat0 + 0.05 * Math.sin(lon * 7 + t * 2.2 + k) * sea;
-      const p = sph(lat, lon, rot, tilt, Rg);
-      if (prev && p[2] > 0) { ctx.strokeStyle = rgba(hsl(198, 70, 58), 0.35 * sea); ctx.lineWidth = 1.4 * K; ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(p[0], p[1]); ctx.stroke(); }
-      prev = p;
-    }
   }
   // голоса на поверхности: рог Ульмо (юг), ветер Манвэ (север), Дети
   for (const th of globeThreads) {
@@ -500,44 +585,20 @@ function drawVision(t) {
       let n = null; for (const x of th.notes) if (x[0] <= tau) n = x;
       if (!n) continue;
       const e = env(n, tau) * Math.exp(-(t - tau) / 2.5);
-      const p = sph(latf(n[2]), lonBase + (tau - t0) * om, rot, tilt, Rg);
-      if (prev && e > 0.01) { ctx.strokeStyle = rgba(col, Math.min(1, e * 2) * (p[2] > 0 ? 1 : .2)); ctx.lineWidth = 2.6 * K; ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(p[0], p[1]); ctx.stroke(); }
+      const p = sph(latf(n[2]), lonBase + (tau - t0) * om, rot, tilt, Rg * 1.01);
+      if (prev && e > 0.01) { ctx.strokeStyle = rgba(col, Math.min(1, e * 2) * (p[2] > 0 ? 1 : .2)); ctx.lineWidth = 2.4 * K; ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(p[0], p[1]); ctx.stroke(); }
       prev = p;
     }
   }
-  // Аулэ: каждый щипок поднимает гору, горы остаются
-  FX_AULE.forEach((r, k) => {
-    const v = t - r.n[0]; if (v < 0) return;
-    const [lat, lon] = GLOBE.mounts[k % GLOBE.mounts.length], p = sph(lat, lon, rot, tilt, Rg);
-    if (p[2] < 0) return;
-    const flash = Math.exp(-v / 0.3), a = (0.45 + 0.55 * flash) * p[2];
-    const rr = (2.2 + 3 * flash) * K;
-    const gg = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], rr * 3);
-    gg.addColorStop(0, rgba(hsl(36, 75, 70), a)); gg.addColorStop(1, rgba(hsl(30, 70, 50), 0));
-    ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(p[0], p[1], rr * 3, 0, TAU); ctx.fill();
-  });
-  // дождь
+  // «шум дождя, падающего на Землю»
   FX_RAIN.forEach((r, k) => {
     const v = t - r.n[0]; if (v < -0.5 || v > 0.5) return;
-    const x = (GLOBE.drops[k % 80] * 2 - 1) * 0.85, yHit = -Math.sqrt(Math.max(0, 1 - x * x)) * 0.95;
+    const x = (SURF.drops[k % 80] * 2 - 1) * 0.85, yHit = -Math.sqrt(Math.max(0, 1 - x * x)) * 0.95;
     const y0 = -1.45, y = v < 0 ? yHit + (y0 - yHit) * (-v / 0.5) : yHit;
     const px = CX + x * Rg, py = CY + y * Rg;
     if (v < 0) { ctx.strokeStyle = rgba(hsl(205, 40, 88), 0.8); ctx.lineWidth = 1.2 * K; ctx.beginPath(); ctx.moveTo(px, py - 16 * K); ctx.lineTo(px, py); ctx.stroke(); }
     else { ctx.strokeStyle = rgba(hsl(205, 40, 88), 0.8 * (1 - v / 0.5)); ctx.lineWidth = 1.1 * K; ctx.beginPath(); ctx.ellipse(px, py, (2 + 12 * v) * K, (1 + 4 * v) * K, 0, 0, TAU); ctx.stroke(); }
   });
-  // пробуждение Детей: тёплые огни на поверхности
-  if (child > 0) {
-    const q = rnd(31);
-    for (let k = 0; k < 40; k++) {
-      const lat = (-25 + 50 * q()) * Math.PI / 180, lon = q() * TAU, when = T.child + q() * 5;
-      if (t < when) continue;
-      const p = sph(lat, lon, rot, tilt, Rg); if (p[2] < 0.05) continue;
-      const fl = Math.min(1, (t - when) * 1.5) * p[2] * (0.75 + 0.25 * Math.sin(t * 3 + k));
-      const gg = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], 6 * K);
-      gg.addColorStop(0, rgba(hsl(42, 95, 80), fl)); gg.addColorStop(1, rgba(hsl(36, 90, 60), 0));
-      ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(p[0], p[1], 6 * K, 0, TAU); ctx.fill();
-    }
-  }
 }
 
 // ------------------------------------------------------------------ Эа
@@ -590,6 +651,17 @@ function frame(t) {
   ctx.globalCompositeOperation = "source-over";
   ctx.clearRect(0, 0, W, H);
   drawMusic(t);
+  // «и музыка, и эхо музыки излились в Пустоту, и она перестала быть пустотой»
+  const pour = sstep(98, 104, t) * (1 - sstep(110, 115, t));
+  if (pour > 0.01) {
+    ectx.clearRect(0, 0, echo.width, echo.height); ectx.drawImage(cv, 0, 0, echo.width, echo.height);
+    ctx.globalCompositeOperation = "lighter";
+    for (const [sc, al, rt] of [[1.35, .22, .04], [1.85, .12, -.07], [2.6, .06, .11]]) {
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.translate(CX, CY); ctx.rotate(rt * (t - 98)); ctx.scale(sc, sc); ctx.translate(-CX, -CY);
+      ctx.globalAlpha = al * pour; ctx.drawImage(echo, 0, 0, W, H);
+    }
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1;
+  }
   drawVision(t);
   drawEa(t);
   // свечение
