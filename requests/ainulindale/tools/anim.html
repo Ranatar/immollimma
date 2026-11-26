@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ainulindalë — Музыка Айнур</title>
+<style>
+@font-face{font-family:Ea;src:url(data:font/ttf;base64,/*FONT*/) format("truetype");}
+html,body{margin:0;height:100%;overflow:hidden;background:#04050a;}
+body{background:radial-gradient(ellipse at 50% 50%,#0b0d18 0%,#06070e 55%,#020205 100%);cursor:default;}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block;}
+#veil{position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%);}
+#start{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+#start div{width:84px;height:84px;border-radius:50%;border:1px solid rgba(240,214,150,.55);
+  box-shadow:0 0 40px rgba(240,214,150,.18),inset 0 0 24px rgba(240,214,150,.12);position:relative;transition:transform .4s;}
+#start div:after{content:"";position:absolute;left:34px;top:27px;border-style:solid;border-width:15px 0 15px 24px;
+  border-color:transparent transparent transparent rgba(244,222,166,.85);}
+#start:hover div{transform:scale(1.06);}
+#bar{position:fixed;left:0;bottom:0;height:2px;background:rgba(240,214,150,.25);width:0;opacity:0;transition:opacity 1s;}
+body.ui #bar{opacity:1;}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="veil"></div>
+<div id="bar"></div>
+<div id="start"><div></div></div>
+<audio id="au" preload="auto" src="data:audio/mpeg;base64,/*AUDIO*/"></audio>
+<script>
+"use strict";
+const D = /*DATA*/;
+const LEN = D.length, TAU = Math.PI * 2, OM = TAU / 17, FS = 40;
+const cv = document.getElementById("c"), ctx = cv.getContext("2d");
+const small = document.createElement("canvas"), sctx = small.getContext("2d");
+const whole = document.createElement("canvas"), wctx = whole.getContext("2d");
+let W = 0, H = 0, S = 0, CX = 0, CY = 0, R = 0, K = 1;
+
+// ------------------------------------------------------------------ утилиты
+const clamp = (x, a, b) => x < a ? a : x > b ? b : x;
+const sstep = (a, b, x) => { const u = clamp((x - a) / (b - a), 0, 1); return u * u * (3 - 2 * u); };
+function lin(tab, t) {                      // кусочно-линейная функция по таблице [[t, v], ...]
+  if (t <= tab[0][0]) return tab[0][1];
+  for (let i = 1; i < tab.length; i++) if (t < tab[i][0]) {
+    const [a, x] = tab[i - 1], [b, y] = tab[i]; return x + (y - x) * (t - a) / (b - a);
+  }
+  return tab[tab.length - 1][1];
+}
+function hsl(h, s, l) {
+  s /= 100; l /= 100; const k = n => (n + h / 30) % 12, a = s * Math.min(l, 1 - l);
+  const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1));
+  return [Math.round(255 * f(0)), Math.round(255 * f(8)), Math.round(255 * f(4))];
+}
+const mix = (c1, c2, u) => [0, 1, 2].map(i => Math.round(c1[i] + (c2[i] - c1[i]) * u));
+const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+function rnd(seed) { let s = seed >>> 0 || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
+const rN = m => 0.07 + 0.93 * (m - 24) / 78;          // высота → радиус (доля R): низ у центра, верх к краю
+function env(n, tau) {                                 // n = [t, d, m, a, att, rel]
+  const u = tau - n[0]; if (u < 0) return 0;
+  const att = Math.max(0.03, Math.min(n[4], n[1] * 0.5)), rel = Math.max(0.15, n[5]);
+  if (u < att) return n[3] * u / att;
+  if (u < n[1]) return n[3];
+  return n[3] * Math.exp(-(u - n[1]) / (rel * 0.6));
+}
+const envEnd = n => n[0] + n[1] + Math.max(0.15, n[5]) * 3;
+
+// ------------------------------------------------------------------ время сочинения
+const T = { great: 44.5, devA: 81, ret: 101.4, melkor: 113, sea: 126, sec: 148, battle: 166, mastery: 180,
+  third: 188, t3b: 200, t3c: 216, unison: 212, absorb: 232, chord: 248, silence: 252.5, vision: 257,
+  child: 276.5, vcut: 282.5, ea: 286 };
+const phM = t => -Math.PI / 2 + 1.7 * OM * (t - T.melkor);           // фаза Мелькора: ровный навязанный ход
+const troubled = t => clamp((t - 114) / 8, 0, 1);                     // смятение соседей
+function discord(t) {                                                  // мера разлада для решётки
+  return lin([[113, 0], [118, .35], [126, .8], [136, 1], [146, .9], [150, .3], [164, .3], [168, .9], [186, 1],
+    [192, .45], [210, .3], [212, .15], [232, .15], [242, 0]], t);
+}
+// лад решётки по времени
+const F_D = [2, 4, 6, 9, 11], F_A = [9, 11, 1, 4, 6], F_INV = [2, 5, 7, 10, 0], F_DOR = [2, 4, 5, 7, 9, 11, 0];
+const LATTICE = [[22, 81, F_D], [81, 101.4, F_A], [101.4, 148, F_D], [148, 188, F_INV], [188, 248, F_DOR]];
+const JI = { 0: 0, 1: 11.7, 2: 3.9, 3: 15.6, 4: -13.7, 5: -2, 6: -9.8, 7: 2, 8: 13.7, 9: -15.6, 10: -3.9, 11: -11.7 };
+const ji = m => JI[((m - 2) % 12 + 12) % 12] / 100;
+
+// ------------------------------------------------------------------ цвета и семейства нитей
+const GOLD = hsl(44, 85, 74), WGOLD = hsl(40, 70, 86), RED = hsl(4, 88, 52), EMBER = hsl(16, 95, 58);
+const DEVC = [hsl(30, 75, 64), hsl(210, 35, 86), hsl(172, 55, 68), hsl(24, 55, 48), hsl(50, 80, 66), hsl(128, 38, 70)];
+const SECC = [hsl(262, 45, 80), hsl(232, 50, 78), hsl(285, 40, 78), hsl(250, 35, 62)];
+const FAM = {
+  solo:   { L: 7, tau: 3, w: 1.8, a: 1 },
+  expo:   { L: 26, tau: 18, w: 2.8, a: 1 },
+  cantus: { L: 22, tau: 10, w: 2.6, a: .9 },
+  dev:    { L: 12, tau: 5, w: 1.6, a: .9 },
+  mel:    { L: 7, tau: 2.6, w: 2.6, a: 1 },
+  str:    { L: 3.5, tau: 1.2, w: 2.0, a: .9 },
+  sec:    { L: 18, tau: 9, w: 2.4, a: .9 },
+  secv:   { L: 10, tau: 4.5, w: 1.5, a: .85 },
+  t3:     { L: 20, tau: 15, w: 2.6, a: 1 },
+  uni:    { L: 25, tau: 18, w: 2.8, a: .9 },
+};
+const DEV_VAL = [0.6, 0.3, 0.15, 2.4, 1.0, 0.45], DEV_PH = [0.6, 2.3, 3.9, 5.1, 1.4, 4.5], DEV_LOCK = [1, .55, .4, 1, 1, .6];
+const SEC_VAL = [0.4, 0.2, 0.3, 1.6], SEC_PH = [1.0, 3.1, 4.6, 5.6];
+
+// ------------------------------------------------------------------ подготовка нитей
+const threads = [], globeThreads = [];
+function prep(th) {
+  const ns = th.notes, f = th.fam;
+  const t0 = ns[0][0], last = ns[ns.length - 1];
+  th.tA = t0 - 0.05; th.tB = Math.max(...ns.map(envEnd));
+  let mode = "arc", om = OM, ph = -Math.PI / 2, lock = 0, col = GOLD, poly = null, local = null, width = 1;
+  let k = 1, mirror = false;
+  if (f === "solo") {
+    mode = "local"; om = TAU / 5.5; col = hsl([40, 200, 170, 30, 52, 220, 44, 190, 25][th.i], 45, 78);
+    const ang = -Math.PI / 2 + th.pan * 2.2 + th.i * 0.9, dist = 0.62 - 0.035 * th.i;
+    local = [Math.cos(ang) * dist, Math.sin(ang) * dist];
+    ph = ang + Math.PI;
+  } else if (f === "expo") {
+    col = [WGOLD, GOLD, hsl(38, 60, 66), hsl(34, 55, 58)][th.cls]; width = [1.25, .85, .6, .55][th.cls];
+  } else if (f === "cantus") { om = OM / th.unit; col = th.key.startsWith("ret") ? WGOLD : GOLD; }
+  else if (f === "dev") { om = OM * Math.pow(DEV_VAL[th.vi], -0.55) / 2.6; ph = -Math.PI / 2 + DEV_PH[th.vi] / 5; lock = DEV_LOCK[th.vi]; col = DEVC[th.vi]; k = 5; if (th.vi === 2) width = 0.8; }
+  else if (f === "sec") { om = -OM / th.unit; col = th.key === "sec_pk" ? hsl(268, 55, 88) : SECC[0]; }
+  else if (f === "secv") { om = -OM * Math.pow(SEC_VAL[th.vi], -0.55) / 2.6; ph = -Math.PI / 2 + SEC_PH[th.vi] / 5; col = SECC[th.vi]; k = 5; mirror = true; }
+  else if (f === "t3") {
+    om = TAU / (16 * th.beat);
+    col = th.line < 406 ? hsl(350, 45, 86) : th.line < 410 ? hsl(28, 65, 78) : hsl(205, 45, 78);
+  } else if (f === "mel") { mode = "poly"; poly = t => phM(t); col = RED; }
+  else if (f === "str") { mode = "poly"; const b = -Math.PI / 2 + th.pan * Math.PI + th.k * 0.9; poly = t => b + (t - t0) * 2.2; col = EMBER; }
+  else if (f === "uni") { mode = "poly"; poly = t => -Math.PI / 2 + (t - T.unison) * TAU / 24; col = hsl(2, 80, 48); }
+  else { globeThreads.push(th); return; }
+  const fam = FAM[f];
+  th.L = fam.L; th.tau = fam.tau; th.w = fam.w * width; th.a = fam.a; th.col = col; th.mode = mode;
+  th.copies = [];                                       // узор Айнур: поворот на 2π/5 (и зеркало у второй темы)
+  for (let j = 0; j < k; j++) { th.copies.push([j * TAU / k, false]); if (mirror) th.copies.push([j * TAU / k, true]); }
+  const N = Math.ceil((th.tB - th.tA) * FS) + 2;
+  const xs = new Float32Array(N), ys = new Float32Array(N), I = new Float32Array(N), M = new Float32Array(N), Lk = new Float32Array(N);
+  let ni = 0;
+  for (let i = 0; i < N; i++) {
+    const tau = th.tA + i / FS;
+    while (ni + 1 < ns.length && ns[ni + 1][0] <= tau) ni++;
+    const n = ns[ni];
+    let m = n[2];
+    if (ni > 0 && tau >= n[0]) {
+      const g = Math.min(0.09, 0.35 * n[1]), u = (tau - n[0]) / g;
+      if (u < 1) { const pm = ns[ni - 1][2], s = u * u * (3 - 2 * u); m = pm + (n[2] - pm) * s; }
+    }
+    let e = env(n, tau); if (ni > 0) e = Math.max(e, env(ns[ni - 1], tau));
+    if (tau >= n[0]) e += n[3] * 0.55 * Math.exp(-(tau - n[0]) / 0.1);   // вспышка атаки
+    I[i] = e; M[i] = n[2];
+    let x, y;
+    if (mode === "poly") {
+      const va = poly(n[0]), vr = rN(n[2]);
+      x = Math.cos(va) * vr; y = Math.sin(va) * vr;
+      if (ni > 0 && tau < n[0] + 0.06) {
+        const p = ns[ni - 1], pa = poly(p[0]), pr = rN(p[2]), u = clamp((tau - n[0]) / 0.06, 0, 1);
+        x = Math.cos(pa) * pr + (x - Math.cos(pa) * pr) * u; y = Math.sin(pa) * pr + (y - Math.sin(pa) * pr) * u;
+      }
+    } else if (mode === "local") {
+      const rr = 0.05 + 0.12 * clamp((m - 50) / 32, 0, 1);
+      x = local[0] + Math.cos(ph) * rr; y = local[1] + Math.sin(ph) * rr;
+      ph += om / FS;
+    } else {
+      const rr = rN(m);
+      x = Math.cos(ph) * rr; y = Math.sin(ph) * rr;
+      let lk = 0;
+      if (lock && tau > 113) {                        // Курамото: соседи Мелькора втягиваются в его ход
+        lk = troubled(tau) * lock;
+        for (let s = 0; s < 4; s++) ph += (om * (1 - 0.6 * lk) + 1.7 * OM * 0.6 * lk + 3.0 * OM * lk * Math.sin(phM(tau) - ph)) / (FS * 4);
+      } else ph += om / FS;
+      Lk[i] = lk;
+    }
+    xs[i] = x; ys[i] = y;
+  }
+  Object.assign(th, { xs, ys, I, M, Lk, N });
+  threads.push(th);
+}
+D.threads.forEach(prep);
+
+// ------------------------------------------------------------------ кольца и вспышки
+const rings = D.rings.map(r => ({ n: r.slice(0, 6), fam: r[6], x: r[7] || {}, end: envEnd(r) }));
+const fx = D.fx.map((r, i) => ({ n: r.slice(0, 6), fam: r[6], i, end: envEnd(r) }));
+const byFam = f => fx.filter(x => x.fam === f);
+const FX_RIPPLE = byFam("ripple"), FX_TIMP = byFam("timp"), FX_VHARP = byFam("vharp"), FX_AULE = byFam("aule"),
+  FX_RAIN = byFam("rain"), FX_PULSE = byFam("pulse"), FX_TAM = byFam("tamtam"), FX_CYM = byFam("cymbal");
+// рябь третьей темы рождается там, где сейчас её голос
+const t3solo = threads.find(t => t.fam === "t3" && t.line < 406);
+for (const r of FX_RIPPLE) {
+  const th = t3solo, i = clamp(Math.round((r.n[0] - th.tA) * FS), 0, th.N - 1);
+  const a = Math.atan2(th.ys[i], th.xs[i]), rr = rN(r.n[2]);
+  r.p = [Math.cos(a + 0.05) * rr, Math.sin(a + 0.05) * rr];
+}
+
+// ------------------------------------------------------------------ размер
+function resize() {
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  W = cv.width = Math.round(innerWidth * dpr); H = cv.height = Math.round(innerHeight * dpr);
+  S = Math.min(W, H); CX = W / 2; CY = H / 2; R = 0.46 * S; K = S / 1000;
+  small.width = Math.ceil(W / 4); small.height = Math.ceil(H / 4);
+  whole.width = W; whole.height = H; drawWhole();
+  last = -1;
+}
+// вся Музыка разом — для последнего аккорда
+function drawWhole() {
+  wctx.clearRect(0, 0, W, H); wctx.globalCompositeOperation = "lighter"; wctx.lineCap = "round";
+  for (const th of threads) {
+    if (th.fam === "solo") continue;
+    wctx.strokeStyle = rgba(mix(th.col, WGOLD, 0.5), 0.16); wctx.lineWidth = th.w * K * 0.8;
+    wctx.beginPath(); let pen = false;
+    for (let i = 0; i < th.N; i += 2) {
+      if (th.I[i] < 0.05) { pen = false; continue; }
+      const x = CX + th.xs[i] * R, y = CY + th.ys[i] * R;
+      if (pen) wctx.lineTo(x, y); else wctx.moveTo(x, y); pen = true;
+    }
+    for (const [ang, mir] of th.copies) {
+      wctx.setTransform(1, 0, 0, 1, 0, 0); wctx.translate(CX, CY); wctx.rotate(ang); if (mir) wctx.scale(-1, 1); wctx.translate(-CX, -CY);
+      wctx.stroke();
+    }
+    wctx.setTransform(1, 0, 0, 1, 0, 0);
+  }
+}
+
+// ------------------------------------------------------------------ рисование музыки
+function circle(r, col, a, w) { ctx.strokeStyle = rgba(col, a); ctx.lineWidth = w; ctx.beginPath(); ctx.arc(CX, CY, r, 0, TAU); ctx.stroke(); }
+function noisyRing(r, amp, seed, t, col, a, w, n = 160) {
+  const q = rnd(seed), ph = [q() * TAU, q() * TAU, q() * TAU, q() * TAU], sp = [q() - .5, q() - .5, q() - .5, q() - .5];
+  ctx.strokeStyle = rgba(col, a); ctx.lineWidth = w; ctx.beginPath();
+  for (let k = 0; k <= n; k++) {
+    const th = k / n * TAU;
+    const d = Math.sin(3 * th + ph[0] + t * sp[0] * 3) * .45 + Math.sin(5 * th + ph[1] + t * sp[1] * 5) * .3
+      + Math.sin(11 * th + ph[2] + t * sp[2] * 9) * .18 + Math.sin(17 * th + ph[3] - t * 6) * .1;
+    const rr = r + amp * d, x = CX + Math.cos(th) * rr, y = CY + Math.sin(th) * rr;
+    k ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+  }
+  ctx.stroke();
+}
+
+function latticeField(t) {
+  for (const [a, b, f] of LATTICE) if (t >= a - 1.5 && t < b + 1.5) {
+    const w = Math.min(sstep(a - 1.5, a + 1.5, t), 1 - sstep(b - 1.5, b + 1.5, t));
+    if (w > 0.01) yield_(f, w);
+  }
+}
+let yield_ = null;
+function drawLattice(t, sym) {
+  const fadeIn = sstep(22, 26, t), dis = discord(t), dim = 1 - 0.55 * dis;
+  yield_ = (f, w) => {
+    for (let m = 26; m <= 100; m++) {
+      if (!f.includes(((m % 12) + 12) % 12)) continue;
+      const r = rN(m + ji(m)) * R, s = sym.get(m) || 0;
+      const a = (0.045 + 0.26 * s) * w * fadeIn * dim;
+      if (a < 0.004) continue;
+      const col = mix(hsl(42, 45, 70), RED, dis * 0.5);
+      if (dis > 0.05) noisyRing(r, dis * 3.5 * K * (1 + (m % 5)), m * 7 + 3, t, col, a, 1 * K, 120);
+      else circle(r, col, a, (0.9 + 1.2 * s) * K);
+    }
+  };
+  latticeField(t);
+}
+
+function drawThread(th, t, gain) {
+  if (t < th.tA || t > th.tB + th.L) return;
+  const tEnd = Math.min(t, th.tB), iH = (tEnd - th.tA) * FS, i1 = Math.floor(iH);
+  const i0 = Math.max(0, Math.floor((t - th.L - th.tA) * FS));
+  if (i1 <= i0) return;
+  const paths = new Map(), invTau = 1 / th.tau;
+  const lkNow = th.Lk ? th.Lk[Math.min(i1, th.N - 1)] : 0;
+  for (let i = i0; i < i1 && i + 1 < th.N; i++) {
+    const age = t - (th.tA + i / FS);
+    const al = (th.I[i] + th.I[i + 1]) * 0.5 * Math.exp(-age * invTau) * gain * th.a;
+    if (al < 0.012) continue;
+    const lv = Math.min(16, Math.max(1, Math.round(al * 14)));
+    let p = paths.get(lv); if (!p) { p = new Path2D(); paths.set(lv, p); }
+    p.moveTo(CX + th.xs[i] * R, CY + th.ys[i] * R);
+    p.lineTo(CX + th.xs[i + 1] * R, CY + th.ys[i + 1] * R);
+  }
+  // голова — точно в текущий миг
+  const j = Math.min(i1, th.N - 2), u = iH - j;
+  const hx = CX + (th.xs[j] + (th.xs[j + 1] - th.xs[j]) * u) * R, hy = CY + (th.ys[j] + (th.ys[j + 1] - th.ys[j]) * u) * R;
+  const hI = th.I[j] * gain * th.a * (t <= th.tB ? 1 : 0);
+  const col = lkNow > 0 ? mix(th.col, EMBER, lkNow * 0.75) : th.col;
+  const isMel = th.mode === "poly";
+  const setCopy = (ang, mir) => {
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.translate(CX, CY); ctx.rotate(ang);
+    if (mir) ctx.scale(-1, 1); ctx.translate(-CX, -CY);
+  };
+  if (isMel) {                                         // тьма Мелькора гасит свет вокруг себя
+    ctx.globalCompositeOperation = "destination-out"; ctx.lineWidth = 15 * K;
+    for (const [lv, p] of paths) { ctx.strokeStyle = `rgba(0,0,0,${Math.min(.5, lv / 14 * .45)})`; ctx.stroke(p); }
+    ctx.globalCompositeOperation = "lighter";
+  }
+  ctx.lineWidth = th.w * K;
+  const rr = (3 + 5 * Math.min(1, hI)) * K * (isMel ? 1.3 : 1);
+  let g = null;
+  if (hI > 0.03) {
+    g = ctx.createRadialGradient(hx, hy, 0, hx, hy, rr * 2.2);
+    g.addColorStop(0, rgba(mix(col, [255, 255, 255], 0.6), Math.min(1, hI)));
+    g.addColorStop(1, rgba(col, 0));
+  }
+  for (let c = 0; c < th.copies.length; c++) {
+    const [ang, mir] = th.copies[c];
+    const ca = c === 0 ? 1 : 1 - lkNow;                // втянутый Мелькором голос теряет свои отражения
+    if (ca < 0.02) continue;
+    if (th.copies.length > 1) setCopy(ang, mir);
+    for (const [lv, p] of paths) { ctx.strokeStyle = rgba(col, Math.min(1, lv / 10) * ca); ctx.stroke(p); }
+    if (g) { ctx.globalAlpha = ca; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(hx, hy, rr * 2.2, 0, TAU); ctx.fill(); ctx.globalAlpha = 1; }
+  }
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  return hI > 0.08 ? th.M[j] : null;
+}
+
+function drawRings(t, gate) {
+  const seen = new Set();
+  for (const r of rings) {
+    if (t < r.n[0] || t > r.end) continue;
+    const e = env(r.n, t) * gate; if (e < 0.004) continue;
+    const m = r.n[2], rr = rN(m) * R;
+    switch (r.fam) {
+      case "bloom": circle(rr, WGOLD, e * 0.35, 2 * K); break;
+      case "pad": circle(rr, GOLD, e * 0.22, 2.5 * K); break;
+      case "splend": circle(rr, [255, 246, 222], e * 0.5, 1.6 * K); break;
+      case "pedal": circle(rr, GOLD, e * 0.32, 3.2 * K); break;
+      case "wave": {
+        const u = (t - r.n[0]) / Math.max(.5, r.n[1]), bend = (r.x.bend || 0) * Math.min(1, u);
+        const c = m % 2 ? hsl(350, 70, 42) : hsl(275, 45, 40);
+        noisyRing(rN(m + bend) * R, (6 + 10 * e) * K, Math.round(r.n[0] * 13 + m), t, c, Math.min(.5, e * 0.45), 2.6 * K);
+        break;
+      }
+      case "harm3": {
+        const c = r.n[0] < 216 ? hsl(28, 60, 72) : hsl(205, 45, 72);
+        if (!seen.has("h" + Math.round(m))) { seen.add("h" + Math.round(m)); circle(rr, c, e * 0.32, 2.2 * K); }
+        break;
+      }
+      case "abs": {
+        const u = sstep(232, 246, t), c = mix(RED, WGOLD, u);
+        if (!seen.has("a" + Math.round(m))) { seen.add("a" + Math.round(m)); circle(rr, c, e * 0.28, (1.6 + u) * K); }
+        break;
+      }
+      case "part": {
+        if (seen.has("p" + m)) break; seen.add("p" + m);
+        const n = Math.max(1, (r.x.n || 1)), A = Math.min(0.03 * R, 0.25 * R / n) * (0.6 + 0.4 * e);
+        ctx.strokeStyle = rgba(mix(WGOLD, [255, 255, 255], .4), Math.min(.95, e * .8)); ctx.lineWidth = 1.7 * K; ctx.beginPath();
+        const steps = Math.max(180, n * 12), rot = (t - T.chord) * 0.04 * (n % 2 ? 1 : -1);
+        for (let k = 0; k <= steps; k++) {
+          const a = k / steps * TAU, q = rr + A * Math.cos(n * (a + rot)), x = CX + Math.cos(a) * q, y = CY + Math.sin(a) * q;
+          k ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.stroke(); break;
+      }
+    }
+  }
+}
+
+function drawFx(t) {
+  for (const r of FX_RIPPLE) {                         // «лёгкая рябь негромких звуков»
+    const u = t - r.n[0]; if (u < 0 || u > 1.8) continue;
+    const x = CX + r.p[0] * R, y = CY + r.p[1] * R, rr = (2 + 34 * Math.sqrt(u / 1.8)) * K;
+    ctx.strokeStyle = rgba(hsl(190, 50, 80), 0.5 * r.n[3] * (1 - u / 1.8)); ctx.lineWidth = 1 * K;
+    ctx.beginPath(); ctx.arc(x, y, rr, 0, TAU); ctx.stroke();
+  }
+  for (const r of FX_TIMP) {
+    if (r.n[0] > 260) continue;
+    const u = t - r.n[0];
+    if (r.n[1] > 2) {                                  // тремоло литавр — дрожь глубины
+      if (u < 0 || u > r.n[1] + 1) continue;
+      const e = sstep(0, r.n[1] * 0.6, u) * (1 - sstep(r.n[1], r.n[1] + 1, u));
+      noisyRing(rN(38) * R, 4 * K, 911 + r.i, t * 3, hsl(10, 60, 40), e * 0.4, 3 * K);
+    } else if (u >= 0 && u < 1.6) {
+      circle(rN(38) * R + u * 0.6 * R, WGOLD, 0.35 * (1 - u / 1.6), 2 * K);
+    }
+  }
+  for (const r of FX_TAM) {                            // удар там-тама — тёмная волна
+    const u = t - r.n[0]; if (u < 0 || u > 5) continue;
+    const rr = rN(36) * R + u * 0.25 * R;
+    ctx.globalCompositeOperation = "destination-out"; circle(rr, [0, 0, 0], 0.5 * (1 - u / 5), 40 * K);
+    ctx.globalCompositeOperation = "lighter"; noisyRing(rr, 5 * K, 77, t, hsl(0, 80, 45), 0.4 * (1 - u / 5), 2 * K);
+  }
+  for (const r of FX_CYM) {                            // тарелка — колючие искры по всему кругу
+    const u = t - r.n[0]; if (u < 0 || u > r.n[1] + 1) continue;
+    const e = sstep(0, 3, u) * (1 - sstep(r.n[1] - .5, r.n[1] + 1, u)), q = rnd(Math.floor(t * 20));
+    ctx.fillStyle = rgba(hsl(15, 80, 70), 0.5 * e);
+    for (let k = 0; k < 60; k++) { const a = q() * TAU, rr = (0.3 + 0.7 * q()) * R; ctx.fillRect(CX + Math.cos(a) * rr, CY + Math.sin(a) * rr, 1.6 * K, 1.6 * K); }
+  }
+}
+
+const CENTER = [[0, 0], [21.5, 0], [22, .7], [24.6, .35], [41.6, .6], [42.6, 1.0], [44.5, .45], [60, .45], [101.4, .55],
+  [104, .85], [112, .6], [114, .3], [126, .1], [146, .1], [149, .35], [166, .25], [180, .08], [188, .12], [200, .3],
+  [216, .4], [232, .35], [247.9, .55], [248, 1.6], [252.4, .7], [252.5, 0]];
+function drawCenter(t) {
+  const v = lin(CENTER, t) * (1 + 0.06 * Math.sin(t * 1.3));
+  if (v < 0.01) return;
+  const rr = (0.018 + 0.03 * Math.min(1, v)) * R;
+  const g = ctx.createRadialGradient(CX, CY, 0, CX, CY, rr * 3.5);
+  g.addColorStop(0, rgba([255, 250, 238], Math.min(1, v)));
+  g.addColorStop(0.12, rgba(WGOLD, Math.min(.7, v * .5)));
+  g.addColorStop(0.45, rgba(GOLD, Math.min(.18, v * .12)));
+  g.addColorStop(1, rgba(GOLD, 0));
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(CX, CY, rr * 3, 0, TAU); ctx.fill();
+}
+
+function drawMusic(t) {
+  const gate = t < T.silence ? 1 : 0;
+  if (!gate) return;
+  const sym = new Map();
+  const heads = [];
+  ctx.globalCompositeOperation = "lighter"; ctx.lineCap = "round"; ctx.lineJoin = "round";
+  drawCenter(t);
+  // нити, кроме Мелькора: они ложатся первыми, чтобы его тьма их гасила
+  const chordBoost = t >= T.chord ? 0.4 : 1;
+  for (const th of threads) if (th.mode !== "poly") {
+    const m = drawThread(th, t, chordBoost);
+    if (m != null) { const k = Math.round(m); sym.set(k, Math.min(1, (sym.get(k) || 0) + .5)); }
+  }
+  drawLattice(t, sym);
+  drawRings(t, gate);
+  for (const th of threads) if (th.mode === "poly") {
+    let g = 1;
+    if (th.fam === "uni" && t > T.absorb) g = 1 - 0.75 * sstep(T.absorb, T.absorb + 8, t);
+    drawThread(th, t, g);
+  }
+  drawFx(t);
+  if (t >= T.chord) {                                  // один аккорд: вся Музыка разом
+    const a = 0.55 * Math.exp(-(t - T.chord) / 1.1) * sstep(T.chord, T.chord + 0.1, t);
+    ctx.globalAlpha = a; ctx.drawImage(whole, 0, 0); ctx.globalAlpha = 1;
+  }
+}
+
+// ------------------------------------------------------------------ видение: Музыка становится миром
+const GLOBE = (() => {
+  const q = rnd(4242), mounts = [];
+  for (let k = 0; k < 11; k++) mounts.push([-0.15 + q() * 0.75, q() * TAU, q()]);
+  const q2 = rnd(77), drops = [];
+  for (let k = 0; k < 80; k++) drops.push(q2());
+  return { mounts, drops };
+})();
+function sph(lat, lon, rot, tilt, Rg) {
+  const cl = Math.cos(lat), x = cl * Math.sin(lon + rot), y0 = Math.sin(lat), z0 = cl * Math.cos(lon + rot);
+  const y = y0 * Math.cos(tilt) - z0 * Math.sin(tilt), z = y0 * Math.sin(tilt) + z0 * Math.cos(tilt);
+  return [CX + x * Rg, CY - y * Rg, z];
+}
+const latOf = m => (-62 + 124 * clamp((m - 62) / (95 - 62), 0, 1)) * Math.PI / 180;
+function drawVision(t) {
+  if (t < T.vision || t >= T.vcut) return;
+  const u = t - T.vision, appear = sstep(0, 2.2, u);
+  const tilt = 0.42 + (Math.PI / 2 - 0.42) * (1 - sstep(0.5, 6.5, u));     // сначала с полюса: кольца — потом шар
+  const rot = u * 0.22, Rg = R * (0.58 + 0.06 * sstep(0, 6.5, u));
+  const child = sstep(T.child - 0.6, T.child + 2.5, t);
+  ctx.globalCompositeOperation = "lighter"; ctx.lineCap = "round";
+  // тело мира и воздух (флажолеты)
+  const atm = rings.filter(r => r.fam === "vharm").reduce((s, r) => Math.max(s, env(r.n, t)), 0);
+  let g = ctx.createRadialGradient(CX, CY, Rg * 0.2, CX, CY, Rg * 1.12);
+  const body = sstep(2.5, 7, u) * appear;
+  g.addColorStop(0, rgba(hsl(215, 45, 14), 0.35 * body)); g.addColorStop(0.9, rgba(hsl(205, 50, 18), 0.4 * body));
+  g.addColorStop(0.97, rgba(hsl(195, 60, 62), (0.05 + 0.3 * atm) * body)); g.addColorStop(1, rgba(hsl(195, 60, 60), 0));
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(CX, CY, Rg * 1.12, 0, TAU); ctx.fill();
+  const drawLat = (lat, col, a, w, lon0 = 0, lon1 = TAU, back = 0.18) => {
+    let prev = null; const n = Math.max(8, Math.round((lon1 - lon0) / TAU * 150));
+    for (let k = 0; k <= n; k++) {
+      const p = sph(lat, lon0 + (lon1 - lon0) * k / n, rot, tilt, Rg);
+      if (prev) { ctx.strokeStyle = rgba(col, a * (p[2] > 0 ? 1 : back)); ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(p[0], p[1]); ctx.stroke(); }
+      prev = p;
+    }
+  };
+  // широты — та же решётка лада
+  const PENT = [62, 64, 66, 69, 71, 74, 76, 78, 81, 83, 86, 88, 90, 93, 95];
+  const ringy = 1 - sstep(1, 7, u);                   // кольца Музыки, увиденные с полюса, гаснут до решётки шара
+  for (const m of PENT) drawLat(latOf(m), mix(hsl(42, 50, 72), hsl(30, 70, 70), child), (0.12 + 0.3 * ringy) * appear, (0.9 + ringy) * K);
+  for (let k = 0; k < 12; k++) {                       // меридианы
+    let prev = null;
+    for (let s = 0; s <= 40; s++) {
+      const p = sph(-Math.PI / 2 + Math.PI * s / 40, k / 12 * TAU, rot, tilt, Rg);
+      if (prev) { ctx.strokeStyle = rgba(hsl(210, 30, 70), 0.05 * appear * (p[2] > 0 ? 1 : .2)); ctx.lineWidth = .8 * K; ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(p[0], p[1]); ctx.stroke(); }
+      prev = p;
+    }
+  }
+  // арфа: искры бегут по широтам
+  for (const r of FX_VHARP) {
+    const v = t - r.n[0]; if (v < 0 || v > 1.4) continue;
+    const lat = latOf(r.n[2]), lon0 = r.i * 2.399, e = env(r.n, t);
+    const c = r.n[0] >= T.child - 0.5 ? hsl(36, 80, 76) : hsl(48, 70, 80);
+    drawLat(lat, c, Math.min(.8, e * 1.6), 1.6 * K, lon0, lon0 + 0.25 + v * 0.9, 0.1);
+  }
+  // море (рёв), Ульмо
+  const sea = rings.filter(r => r.fam === "vsea").reduce((s, r) => Math.max(s, env(r.n, t)), 0);
+  if (sea > 0.01) for (let k = 0; k < 5; k++) {
+    let prev = null; const lat0 = (-38 + k * 6) * Math.PI / 180;
+    for (let s = 0; s <= 150; s++) {
+      const lon = s / 150 * TAU, lat = lat0 + 0.05 * Math.sin(lon * 7 + t * 2.2 + k) * sea;
+      const p = sph(lat, lon, rot, tilt, Rg);
+      if (prev && p[2] > 0) { ctx.strokeStyle = rgba(hsl(198, 70, 58), 0.35 * sea); ctx.lineWidth = 1.4 * K; ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(p[0], p[1]); ctx.stroke(); }
+      prev = p;
+    }
+  }
+  // голоса на поверхности: рог Ульмо (юг), ветер Манвэ (север), Дети
+  for (const th of globeThreads) {
+    const col = th.fam === "ulmo" ? hsl(186, 65, 62) : th.fam === "manwe" ? hsl(210, 30, 92) : hsl(38, 85, 76);
+    const latf = th.fam === "ulmo" ? m => (-50 + 30 * clamp((m - 50) / 16, 0, 1)) * Math.PI / 180
+      : th.fam === "manwe" ? m => (38 + 26 * clamp((m - 74) / 9, 0, 1)) * Math.PI / 180
+      : m => (-4 + 26 * clamp((m - 62) / 12, 0, 1)) * Math.PI / 180;
+    const t0 = th.notes[0][0], lonBase = th.fam === "ulmo" ? 0.6 : th.fam === "manwe" ? 3.0 : -rot + 0.2 - (t0 - T.vision) * 0.22;
+    const om = th.fam === "child" ? 0.55 : 0.7;
+    let prev = null;
+    for (let tau = Math.max(t0, t - 6); tau <= t; tau += 1 / 30) {
+      let n = null; for (const x of th.notes) if (x[0] <= tau) n = x;
+      if (!n) continue;
+      const e = env(n, tau) * Math.exp(-(t - tau) / 2.5);
+      const p = sph(latf(n[2]), lonBase + (tau - t0) * om, rot, tilt, Rg);
+      if (prev && e > 0.01) { ctx.strokeStyle = rgba(col, Math.min(1, e * 2) * (p[2] > 0 ? 1 : .2)); ctx.lineWidth = 2.6 * K; ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(p[0], p[1]); ctx.stroke(); }
+      prev = p;
+    }
+  }
+  // Аулэ: каждый щипок поднимает гору, горы остаются
+  FX_AULE.forEach((r, k) => {
+    const v = t - r.n[0]; if (v < 0) return;
+    const [lat, lon] = GLOBE.mounts[k % GLOBE.mounts.length], p = sph(lat, lon, rot, tilt, Rg);
+    if (p[2] < 0) return;
+    const flash = Math.exp(-v / 0.3), a = (0.45 + 0.55 * flash) * p[2];
+    const rr = (2.2 + 3 * flash) * K;
+    const gg = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], rr * 3);
+    gg.addColorStop(0, rgba(hsl(36, 75, 70), a)); gg.addColorStop(1, rgba(hsl(30, 70, 50), 0));
+    ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(p[0], p[1], rr * 3, 0, TAU); ctx.fill();
+  });
+  // дождь
+  FX_RAIN.forEach((r, k) => {
+    const v = t - r.n[0]; if (v < -0.5 || v > 0.5) return;
+    const x = (GLOBE.drops[k % 80] * 2 - 1) * 0.85, yHit = -Math.sqrt(Math.max(0, 1 - x * x)) * 0.95;
+    const y0 = -1.45, y = v < 0 ? yHit + (y0 - yHit) * (-v / 0.5) : yHit;
+    const px = CX + x * Rg, py = CY + y * Rg;
+    if (v < 0) { ctx.strokeStyle = rgba(hsl(205, 40, 88), 0.8); ctx.lineWidth = 1.2 * K; ctx.beginPath(); ctx.moveTo(px, py - 16 * K); ctx.lineTo(px, py); ctx.stroke(); }
+    else { ctx.strokeStyle = rgba(hsl(205, 40, 88), 0.8 * (1 - v / 0.5)); ctx.lineWidth = 1.1 * K; ctx.beginPath(); ctx.ellipse(px, py, (2 + 12 * v) * K, (1 + 4 * v) * K, 0, 0, TAU); ctx.stroke(); }
+  });
+  // пробуждение Детей: тёплые огни на поверхности
+  if (child > 0) {
+    const q = rnd(31);
+    for (let k = 0; k < 40; k++) {
+      const lat = (-25 + 50 * q()) * Math.PI / 180, lon = q() * TAU, when = T.child + q() * 5;
+      if (t < when) continue;
+      const p = sph(lat, lon, rot, tilt, Rg); if (p[2] < 0.05) continue;
+      const fl = Math.min(1, (t - when) * 1.5) * p[2] * (0.75 + 0.25 * Math.sin(t * 3 + k));
+      const gg = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], 6 * K);
+      gg.addColorStop(0, rgba(hsl(42, 95, 80), fl)); gg.addColorStop(1, rgba(hsl(36, 90, 60), 0));
+      ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(p[0], p[1], 6 * K, 0, TAU); ctx.fill();
+    }
+  }
+}
+
+// ------------------------------------------------------------------ Эа
+const CLOUD = (() => { const q = rnd(1999), a = []; for (let k = 0; k < 700; k++) { const r = Math.pow(q(), 0.6); a.push([r, q() * TAU, q(), q()]); } return a; })();
+function drawEa(t) {
+  if (t < T.ea) return;
+  ctx.globalCompositeOperation = "lighter";
+  const cloud = Math.min(1.4, rings.filter(r => r.fam === "cloud").reduce((s, r) => s + env(r.n, t), 0) * 0.9);
+  const u = t - T.ea;
+  for (const [r, a0, s, b] of CLOUD) {                    // облако — Айнур смотрят на Эа
+    const a = a0 + u * (0.05 + 0.25 * (1 - r)) * (s > .5 ? 1 : .8);
+    const rr = r * R * (0.55 + 0.1 * Math.sin(u * 0.3 + s * 6));
+    const x = CX + Math.cos(a) * rr, y = CY + Math.sin(a) * rr * 0.62;
+    const al = cloud * (0.25 + 0.5 * b) * (1 - r * 0.6) * (0.7 + 0.3 * Math.sin(t * 2 + s * 30));
+    if (al < 0.01) continue;
+    ctx.fillStyle = rgba(b > .7 ? WGOLD : hsl(210, 30, 85), Math.min(.9, al));
+    ctx.fillRect(x, y, 1.8 * K, 1.8 * K);
+  }
+  // сердце: литавра — удар, арфа с пиццикато — отзвук
+  let beat = 0;
+  for (const r of FX_TIMP) if (r.n[0] >= T.ea) {
+    const v = t - r.n[0]; if (v < 0) continue;
+    beat = Math.max(beat, Math.exp(-v / 0.22) * r.n[3] * 2.2);
+    if (v < 2.2) circle(0.02 * R + v * 0.22 * R, WGOLD, 0.28 * (1 - v / 2.2) * r.n[3] * 2.5, 1.4 * K);
+  }
+  for (const r of FX_PULSE) { const v = t - r.n[0]; if (v >= 0) beat = Math.max(beat, Math.exp(-v / 0.18) * 0.55); }
+  const firstBeat = FX_TIMP.find(r => r.n[0] >= T.ea).n[0];
+  const core = sstep(T.ea + 1, firstBeat, t) * 0.35 + beat;
+  if (core > 0.01) {
+    const rr = (0.016 + 0.014 * beat) * R;
+    const g = ctx.createRadialGradient(CX, CY, 0, CX, CY, rr * 4);
+    g.addColorStop(0, rgba([255, 244, 220], Math.min(1, core))); g.addColorStop(0.2, rgba(hsl(40, 85, 72), Math.min(.7, core * .55)));
+    g.addColorStop(1, rgba(hsl(38, 80, 60), 0));
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(CX, CY, rr * 4, 0, TAU); ctx.fill();
+  }
+  const ta = sstep(296.5, 300, t);
+  if (ta > 0) {
+    ctx.globalCompositeOperation = "source-over";
+    ctx.font = `${Math.round(64 * K)}px Ea, Georgia, serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillStyle = rgba(hsl(40, 60, 82), 0.85 * ta);
+    ctx.shadowColor = rgba(GOLD, 0.6 * ta); ctx.shadowBlur = 18 * K;
+    ctx.fillText("Эа", CX, CY + 0.4 * R);
+    ctx.shadowBlur = 0;
+  }
+}
+
+// ------------------------------------------------------------------ кадр
+let last = -1;
+function frame(t) {
+  ctx.globalCompositeOperation = "source-over";
+  ctx.clearRect(0, 0, W, H);
+  drawMusic(t);
+  drawVision(t);
+  drawEa(t);
+  // свечение
+  sctx.globalCompositeOperation = "source-over"; sctx.clearRect(0, 0, small.width, small.height);
+  sctx.filter = `blur(${Math.max(2, 3 * K)}px)`; sctx.drawImage(cv, 0, 0, small.width, small.height); sctx.filter = "none";
+  ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 1.0; ctx.drawImage(small, 0, 0, W, H); ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = "source-over";
+  document.getElementById("bar").style.width = (t / LEN * 100) + "%";
+}
+
+// ------------------------------------------------------------------ часы: музыка ведёт
+const au = document.getElementById("au"), startEl = document.getElementById("start");
+const params = new URLSearchParams(location.search);
+let tNow = parseFloat(params.get("t") || "0") || 0, playing = false, lastAudio = -1, lastPerf = 0;
+window.__frame = t => { tNow = t; frame(t); };          // для съёмки
+function loop(now) {
+  if (playing) {
+    const a = au.currentTime;
+    if (a !== lastAudio) { lastAudio = a; lastPerf = now; tNow = a; }
+    else tNow = a + Math.min(0.1, (now - lastPerf) / 1000);
+    if (au.ended) { playing = false; tNow = LEN; startEl.style.display = "flex"; }
+  }
+  if (!window.__manual) frame(Math.min(LEN, tNow));
+  requestAnimationFrame(loop);
+}
+function start() {
+  if (tNow >= LEN - 0.5) tNow = 0;
+  au.currentTime = tNow; au.play().then(() => { playing = true; startEl.style.display = "none"; }).catch(() => {});
+}
+startEl.addEventListener("click", start);
+let uiTimer = 0;
+addEventListener("mousemove", () => { document.body.classList.add("ui"); clearTimeout(uiTimer); uiTimer = setTimeout(() => document.body.classList.remove("ui"), 1800); });
+addEventListener("keydown", e => {
+  if (e.code === "Space") { e.preventDefault(); if (playing) { au.pause(); playing = false; } else start(); }
+  else if (e.code === "ArrowRight" || e.code === "ArrowLeft") {
+    tNow = clamp(tNow + (e.code === "ArrowRight" ? 10 : -10), 0, LEN - 0.1); au.currentTime = tNow;
+  } else if (e.code === "KeyF") { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+  else if (e.code === "Home") { tNow = 0; au.currentTime = 0; }
+});
+addEventListener("resize", resize);
+resize();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
