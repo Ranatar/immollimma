@@ -1,0 +1,373 @@
+{
+ "title": "Aldudénië — плач о Двух Древах",
+ "styles": [
+  "sacred_choral",
+  "impressionist",
+  "ambient_film"
+ ],
+ "seconds": 104,
+ "tempo_bpm": 72,
+ "meter": "4/4",
+ "key": "A major",
+ "language": "modal",
+ "library": "plain",
+ "library_notes": [
+  "afl_sus, bcl_sus, cbsn_sus, celesta, choir, crotales, eh_sus, org_reed, vibes, vln_harm есть только в Sonatina — для них Sonatina (не для рекламы)."
+ ],
+ "defaults": [
+  "sync.video_file",
+  "characters"
+ ],
+ "sections": [
+  {
+   "t0": 0,
+   "t1": 20,
+   "label": "I Telperion ar Laurelin",
+   "mood": "Счёт Древ: серебро и золото попеременно, час за часом; ясность, покой",
+   "intensity": 0.35,
+   "note": "часы — каждые 1,67 с (пуста под рядом ромбов); слово lúmë в 8 с",
+   "leader": "afl_sus",
+   "texture": "напев над арпеджио арфы; часы — колокольцы серебра/золота",
+   "register": "mid",
+   "pulse": "slow",
+   "dynamic": "p"
+  },
+  {
+   "t0": 20,
+   "t1": 40,
+   "label": "II silima",
+   "mood": "Сотворение Сильмарилей: свет Древ по нитям стекается в три камня; мастерство, нарастание",
+   "intensity": 0.55,
+   "note": "потоки бусин 22–38; камни загораются в 30, 33, 36; подпись Silmarilli в 37,5",
+   "leader": "celesta",
+   "texture": "потоки бегущих фигур (арфа, челеста) сходятся; аккорд камней собирается",
+   "register": "high",
+   "pulse": "fast",
+   "dynamic": "mp→mf"
+  },
+  {
+   "t0": 40,
+   "t1": 52,
+   "label": "III Valinórë",
+   "mood": "Полдень Валинора: оба света в полную силу, смешение; полнота, слава",
+   "intensity": 0.85,
+   "note": "слова malta (41) и telpë (46,6)",
+   "leader": "choir",
+   "texture": "хор поёт напев полностью; хорал струнных и валторн",
+   "register": "wide",
+   "pulse": "broad",
+   "dynamic": "f"
+  },
+  {
+   "t0": 52,
+   "t1": 72,
+   "label": "IV Ungoliantë",
+   "mood": "Унголиант: Не-Свет пьёт Древа; паутина ползёт из букв ungwë, роса течёт вспять; Древа гаснут",
+   "intensity": 0.9,
+   "note": "паутина с 52,6; Úcala Ungolianteva (54), Ungoliantë yúla i Aldu (58,4); Древа мертвы в 62 (lómë); в 65 Сильмарилли вспыхивают и не даются тьме",
+   "leader": "cb_sus",
+   "texture": "паутина низких голосов (канон по полутонам), обрывки напева, стянутые вниз; обрыв",
+   "register": "low",
+   "pulse": "irregular",
+   "dynamic": "p→sfz→pp"
+  },
+  {
+   "t0": 72,
+   "t1": 90,
+   "label": "V nainië",
+   "mood": "Плач: тьма, остались формы букв, звуки ушли; утрата",
+   "intensity": 0.3,
+   "note": "þ→s (74), ñ→n (79), anna без звука (84), vanwa (85,2)",
+   "leader": "vln_solo",
+   "texture": "монодия скрипки над бурдоном; звуки уходят ввысь",
+   "register": "mid",
+   "pulse": "free",
+   "dynamic": "pp–p"
+  },
+  {
+   "t0": 90,
+   "t1": 104,
+   "label": "VI Isil ar Anar",
+   "mood": "Исиль и Анар: серебро и золото сменяют друг друга, не смешиваясь; смешанный свет — только в камнях",
+   "intensity": 0.5,
+   "note": "Isil (90,8), Anar (97,4); титул Aldudénië (100,8); уход в темноту 102,4–104",
+   "leader": "vln_harm",
+   "texture": "флажолеты (серебро, лидийский) ↔ валторна (золото, миксолидийский) поочерёдно; аккорд камней",
+   "register": "high/mid",
+   "pulse": "slow",
+   "dynamic": "mp"
+  }
+ ],
+ "hits": [
+  {
+   "t": 0.0,
+   "label": "вход из темноты",
+   "kind": "swell",
+   "intensity": 0.2,
+   "note": "чёрное до 2,2 с",
+   "end": 2.2,
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 8,
+   "label": "lúmë",
+   "kind": "document",
+   "intensity": 0.45,
+   "note": "слово тенгваром проступает по буквам (5–6,5 с)",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 30,
+   "label": "Сильмариль 1",
+   "kind": "hit",
+   "intensity": 0.7,
+   "note": "камень загорается, кольцо-вспышка",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 33,
+   "label": "Сильмариль 2",
+   "kind": "hit",
+   "intensity": 0.7999999999999999,
+   "note": "камень загорается, кольцо-вспышка",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 36,
+   "label": "Сильмариль 3",
+   "kind": "hit",
+   "intensity": 0.8999999999999999,
+   "note": "камень загорается, кольцо-вспышка",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 37.5,
+   "label": "Silmarilli",
+   "kind": "document",
+   "intensity": 0.45,
+   "note": "надпись тенгваром и латиницей",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 41,
+   "label": "malta",
+   "kind": "document",
+   "intensity": 0.45,
+   "note": "слово тенгваром проступает по буквам (5–6,5 с)",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 46.6,
+   "label": "telpë",
+   "kind": "document",
+   "intensity": 0.45,
+   "note": "слово тенгваром проступает по буквам (5–6,5 с)",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 52,
+   "label": "Унголиант",
+   "kind": "hit",
+   "intensity": 0.8,
+   "note": "Древа мерцают и гаснут 52–62, пелена с 54",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 52.6,
+   "label": "ungwë",
+   "kind": "document",
+   "intensity": 0.45,
+   "note": "слово тенгваром проступает по буквам (5–6,5 с)",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 54.0,
+   "label": "Úcala Ungolianteva",
+   "kind": "document",
+   "intensity": 0.45,
+   "note": "надпись тенгваром и латиницей",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 58.4,
+   "label": "Ungoliantë yúla i Aldu",
+   "kind": "document",
+   "intensity": 0.45,
+   "note": "надпись тенгваром и латиницей",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 62,
+   "label": "Древа мертвы",
+   "kind": "silence",
+   "intensity": 0.1,
+   "note": "свет Древ = 0; остаются камни",
+   "end": 64.8,
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 62.4,
+   "label": "lómë",
+   "kind": "document",
+   "intensity": 0.45,
+   "note": "надпись тенгваром и латиницей",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 65,
+   "label": "Сильмарилли не даются",
+   "kind": "hit",
+   "intensity": 0.9,
+   "note": "кольца-вспышки трёх камней",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 66.0,
+   "label": "Silmarilli uir túrimë mornienen",
+   "kind": "document",
+   "intensity": 0.45,
+   "note": "надпись тенгваром и латиницей",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 74,
+   "label": "þ → s",
+   "kind": "accent",
+   "intensity": 0.35,
+   "note": "звук покидает букву: дуга к другой букве (или вверх — anna)",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 79,
+   "label": "ñ → n",
+   "kind": "accent",
+   "intensity": 0.35,
+   "note": "звук покидает букву: дуга к другой букве (или вверх — anna)",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 84,
+   "label": "anna",
+   "kind": "accent",
+   "intensity": 0.35,
+   "note": "звук покидает букву: дуга к другой букве (или вверх — anna)",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 85.2,
+   "label": "vanwa",
+   "kind": "document",
+   "intensity": 0.45,
+   "note": "слово тенгваром проступает по буквам (5–6,5 с)",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 90.8,
+   "label": "Isil",
+   "kind": "document",
+   "intensity": 0.45,
+   "note": "слово тенгваром проступает по буквам (5–6,5 с)",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 97.4,
+   "label": "Anar",
+   "kind": "document",
+   "intensity": 0.45,
+   "note": "слово тенгваром проступает по буквам (5–6,5 с)",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 100.8,
+   "label": "Aldudénië",
+   "kind": "document",
+   "intensity": 0.5,
+   "note": "титул",
+   "mood": "",
+   "characters": []
+  },
+  {
+   "t": 102.4,
+   "label": "уход в темноту",
+   "kind": "swell",
+   "intensity": 0.0,
+   "note": "в чёрное к 104; затем цикл повторяется",
+   "end": 104.0,
+   "mood": "",
+   "characters": []
+  }
+ ],
+ "silences": [
+  {
+   "t": 62.0,
+   "dur": 2.8,
+   "note": "Древа мертвы: почти тишина (только низкий гул) до вспышки камней в 65"
+  },
+  {
+   "t": 103.6,
+   "dur": 0.4,
+   "note": "тишина перед повтором цикла"
+  }
+ ],
+ "themes": [
+  {
+   "name": "напев Aldu",
+   "notation": "ля мажор, речитация на до-диезе; фраза a «Telperion ar Laurelin» кончается на си, фраза b «Aldudénië» — подъём к фа-диезу и мелизматический спуск к ля",
+   "for": "альтовая флейта → хор → скрипка соло → флажолеты/валторна",
+   "transform": "серебро — лидийский, золото — миксолидийский, плач — фа-диез эолийский; в Унголиант — обрывки, стянутые вниз"
+  },
+  {
+   "name": "аккорд Сильмарилей",
+   "notation": "A–E–B–C♯ в высоком регистре (флажолеты, кроталы, челеста)",
+   "for": "собирается по звуку в 30/33/36",
+   "transform": "единственное, что не меняется после 52 с"
+  }
+ ],
+ "characters": [],
+ "avoid": [
+  "шумы",
+  "обработка",
+  "цитат Суонна и чьих-либо мелодий; функциональных каденций V–I и вводного тона как опоры (звучат «земно»); трейлерной эпики; хоррора только тремоло+кластером; литавр"
+ ],
+ "devices": [
+  "chorale",
+  "pad (орган)",
+  "line (канон)",
+  "melody"
+ ],
+ "ending": "fade",
+ "deliver": [
+  "mp3",
+  "midi",
+  "pdf",
+  "report"
+ ],
+ "sketch": {
+  "sketch_first": true,
+  "sketch_seconds": 52,
+  "ask_before_full": false
+ },
+ "process": "Аккорд Сильмарилей A–E–B–C♯: собирается по звуку (30/33/36), держится, не меняясь, сквозь тьму и плач до конца — единственный «смешанный свет». Второй процесс — лад: серебро (лидийский) ↔ золото (миксолидийский) ↔ смешение (ионийский) по кривой света Древ."
+}

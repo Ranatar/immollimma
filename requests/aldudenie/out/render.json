@@ -1,0 +1,93 @@
+{
+ "backend": "plain",
+ "libraries": [
+  "plain",
+  "sso",
+  "vsco"
+ ],
+ "licenses": [
+  "Sonatina Symphonic Orchestra (Mattias Westlund; SFZ by P. Eastman), CC Sampling Plus 1.0 — not for advertising",
+  "VSCO 2 Community Edition (Versilian Studios, Sam Gossner), CC0"
+ ],
+ "by_instrument": {
+  "afl_sus@sso": 16,
+  "bcl_sus@sso": 7,
+  "cb_pizz@plain": 27,
+  "cb_sus@plain": 17,
+  "cbsn_sus@sso": 2,
+  "celesta@sso": 86,
+  "choir@sso": 60,
+  "crotales@sso": 11,
+  "glock@plain": 6,
+  "harp@plain": 179,
+  "hn_sus@plain": 19,
+  "vc_pizz@plain": 35,
+  "vc_sus@plain": 18,
+  "vla_pizz@plain": 30,
+  "vla_sus@plain": 16,
+  "vln_harm@sso": 29,
+  "vln_solo@vsco": 16,
+  "vln_sus@plain": 12,
+  "vln_trem@plain": 33
+ },
+ "substitutions": {},
+ "missing": {},
+ "out_of_range_rescued": {},
+ "sfizz_notes": 156,
+ "lengthened": 0,
+ "window": [
+  0.0,
+  105.2
+ ],
+ "seconds": 105.2,
+ "mp3": "/home/claude/immollimma/requests/aldudenie/out/audio.mp3",
+ "notation": {
+  "midi": "/home/claude/immollimma/requests/aldudenie/out/score.mid",
+  "lost": {
+   "notes with a glissando inside": 8
+  },
+  "musicxml": "/home/claude/immollimma/requests/aldudenie/out/score.musicxml",
+  "pdf": "/home/claude/immollimma/requests/aldudenie/out/score.pdf",
+  "grid": [
+   4,
+   3
+  ]
+ },
+ "qa": {
+  "gaps": [],
+  "clipped": 0,
+  "clicks": [],
+  "flat": [],
+  "bounds": [
+   21.2,
+   30.2,
+   47.8,
+   50.8,
+   63.5,
+   65.2,
+   71.5,
+   73.5,
+   91.2,
+   98.5
+  ],
+  "png": "/home/claude/immollimma/requests/aldudenie/out/report.png"
+ },
+ "parts_lufs": {
+  "Choir": -23.0,
+  "Alto flute": -26.4,
+  "Horn": -29.3,
+  "Contrabassoon": -29.7,
+  "Violin solo": -30.3,
+  "Violin harmonics": -30.6,
+  "Cellos": -31.7,
+  "Violins": -33.7,
+  "Violas": -34.4,
+  "Harp": -34.5,
+  "Bass clarinet": -35.6,
+  "Celesta": -36.9,
+  "Basses": -38.1,
+  "Crotales": -39.3,
+  "Glockenspiel": -47.4
+ },
+ "seconds_taken": 38.4
+}
