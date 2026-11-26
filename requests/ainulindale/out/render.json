@@ -13,12 +13,12 @@
   "bcl_sus@sso": 26,
   "bsn_sus@plain": 18,
   "cb_pizz@plain": 10,
-  "cb_sus@plain": 64,
+  "cb_sus@plain": 65,
   "cb_trem@plain": 27,
   "cbsn_sus@sso": 45,
-  "choir@sso": 290,
-  "cl_sus@plain": 311,
-  "fl_sus@plain": 498,
+  "choir@sso": 302,
+  "cl_sus@plain": 301,
+  "fl_sus@plain": 484,
   "harp@plain": 1064,
   "hn_sus@plain": 370,
   "ob_sus@plain": 239,
@@ -30,17 +30,17 @@
   "tbn_sus@plain": 193,
   "timp@plain": 11,
   "timp_roll@vsco": 2,
-  "tpt_sus@plain": 161,
+  "tpt_sus@plain": 173,
   "vc_pizz@plain": 11,
-  "vc_sus@plain": 68,
+  "vc_sus@plain": 58,
   "vc_trem@plain": 16,
-  "vla_sus@plain": 524,
+  "vla_sus@plain": 515,
   "vla_trem@plain": 17,
   "vln_harm@sso": 785,
-  "vln_pizz@plain": 45,
-  "vln_pizz@sso": 16,
+  "vln_pizz@plain": 42,
+  "vln_pizz@sso": 19,
   "vln_solo@vsco": 30,
-  "vln_sus@plain": 470,
+  "vln_sus@plain": 456,
   "vln_trem@plain": 7
  },
  "substitutions": {
@@ -50,20 +50,20 @@
  "missing": {},
  "out_of_range_rescued": {
   "timp_roll": 2,
-  "vln_pizz": 16
+  "vln_pizz": 19
  },
- "sfizz_notes": 974,
+ "sfizz_notes": 993,
  "lengthened": 0,
  "window": [
   0.0,
-  296.0
+  304.0
  ],
- "seconds": 296.0,
+ "seconds": 304.0,
  "mp3": "/home/claude/immollimma/requests/ainulindale/out/audio.mp3",
  "notation": {
   "midi": "/home/claude/immollimma/requests/ainulindale/out/score.mid",
   "lost": {
-   "notes with detune (out-of-tune doubles)": 3941,
+   "notes with detune (out-of-tune doubles)": 3953,
    "notes with a glissando inside": 68,
    "raw samples (noises, unpitched percussion)": 2
   },
@@ -77,44 +77,44 @@
  "qa": {
   "gaps": [
    [
-    276.7,
-    279.7
+    284.2,
+    287.7
    ]
   ],
   "clipped": 0,
   "clicks": [],
   "flat": [],
   "bounds": [
+   7.2,
    9.8,
    11.0,
    15.0,
    22.2,
-   249.2,
-   252.5,
-   254.8,
-   255.8,
-   259.8,
-   263.2,
-   264.2,
-   265.8
+   236.5,
+   257.2,
+   260.5,
+   263.8,
+   271.2,
+   273.8,
+   281.8
   ],
   "png": "/home/claude/immollimma/requests/ainulindale/out/report.png"
  },
  "parts_lufs": {
-  "Choir": -17.3,
-  "Trumpet": -20.1,
-  "Cellos": -22.5,
-  "Violins": -22.9,
-  "Violas": -24.4,
+  "Choir": -16.7,
+  "Trumpet": -20.4,
+  "Cellos": -22.8,
+  "Violins": -22.8,
   "Horn": -24.7,
-  "Harp": -25.7,
+  "Violas": -24.7,
+  "Harp": -25.6,
   "Timpani": -26.3,
-  "Organ": -26.4,
-  "Trombone": -26.9,
-  "Basses": -27.5,
+  "Organ": -26.6,
+  "Trombone": -27.0,
+  "Basses": -27.4,
   "Contrabassoon": -27.6,
-  "Clarinet": -28.7,
-  "Flute": -29.0,
+  "Clarinet": -28.5,
+  "Flute": -29.1,
   "Bass clarinet": -29.4,
   "Piccolo": -29.6,
   "Violin solo": -30.1,
@@ -122,5 +122,5 @@
   "Oboe": -31.4,
   "Bassoon": -31.5
  },
- "seconds_taken": 197.0
+ "seconds_taken": 221.5
 }

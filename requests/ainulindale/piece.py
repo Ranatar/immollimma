@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Ainulindalë — Музыка Айнур, третья редакция (≈ 4:55).
+"""Ainulindalë — Музыка Айнур, третья редакция (≈ 5:04).
 
 По тексту «Айнулиндалэ» (Румиль — Пенголод — Эльфвинэ):
   * Великая Музыка — Айнур «развивают» Тему и «украшают каждый своими думами и замыслами»: Тема целиком — только в
@@ -30,7 +30,8 @@ sys.path.insert(0, os.path.join(HERE, "..", ".."))
 from kit.devices import Composer  # noqa: E402
 from kit.events import Piece  # noqa: E402
 
-LEN = 296.0
+LEN = 304.0
+OFF, T_SHIFT = 8.0, 36.45   # всё после изложения Темы сдвинуто на OFF: изложение удлинено с 11,6 до 17 с
 D_PC = 2
 JI = {0: 0.0, 1: 11.7, 2: 3.9, 3: 15.6, 4: -13.7, 5: -2.0, 6: -9.8, 7: 2.0, 8: 13.7, 9: -15.6, 10: -3.9, 11: -11.7}
 
@@ -146,11 +147,20 @@ def build(ctx):
     c = Composer(p, lib="vsco", seed=29)
     rng = p.rng
 
-    def note(inst, m, t, d, vel, gain, pure=True, **kw):
+    def tshift(t):
+        return t + OFF if t >= T_SHIFT else t
+
+    def note(inst, m, t, d, vel, gain, pure=True, raw=False, **kw):
         kw.setdefault("attack", 0.12)
         kw.setdefault("release", 0.8)
         det = (ji(m) if pure else 0.0) + kw.pop("detune", 0.0)
-        p.note(inst, m, t, d, vel=min(1.0, vel), gain=gain, detune=det, **kw)
+        p.note(inst, m, t if raw else tshift(t), d, vel=min(1.0, vel), gain=gain, detune=det, **kw)
+
+    def timp(t, *a, **k):
+        c.timp(tshift(t), *a, **k)
+
+    def fx(name, t, *a, **k):
+        c.fx(name, tshift(t), *a, **k)
 
     def play(notes, insts, vel, gain, pan=0.0, echo=None, wobble=None, fade=None, legato=0.97, vel_fn=None):
         """сыграть [(t, d, m)] составом insts [(инстр., усил., сдвиг)]"""
@@ -181,7 +191,7 @@ def build(ctx):
              (T_THIRD, "VI Третья тема — Дети Илуватара"), (T_UNISON, "VIb Две музыки"), (T_ABSORB, "VIc Вбирание"),
              (T_CHORD, "VII Один аккорд"), (T_VISION, "VIII Видение"), (T_EA, "IX Эа")]
     for t, label in marks:
-        p.mark(t, label)
+        p.mark(tshift(t), label)
 
     # ============================================================ I. Голоса порознь (0–22)
     SOLOS = [("fl_sus", 1.0, 79, 0.6), ("vla_sus", 4.2, 54, -0.4), ("harp", 7.0, 76, 0.2), ("cl_sus", 9.5, 61, -0.6),
@@ -193,20 +203,27 @@ def build(ctx):
             note(inst, base + iv, t, d * 0.97, 0.5, 0.42, pure=(base % 12) in (2, 9), pan=pan, attack=0.2, release=1.4)
             t += d
 
-    # ============================================================ II. Илуватар предлагает Тему (22–36.5)
+    # ============================================================ II. Илуватар предлагает Тему (22–44.5, без сдвига)
+    # «мощная тема… слава, в коей началась та музыка, и великолепие, в коей она окончилась… Айнур преклонились и умолкли»
     for m in (38, 45, 50, 54, 57):
-        note("org_quiet", m, 22.0, 2.6, 0.55, 0.3, attack=1.2, release=1.5)
+        note("org_quiet", m, 22.0, 3.0, 0.55, 0.3, attack=1.2, release=1.5, raw=True)
     for m in (50, 57):
-        note("choir", m, 22.0, 2.6, 0.5, 0.35, attack=1.0, release=1.2)
+        note("choir", m, 22.0, 3.0, 0.5, 0.35, attack=1.0, release=1.2, raw=True)
     org_below = lambda m: m - 7 if (m - 7) % 12 in F_D else m - 5  # noqa: E731
-    for t, d, m in theme_notes(THEME, T_THEME, 0.68):
-        for inst, mm, g in (("choir", m - 12, 0.5), ("choir", org_below(m - 12), 0.4), ("hn_sus", m - 12, 0.32),
-                            ("org_quiet", m - 12, 0.25), ("org_quiet", org_below(m - 12) - 12, 0.22),
-                            ("vc_sus", org_below(m - 12) - (12 if org_below(m - 12) - 12 >= 36 else 0), 0.25)):
-            note(inst, mm, t, d * 0.98, 0.55, g, attack=0.15, release=0.9)
-    for m in (62, 66, 69, 74, 78, 81, 86):
-        note("vln_sus" if m >= 74 else "choir", m, 34.3, 1.6, 0.6, 0.28, attack=0.4, release=1.6)
-    note("harp", 74, 34.3, 2.0, 0.55, 0.35, release=2.0)
+    T_ST, U_ST = 24.6, 1.0
+    t_end = T_ST + 17 * U_ST
+    for t, d, m in theme_notes(THEME, T_ST, U_ST):
+        v = 0.6 + 0.15 * (t - T_ST) / 17.0
+        for inst, mm, g in (("choir", m, 0.55), ("choir", m - 12, 0.45), ("hn_sus", m - 12, 0.38),
+                            ("tpt_sus", m, 0.12), ("choir", org_below(m - 12), 0.26),
+                            ("org_quiet", m - 12, 0.22), ("org_quiet", org_below(m - 12) - 12, 0.2)):
+            note(inst, mm, t, d * 0.98, v, g, attack=0.15, release=0.9, raw=True)
+    for inst, m, g in (("vla_sus", 57, 0.22), ("vc_sus", 50, 0.25), ("vc_sus", 45, 0.22), ("cb_sus", 38, 0.28)):
+        note(inst, m, T_ST, t_end - T_ST, 0.45, g, attack=2.0, release=1.2, raw=True)   # чистая квинта D–A
+    for m in (62, 66, 69, 74, 78, 81, 86):                    # великолепие конца
+        note("vln_sus" if m >= 74 else "choir", m, t_end, 2.0, 0.65, 0.28, attack=0.4, release=1.6, raw=True)
+    note("harp", 74, t_end, 2.4, 0.55, 0.35, release=2.0, raw=True)
+    # t_end + 2 … 44.5: Айнур умолкли
 
     # ============================================================ III. Великая Музыка (36.5–105)
     def drowned(t):                    # мелодии тонут в море нестройных звуков
@@ -219,8 +236,8 @@ def build(ctx):
         return 0.46 + 0.32 * max(0.0, min(1.0, (t - T_GREAT) / (T_RETURN + 6 - T_GREAT)))
 
     # медленные голоса несут Тему целиком
-    cantus_lo = theme_notes(THEME, 37.0, 2.0, -24)                     # 37–71: бас
-    cantus_mid = theme_notes(THEME, 40.0, 1.0, -12)                    # 40–57: валторны и хор
+    cantus_mid = theme_notes(THEME, 36.6, 1.0, -12)                    # Айнур подхватывают Тему — валторны и хор
+    cantus_lo = theme_notes(THEME, 39.0, 2.0, -24)                     # и бас — по 2 с на единицу
     cantus_A = theme_notes(THEME_A, T_DEV_A + 0.2, 1.15, -12)          # 73.2–92.8: Тема развивается — в ля
     cantus_A_lo = [(T_DEV_A, 10.0, 33), (T_DEV_A + 10, 10.4, 40)]      # педаль A1 → E2
     ret_head = theme_notes(THEME[:4], T_RETURN + 0.2, 1.4, -12)        # возвращение: голова Темы в увеличении
@@ -245,8 +262,8 @@ def build(ctx):
     play(cantus_ret_lo, [("org_loud", 0.4, 0), ("cbsn_sus", 0.8, 0), ("cb_sus", 0.8, 12)], 0.75, 0.4)
     # развивающиеся голоса: каждый — свои мелодии из ячеек Темы, в своём регистре и темпе
     VOICES = [  # (вступление, регистр, длительность-ориентир, состав, gain, pan, эхо, конец)
-        (38.0, (57, 76), 0.6, [("vla_sus", 1.0, 0), ("cl_sus", 0.45, 0)], 0.42, -0.25, (0.45, 0.3), 118.0),
-        (43.0, (69, 88), 0.3, [("vln_sus", 1.0, 0), ("fl_sus", 0.45, 0)], 0.38, 0.35, (0.3, 0.3), 124.0),
+        (42.5, (57, 76), 0.6, [("vla_sus", 1.0, 0), ("cl_sus", 0.45, 0)], 0.42, -0.25, (0.45, 0.3), 118.0),
+        (46.5, (69, 88), 0.3, [("vln_sus", 1.0, 0), ("fl_sus", 0.45, 0)], 0.38, 0.35, (0.3, 0.3), 124.0),
         (50.0, (81, 100), 0.15, [("harp", 1.0, 0), ("vln_harm", 0.35, 0)], 0.3, 0.5, (0.22, 0.35), 116.0),
         (55.0, (26, 45), 2.4, [("cbsn_sus", 1.0, 0), ("org_loud", 0.3, 0)], 0.32, 0.0, None, 108.0),
         (57.5, (50, 69), 1.0, [("hn_sus", 0.8, 0), ("choir", 0.7, 0)], 0.36, 0.15, (0.6, 0.2), 112.0),
@@ -303,9 +320,9 @@ def build(ctx):
             tt += d * 0.5
     for m in (50, 52, 53, 56, 57, 58):
         note("choir", m, 123.0, 13.0, 0.8, 0.3, pure=False, attack=4.0, release=0.5, bend=rng.choice((-1.5, 1.5)))
-    c.timp(122.0, 2, vel=0.7, roll=15.0)
-    c.fx("tamtam", 130.0, gain=0.25, bus="perc")
-    c.fx("sso_cymbal", 125.0, gain=0.15, bus="perc", attack=3.0, dur=10.0, fade=0.5)
+    timp(122.0, 2, vel=0.7, roll=15.0)
+    fx("tamtam", 130.0, gain=0.25, bus="perc")
+    fx("sso_cymbal", 125.0, gain=0.15, bus="perc", attack=3.0, dur=10.0, fade=0.5)
 
     # ============================================================ V. Вторая тема (140–180)
     sec_cantus = theme_notes(INV, T_SEC + 1.0, 0.8, 24)               # 141–154.6: скрипки, хор
@@ -341,7 +358,7 @@ def build(ctx):
     waves(T_SEC_BATTLE, T_THIRD, ((2.8, 38, "cb_trem", 0.0), (3.9, 45, "vc_trem", 0.7), (3.3, 52, "vla_trem", 1.5)))
     melkor_line(T_MASTERY, 0, [("tpt_sus", 1.0, 12), ("tbn_sus", 1.0, 0), ("tba_sus", 0.9, -12), ("hn_sus", 0.8, 12)],
                 1.0, 0.45, unit=0.72)                                     # господство: его тема в увеличении
-    c.timp(T_MASTERY, 2, vel=0.6, roll=7.5)
+    timp(T_MASTERY, 2, vel=0.6, roll=7.5)
 
     # ============================================================ VI. Третья тема (180–240)
     def t3(t0, beat, mel_insts, mel_shift, vel, gain, harm=None, ripple=False, pan=0.3):
@@ -432,7 +449,7 @@ def build(ctx):
             g = 0.3 / (1 + 0.04 * n_) * (0.08 if inst == "picc_sus" else 0.6 if inst == "choir" else 1.0)
             note(inst, m, T_CHORD, 4.5, 0.95, g, attack=0.04, release=0.4)
     note("harp", 50, T_CHORD, 4.0, 0.9, 0.35, release=0.4)
-    c.timp(T_CHORD, 2, vel=0.7)
+    timp(T_CHORD, 2, vel=0.7)
 
     # ============================================================ VIII. Видение: музыка становится землёй
     cut = T_VCUT
@@ -490,7 +507,7 @@ def build(ctx):
         note(inst, m, E + dt, 13.0 - dt, 0.36, g, attack=3.0, release=3.0, pan=rng.uniform(-0.3, 0.3))
     t, k = E + 2.5, 0
     while t < E + 13.0:
-        c.timp(t, 2, vel=0.32 + 0.1 * min(1.0, k / 4))
+        timp(t, 2, vel=0.32 + 0.1 * min(1.0, k / 4))
         note("harp", 38, t + 0.28, 1.0, 0.4, 0.3, release=1.0)
         note("cb_pizz", 38, t + 0.28, 0.6, 0.4, 0.25, release=0.6)
         t += 1.1
