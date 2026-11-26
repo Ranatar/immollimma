@@ -132,6 +132,10 @@ function prep(th) {
   th.copies = [];                                       // узор Айнур: поворот на 2π/5 (и зеркало у второй темы)
   for (let j = 0; j < k; j++) { th.copies.push([j * TAU / k, false]); if (mirror) th.copies.push([j * TAU / k, true]); }
   th.bundle = f === "cantus" ? 9 : f === "dev" ? 3 : f === "secv" ? 2 : 1;   // Айнур много: голос — хор нитей
+  if (f === "mel") th.bundle = { 297: 1, 298: 3, 299: 5, 355: 7, 356: 7, 359: 9, 403: 3 }[+th.key.slice(3, 6)] || 1;  // за ним идут всё больше
+  if (f === "str") th.bundle = 2;
+  if (f === "uni") { th.bundle = 9; th.spread = t => 0.08 + 0.92 * (1 - sstep(T.unison, T.unison + 10, t)); }  // многие стягиваются в один унисон
+  if (f === "t3") th.bundle = th.line < 406 ? 1 : th.line < 410 ? 5 : 9;    // третья тема растёт: её подхватывают многие
   const arc = f === "uni";                               // для вбирания: тот же унисон, но дугами
   const xs2 = arc ? new Float32Array(Math.ceil((th.tB - th.tA) * FS) + 2) : null, ys2 = arc ? new Float32Array(xs2.length) : null;
   const N = Math.ceil((th.tB - th.tA) * FS) + 2;
@@ -317,7 +321,7 @@ function drawThread(th, t, gain) {
   let copies = th.copies;
   if (mu > 0) copies = [0, 1, 2, 3, 4].map(q => [q * TAU / 5, false]);
   const core = mix(col, [255, 255, 255], 0.72);
-  const mid = (th.bundle - 1) / 2;
+  const mid = (th.bundle - 1) / 2, sp = th.spread ? th.spread(t) : 1, spA = isMel ? 0.05 : 0.03;
   for (let c = 0; c < copies.length; c++) {
     const [ang, mir] = copies[c];
     const ca = c === 0 ? 1 : mu > 0 ? mu * 0.65 : 1 - lkNow;   // втянутый Мелькором голос теряет отражения
@@ -325,7 +329,7 @@ function drawThread(th, t, gain) {
     for (let bi = 0; bi < th.bundle; bi++) {
       const off = bi - mid, lead = Math.abs(off) < 0.6 || th.bundle === 1;
       const ba = lead ? 1 : 0.42 + 0.1 * ((bi * 7) % 3);
-      if (copies.length > 1 || th.bundle > 1) setCopy(ang + off * 0.03, mir, 1 + ((bi * 5) % 5 - 2) * 0.014 * (lead ? 0 : 1));
+      if (copies.length > 1 || th.bundle > 1) setCopy(ang + off * spA * sp, mir, 1 + ((bi * 5) % 5 - 2) * (isMel ? 0.02 : 0.014) * sp * (lead ? 0 : 1));
       if (isMel) {                                     // раскалённое ядро в цветном ореоле
         ctx.lineWidth = th.w * K * 2;
         for (const [lv, p] of paths) { ctx.strokeStyle = rgba(col, Math.min(1, lv / 10) * ca * 0.5); ctx.stroke(p); }
